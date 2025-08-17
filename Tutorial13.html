@@ -1,0 +1,61 @@
+Tutorial13-modules+packages
+import matplotlib.pyplot as plt
+import numpy as np
+2 (using a text editor to write .py files)
+I put my derivative function in a text editor and saved it as derivative.py
+
+!touch derivative.py # trying to import my derivtive function
+!open derivative.py
+ #function for calculating derivatives
+def derivative( f, x, h):
+    '''
+    -------inputs-------
+    
+    f= function
+    f is a function that you want to take the derivative of
+        ie: y=mx+b
+    x = float or integer
+        The x value at which you want to take the derivative
+    h = float or integer > x
+        The stepsize to use for the separation of derivatives
+
+    --------function--------
+
+    derivative( f, x, h) calculates that values of the derivtive of
+    the function, f at everu x value in the array
+
+    ------output----------
+
+    The function will return a float with the value of the
+    derivative at the given value of x rounded to 3 decmil points
+
+/tmp/tmp.Rlndr5a0lG
+!python derivative.py
+import derivative
+ from derivative import derivative
+#testiung my derivative function to see if I actually imported it correctly
+
+def f(x):
+    '''
+    -----input-------
+    x = float or integer
+    x is the value you want to put inot the function
+
+    ------function-------
+    f(x) will square the inputted number, (x) then 
+    Multiply the squared value by 2
+
+    -------output---------
+    This will return a float with the value of 
+    the squared number rounded to three decmil places
+
+    '''
+    result = f"{2*x**2:.3f}"
+
+    return result
+derivative( f, 2, 0.001) #if the derivative function exists in this code, then it should return 8.000
+f(2) #testing if my f(x) function is working
+I have been stuck trying to figure out why my derivative.py function isn't working and I cannot figure it out so this is where I wil be ending my tutorial as I have been stuck on this for the last hour
+
+ 
+ 
