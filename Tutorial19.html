@@ -1,0 +1,396 @@
+Tutorial19-Classes
+#importing the usaul libraries
+import matplotlib.pyplot as plt
+import numpy as np
+2 think+type: a Walker class
+#defining and typing the walker class
+
+class Walker:
+    
+    '''
+    The Walker class creates random walker objects that can move about in 1D space, 
+    and records where they have been, and when they were there
+    '''
+    
+    def __init__(self, stepsize=0.1):
+        
+        '''
+        Initialize a random Walker object. When the walker takes steps,
+        they will be drawn from a Gaussian distribution with a width of
+        "stepsize".
+
+        
+        Optional Inputs:
+        stepsize = average step size this walker takes, in arbitrary units
+
+        The default step size without an input is stepsize=0.5
+        '''
+        #print(self, stepsize) #testing to make sure the __init__(self, stepsize=0.5) is taking the correct inputs
+
+        
+        # store the initialized step size
+        self.stepsize = stepsize #defining a new attribute for self called stepszie
+        # set the current position to 0.0
+        self.x = 0.0
+        # create a list to store where this walker has been
+        # Initialize it with the starting position of 0.0
+        # the index values of the list self.history records when they were there
+        self.history = [self.x]
+
+        
+    def takeStep(self):
+
+        
+        '''
+        
+        takeStep(self) makes the walker take one random step with the 
+        predefined step size
+        
+        '''
+        # step will be a random number, with amplitude of stepsize
+        step = self.stepsize*np.random.normal(0, 1) # this creates a random number between -1 and 1 under a normal distriubution
+        # modify the current position
+        self.x += step
+        # store the step
+        self.history.append(self.x)
+
+        
+    def takeWalk(self, N):
+        
+        '''
+        
+        This will have the walker take N random steps
+        
+        '''
+        # take N steps
+        for i in range(N):
+            self.takeStep()
+
+        
+    def plotHistory(self):
+        
+        '''
+        
+        plotHistory(self)   plots the position on a graph with the number os steps N
+        on the x-axis and the position on the y -axis
+        
+        '''
+        # how many steps has this walker taken?
+        N = len(self.history) - 1 # the first position in self.history is the starting point
+        # plot a horizontal line at 0
+        plt.axhline(0, color='gray')
+        # plot all the positions the walker has visited
+        plt.plot(self.history, alpha=0.3)
+        # plot the current position
+        plt.scatter(N, self.x)
+        # label the axes
+        plt.xlabel('N (# of steps taken)')
+        plt.ylabel('1D position')
+self. Syntax is creating a list of methods for the Walker class I believe.
+
+Initial testing of the walker class
+I got confused here so I put my code into Python Tutor
+
+walker1 = Walker("Luca") # setting walker to a Walker class
+walker1.__init__() 
+walker1.takeStep()# trying to have my walker1, "Luca" take his first step (also that sounds so weird to refer to myself in the third person)
+walker1.plotHistory() # Hopefully, this creates a graph with one point
+No description has been provided for this image
+OMG that actually worked!!! I have been working on this for like the last hour, trying to get this working and learning to understand how classes and objectss within a class work so seeing that plot makes me so excited!!!
+
+walker1.takeStep()
+walker1.plotHistory()
+No description has been provided for this image
+#trying to make myself a walker again
+
+Luca = Walker(stepsize = 0.05)
+
+#getting my steps in
+Luca.takeWalk(1000)
+
+Luca.plotHistory()
+No description has been provided for this image
+3 think+pair+write: attributes vs methods
+I did this by myself after class
+
+Ok, so I am using Luca instead of a mouse, as I defined Luca
+
+The 3 attributes are:
+
+Luca.x Luca.x holds the current position of the Walker(Luca)
+
+Luca. stepsize Luca. stepsize holds the absolute value of the difference between successive Luca. History elements
+
+Luca. history Luca.History is a list of all of the Luca.x values and has length N+1
+
+the 3 methods are:
+
+Luca. takeStep(self) Luca. takestep method, takes one step by generating a random number in a normal distribution centered at 0 with an amplitude of, 1 and multiplying this numbe,r which is between -1 and 1 by the step size to generate one step
+
+Luca. takeWalk(self, N) the Luca.takeWalk method, repeats the Luca,takeStep method N number of times. For every time(N) it uses the Luca.takeStep method, it adds to result to Lica.,x and appends the Luca.histopry list with the new value of Luca.x
+
+Luca. .plotHistory() The Luca.plotHistory method uses matplotlib.pyplot to generate a plot of Luca.x on the y-axis vs. N on the x-axis
+
+4 think+type: A giant with giant steps
+#creating a giant walker with massive step sizes
+
+giant = Walker(stepsize=10.0) # assigning the giant its first step size
+
+giant.takeWalk(1000) # making the giant walk 1000 random steps
+
+#giatn with new step size 
+
+giant.stepsize=50.0 # reassigning the giant's step size to 50
+
+giant.takeWalk(1000) #having the giant take another 1000 steps
+
+
+#plotting the giant's journey
+giant.plotHistory() # This should be somewhat different as the step size has changed, so I am expecting to see larger variation on the right side of the graph when N>1000
+
+print(f"the final position of the igant is, {giant.x}") #this should print the last value of giant.x
+the final position of the igant is, 3740.995047091854
+No description has been provided for this image
+#second run through of the giant
+
+giant = Walker(stepsize=30.0) # assigning the giant its first step size 50 +10/2 = 30
+
+giant.takeWalk(1000) # making the giant walk 1000 random steps
+
+#giatn with new step size 
+
+giant.stepsize=30.0 # reassigning the giant's step size to 30
+
+giant.takeWalk(1000) #having the giant take another 1000 steps
+
+
+#plotting the giant's journey
+giant.plotHistory() # This should be somewhat different as the step size has changed so I am expecting to see larger variation on the right side of the graph when N>1000
+
+#checking if the giant reaches the same endpoint at the average speed the giant was going last time
+print(f"the final position of the igant is, {giant.x}") #this should print the last value of giant.x
+the final position of the igant is, 1205.8579690629545
+No description has been provided for this image
+#third run through of the giant
+
+giant = Walker(stepsize=50.0) # assigning the giant its first step size
+
+giant.takeWalk(1000) # making the giant walk 1000 random steps
+
+#giatn with new step size 
+
+giant.stepsize=10.0 # reassigning the giant's step size to 10
+
+giant.takeWalk(1000) #having the giant take another 1000 steps
+
+
+#plotting the giant's journey
+giant.plotHistory() # This should be somewhat different as the step size has changed so I am expecting to see larger variation on the right side of the graph when N>1000
+
+#checking how to graph looks if the giant starts out at a fast speed, then slows down
+print(f"the final position of the igant is, {giant.x}") #this should print the last value of giant.x
+the final position of the igant is, 822.6658111673459
+No description has been provided for this image
+#fourth run through of the giant
+
+giant = Walker(stepsize=20.0) # assigning the giant its first step size
+
+giant.takeWalk(1000) # making the giant walk 1000 random steps
+
+#giatn with new step size 
+
+giant.stepsize=40.0 # reassigning the giant's step size to 40
+
+giant.takeWalk(1000) #having the giant take another 1000 steps
+
+
+#plotting the giant's journey
+giant.plotHistory() # This should be somewhat different as the step size has changed so I am expecting to see larger variation on the right side of the graph when N>1000
+
+
+print(f"the final position of the igant is, {giant.x}") #this should print the last value of giant.x
+the final position of the igant is, 894.1318455526501
+No description has been provided for this image
+5 think+write: the wandering giant
+For the first time running the giant walk, I ran the given 10 speed for the first 100 steps and the 50 speed for the second 1000 steps. It had a final position of roughly.
+
+I then calculated that for the total 1000 steps, the giant had an average speed of (50+10)/2 Distance/N. So I made sure all of my future runs kept that average speed as I wanted to seee how the final positions varied.
+
+# I googled, "how to create a data table in python," to create a data table to more clearly organize my results
+print("\n")
+print("data from my four run throughs of the giant walking at varried speeds:")
+print("\n")
+
+import pandas as pd
+
+data = {
+        'run number': ['1', '2', '3', '4'],
+        'first stepsize': [10.0, 30.0, 50.0, 20.0],
+        'second stepsize': [50.0, 30.0, 10.0, 40.0],
+        'final position': [3741, 1206, 823, 894]
+    }
+
+df = pd.DataFrame(data)
+print(df)
+
+data from my four run throughs of the giant walking at varried speeds:
+
+
+  run number  first stepsize  second stepsize  final position
+0          1            10.0             50.0            3741
+1          2            30.0             30.0            1206
+2          3            50.0             10.0             823
+3          4            20.0             40.0             894
+All four of my run-throughs look different. The first run through stays mostly flat until 1000 steps, at which point it spikes. This is because the step size changes from 10 steps to 50 steps. My second run through looks similar to my first run through just with a less flat first 1000 steps. This is because in my second run through I kept my step size constant. This makes the variation look more like random spikes rather than clear points of change. For my 3rd run through, I started at a speed of 50 steps per N and then decreased it to 10 steps per N. This caused massive spikes at the beginning, which flattened out past N = 1000. For my fourth run through, I started at a speed of 20 steps per N. Then after N = 1000, I increased it to a speed of 40 steps per N. This created a similar plot to the first run through, just with a less flat first 1000 steps and a less steep last 1000 steps.
+
+6 think+pair+code: add methods to a class
+I did this by myself
+#defining and typing the walker class
+
+class newWalker:
+    
+    '''
+    The Walker class creates random walker objects that can move about in 1D space, 
+    and records where they have been, and when they were there
+    '''
+    
+    def __init__(self, stepsize=0.1):
+        
+        '''
+        Initialize a random Walker object. When the walker takes steps,
+        they will be drawn from a Gaussian distribution with a width of
+        "stepsize".
+
+        
+        Optional Inputs:
+        stepsize = average step size this walker takes, in arbitrary units
+
+        The default step size without an input is stepsize=0.5
+        '''
+        #print(self, stepsize) #testing to make sure the __init__(self, stepsize=0.5) is taking the correct inputs
+
+        
+        # store the initialized step size
+        self.stepsize = stepsize #defining a new attribute for self called stepszie
+        # set the current position to 0.0
+        self.x = 0.0
+        # create a list to store where this walker has been
+        # Initialize it with the starting position of 0.0
+        # the index values of the list self.history records when they were there
+        self.history = [self.x]
+
+        
+    def takeStep(self):
+
+        
+        '''
+        
+        takeStep(self) makes the walker take one random step with the 
+        predefined step size
+        
+        '''
+        # step will be a random number, with amplitude of stepsize
+        step = self.stepsize*np.random.normal(0, 1) # this creates a random number between -1 and 1 under a normal distriubution
+        # modify the current position
+        self.x += step
+        # store the step
+        self.history.append(self.x)
+
+        
+    def takeWalk(self, N):
+        
+        '''
+        
+        This will have the walker take N random steps
+        
+        '''
+        # take N steps
+        for i in range(N):
+            self.takeStep()
+
+        
+    def plotHistory(self):
+        
+        '''
+        
+        plotHistory(self)   plots the position on a graph with the number os steps N
+        on the x-axis and the position on the y -axis
+        
+        '''
+        # how many steps has this walker taken?
+        N = len(self.history) - 1 # the first position in self.history is the starting point
+        # plot a horizontal line at 0
+        plt.axhline(0, color='gray')
+        # plot all the positions the walker has visited
+        plt.plot(self.history, alpha=0.3)
+        # plot the current position
+        plt.scatter(N, self.x)
+        # label the axes
+        plt.xlabel('N (# of steps taken)')
+        plt.ylabel('1D position')
+
+    def steps(self):
+        '''
+        calculates the total amount of steps taken
+
+        Returns steps taken as an int data type
+
+        '''
+        taken = len(self.history)
+        return(taken)
+
+    def expectedDistance(self, N):
+        '''
+        N = integer
+        N is the number of steps
+
+        Returns the average distance as a float
+
+        '''
+        avg_dist = self.stepsize*np.sqrt(N)
+
+        return( float(avg_dist))
+walker2 = newWalker("test")
+walker2.__init__() # I forgot to initliaze walker2 lmao
+walker2.steps() # This should return 1 because it has the starting point
+1
+walker2.plotHistory() #checking to make sure there is 1 point
+No description has been provided for this image
+walker2.takeWalk(5)
+walker2.steps() # This should return 6 because it has the starting point and five steps
+6
+print(walker2.stepsize) #checking to make sure that walker2.__init__ defined the attribute stepsize for walker2
+0.1
+walker2.expectedDistance(4) #this should return 0.2 if I understand what the code is doing
+0.2
+walker2 = newWalker(stepsize = 42) # changing the stepsize for walker2 
+# Also, if you can't tell, we are all nerds. I saw, "w = newWalker(stepsize=1)" in the tutorial and thought, no, let's have a more fun number, so I picked 42. Then it said, "w.takeWalk(42)" I just about diedd with laughter.
+
+walker2.takeWalk(27) # I don't want to do 42 again. Sorry I am also a nerd so I used 42 for the step size
+
+print(walker2.steps()) #this sould print 27
+
+distances = [] # creating a list for distances
+
+e = walker3.expectedDistance(100) # The walkers are taking 100 steps, so I will plot the expected distance for 100 steps
+count_in = 0
+count_out = 0
+
+for i in range(50):
+    walker3 = newWalker() #one more walker, a third walker, walker3
+    walker3.takeWalk(100)
+    walker3.plotHistory()
+    distances.append(walker3.x)
+    if -e <= walker3.x <= e: #counting the amount of walkers between -e and e
+        count_in += 1
+    else:
+        count_out += 1
+ 
+plt.axhline(e)
+plt.axhline(-e)
+print(f" the amount of walker inside the expected range is, {count_in} \n the amount of walkers out side the expected range is {count_out} ")
+28
+ the amount of walker inside the expected range is, 36 
+ the amount of walkers out side the expected range is 14 
+No description has been provided for this image
+well, it looks like the majority of the walkers are between -e and e, which is the expected range. I added some counting variables to count the number of walkers inside the expected range. The amount of walkers in the expected range is 36. 36/50 *100 = 72%. Considering that for a Gaussian, aka normal, distribution, 68% of the data should fall within one standard deviation, I believe that this is pretty close. So I would assume over more trials the data will move towards a normal distribution.
