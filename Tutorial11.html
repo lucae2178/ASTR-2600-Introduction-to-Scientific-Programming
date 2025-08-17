@@ -1,0 +1,245 @@
+2 think+type: Using boolean arrays
+import numpy as np #importing numpy and matplot
+import matplotlib.pyplot as plt
+#making an array from 0 to 99
+a = np.arange(0,100,1)
+print(a)
+[ 0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23
+ 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47
+ 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71
+ 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95
+ 96 97 98 99]
+# finding all of the even numbers
+even = a%2==0 #setting even to whenever the remainder of the number divided by 2 equals zero (this is a boolean)
+print(even) #this is an array of booleans
+print(a[even]) #this is all of the even numbers and OMG using boolenans to mask arrays is so cool!!!
+[ True False  True False  True False  True False  True False  True False
+  True False  True False  True False  True False  True False  True False
+  True False  True False  True False  True False  True False  True False
+  True False  True False  True False  True False  True False  True False
+  True False  True False  True False  True False  True False  True False
+  True False  True False  True False  True False  True False  True False
+  True False  True False  True False  True False  True False  True False
+  True False  True False  True False  True False  True False  True False
+  True False  True False]
+[ 0  2  4  6  8 10 12 14 16 18 20 22 24 26 28 30 32 34 36 38 40 42 44 46
+ 48 50 52 54 56 58 60 62 64 66 68 70 72 74 76 78 80 82 84 86 88 90 92 94
+ 96 98]
+greater_than_70 = a>70 #this is a boolean 
+print(greater_than_70) #an array of booleans
+print(a[greater_than_70]) #an array of all values of a that are greater than 70
+[False False False False False False False False False False False False
+ False False False False False False False False False False False False
+ False False False False False False False False False False False False
+ False False False False False False False False False False False False
+ False False False False False False False False False False False False
+ False False False False False False False False False False False  True
+  True  True  True  True  True  True  True  True  True  True  True  True
+  True  True  True  True  True  True  True  True  True  True  True  True
+  True  True  True  True]
+[71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94
+ 95 96 97 98 99]
+greater_than_70_even = greater_than_70 & even #using the ampersand function to create an array of all of the values greater than 70 and even
+print(greater_than_70_even)
+print(a[greater_than_70_even])
+[False False False False False False False False False False False False
+ False False False False False False False False False False False False
+ False False False False False False False False False False False False
+ False False False False False False False False False False False False
+ False False False False False False False False False False False False
+ False False False False False False False False False False False False
+  True False  True False  True False  True False  True False  True False
+  True False  True False  True False  True False  True False  True False
+  True False  True False]
+[72 74 76 78 80 82 84 86 88 90 92 94 96 98]
+halfTen = (a%10==0) | (a<50) # elements are less than 50 or multiples of 10
+print(halfTen)
+print(a[halfTen])
+[ True  True  True  True  True  True  True  True  True  True  True  True
+  True  True  True  True  True  True  True  True  True  True  True  True
+  True  True  True  True  True  True  True  True  True  True  True  True
+  True  True  True  True  True  True  True  True  True  True  True  True
+  True  True  True False False False False False False False False False
+  True False False False False False False False False False  True False
+ False False False False False False False False  True False False False
+ False False False False False False  True False False False False False
+ False False False False]
+[ 0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23
+ 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47
+ 48 49 50 60 70 80 90]
+3 think+type: playing with Boulder weather
+#importing the data
+
+files = "./textfiles/"
+
+#using pandas
+
+import pandas as pd #importing pandas, which I am planning on using to get the data from cleaned-boulder-weather
+
+weather = pd.read_csv(files + 'cleaned-boulder-weather.txt', sep=" ", names=['year', 'month', 'day', 'tmax', 'tmin', 'precip', 'snow', 'snowcover'])  #creatomg a dictionary of arrays)
+
+print(weather) #printing the dictionary
+
+print("the year is, ", weather['year'][20000]) #making sure I can index the dictionary correctly
+
+#print(weather['day'][364], weather['day'][365], weather['day'][366]) #checking how the days list works
+
+print("the max temp on", weather['year'][45277], weather['month'][45277], weather['day'][45277], "is, ", weather['tmax'][45277], " degrees celsius") #checking my dictionary again 
+         year  month   day  tmax  tmin  precip  snow  snowcover
+0      1897.0    5.0   1.0  71.0  49.0    0.00   0.0        0.0
+1      1897.0    5.0   2.0  71.0  54.0    0.01   0.0        0.0
+2      1897.0    5.0   3.0  67.0  48.0    0.00   0.0        0.0
+3      1897.0    5.0   4.0  69.0  46.0    0.00   0.0        0.0
+4      1897.0    5.0   5.0  68.0  51.0    0.03   0.0        0.0
+...       ...    ...   ...   ...   ...     ...   ...        ...
+45276  2023.0    1.0  27.0  46.0  26.0    0.00   0.0        2.0
+45277  2023.0    1.0  28.0  41.0  21.0    0.00   0.0        2.0
+45278  2023.0    1.0  29.0  25.0   1.0    0.08   1.1        3.0
+45279  2023.0    1.0  30.0   9.0  -7.0    0.03   0.5        3.0
+45280  2023.0    1.0  31.0  30.0  -4.0    0.00   0.1        3.0
+
+[45281 rows x 8 columns]
+the year is,  1952.0
+the max temp on 2023.0 1.0 28.0 is,  41.0  degrees celsius
+data = np.array(weather,('year'), ('month'), ('day'), ('tmax'), ('tmin'), ('precip'), ('snow'), ('snowcover')))
+print(data)
+  Cell In[66], line 1
+    data = np.array(weather,('year'), ('month'), ('day'), ('tmax'), ('tmin'), ('precip'), ('snow'), ('snowcover')))
+                                                                                                                  ^
+SyntaxError: unmatched ')'
+data = np.genfromtxt('cleaned-boulder-weather.txt')
+#year, month, day, tmax, tmin, precip, snow, snowcover = np.transpose(data)
+---------------------------------------------------------------------------
+FileNotFoundError                         Traceback (most recent call last)
+Cell In[64], line 1
+----> 1 data = np.genfromtxt('cleaned-boulder-weather.txt')
+      2 #year, month, day, tmax, tmin, precip, snow, snowcover = np.transpose(data)
+
+File /opt/anaconda3/envs/current/lib/python3.11/site-packages/numpy/lib/npyio.py:1980, in genfromtxt(fname, dtype, comments, delimiter, skip_header, skip_footer, converters, missing_values, filling_values, usecols, names, excludelist, deletechars, replace_space, autostrip, case_sensitive, defaultfmt, unpack, usemask, loose, invalid_raise, max_rows, encoding, ndmin, like)
+   1978     fname = os_fspath(fname)
+   1979 if isinstance(fname, str):
+-> 1980     fid = np.lib._datasource.open(fname, 'rt', encoding=encoding)
+   1981     fid_ctx = contextlib.closing(fid)
+   1982 else:
+
+File /opt/anaconda3/envs/current/lib/python3.11/site-packages/numpy/lib/_datasource.py:193, in open(path, mode, destpath, encoding, newline)
+    156 """
+    157 Open `path` with `mode` and return the file object.
+    158 
+   (...)
+    189 
+    190 """
+    192 ds = DataSource(destpath)
+--> 193 return ds.open(path, mode, encoding=encoding, newline=newline)
+
+File /opt/anaconda3/envs/current/lib/python3.11/site-packages/numpy/lib/_datasource.py:533, in DataSource.open(self, path, mode, encoding, newline)
+    530     return _file_openers[ext](found, mode=mode,
+    531                               encoding=encoding, newline=newline)
+    532 else:
+--> 533     raise FileNotFoundError(f"{path} not found.")
+
+FileNotFoundError: cleaned-boulder-weather.txt not found.
+!head cleaned-boulder-weather.txt 
+1.897000000000000000e+03 5.000000000000000000e+00 1.000000000000000000e+00 7.100000000000000000e+01 4.900000000000000000e+01 0.000000000000000000e+00 0.000000000000000000e+00 0.000000000000000000e+00
+1.897000000000000000e+03 5.000000000000000000e+00 2.000000000000000000e+00 7.100000000000000000e+01 5.400000000000000000e+01 1.000000000000000021e-02 0.000000000000000000e+00 0.000000000000000000e+00
+1.897000000000000000e+03 5.000000000000000000e+00 3.000000000000000000e+00 6.700000000000000000e+01 4.800000000000000000e+01 0.000000000000000000e+00 0.000000000000000000e+00 0.000000000000000000e+00
+1.897000000000000000e+03 5.000000000000000000e+00 4.000000000000000000e+00 6.900000000000000000e+01 4.600000000000000000e+01 0.000000000000000000e+00 0.000000000000000000e+00 0.000000000000000000e+00
+1.897000000000000000e+03 5.000000000000000000e+00 5.000000000000000000e+00 6.800000000000000000e+01 5.100000000000000000e+01 2.999999999999999889e-02 0.000000000000000000e+00 0.000000000000000000e+00
+1.897000000000000000e+03 5.000000000000000000e+00 6.000000000000000000e+00 6.900000000000000000e+01 5.100000000000000000e+01 0.000000000000000000e+00 0.000000000000000000e+00 0.000000000000000000e+00
+1.897000000000000000e+03 5.000000000000000000e+00 7.000000000000000000e+00 6.800000000000000000e+01 5.000000000000000000e+01 7.000000000000000666e-02 0.000000000000000000e+00 0.000000000000000000e+00
+1.897000000000000000e+03 5.000000000000000000e+00 8.000000000000000000e+00 6.100000000000000000e+01 5.200000000000000000e+01 0.000000000000000000e+00 0.000000000000000000e+00 0.000000000000000000e+00
+1.897000000000000000e+03 5.000000000000000000e+00 9.000000000000000000e+00 6.800000000000000000e+01 4.500000000000000000e+01 0.000000000000000000e+00 0.000000000000000000e+00 0.000000000000000000e+00
+1.897000000000000000e+03 5.000000000000000000e+00 1.000000000000000000e+01 6.700000000000000000e+01 4.500000000000000000e+01 0.000000000000000000e+00 0.000000000000000000e+00 0.000000000000000000e+00
+data = np.genfromtxt('cleaned-boulder-weather.txt') 
+year, month, day, tmax, tmin, precip, snow, snowcover = np.transpose(data) #I believe the code in line [132] worked so hopefully this also works
+print(data) #testing to make sure that lines [70] and [71] worked
+[[1.897e+03 5.000e+00 1.000e+00 ... 0.000e+00 0.000e+00 0.000e+00]
+ [1.897e+03 5.000e+00 2.000e+00 ... 1.000e-02 0.000e+00 0.000e+00]
+ [1.897e+03 5.000e+00 3.000e+00 ... 0.000e+00 0.000e+00 0.000e+00]
+ ...
+ [2.023e+03 1.000e+00 2.900e+01 ... 8.000e-02 1.100e+00 3.000e+00]
+ [2.023e+03 1.000e+00 3.000e+01 ... 3.000e-02 5.000e-01 3.000e+00]
+ [2.023e+03 1.000e+00 3.100e+01 ... 0.000e+00 1.000e-01 3.000e+00]]
+print(len(day), len(month), len(year)==len(tmax)) #checlong t0 make sure all the arrays are the same length
+45281 45281 True
+plt.plot(month, precip, '.'); #creating a plot of the precipation as a relationship with the month in Boulder
+plt.xlabel('Month') #labelling the x axis
+plt.ylabel('preciptation in boulder in inches') #labeling the y axis 
+plt.title('the percipation in Boulder each month from 1897 to 2023')
+Text(0.5, 1.0, 'the percipation in Boulder each month from 1897 to 2023')
+No description has been provided for this image
+4 hink+pair+code: Happy Birthday!
+did this by myself because I had to leave early on Friday
+My birthdate is January 30th 2006
+
+print(month)
+[5. 5. 5. ... 1. 1. 1.]
+myBdayPercipitation = [] # creating an empty list for all of the precipitation on my birthday
+for i in range(len(year)):
+    if month[i]== 1 and day[i]== 30:
+        myBdayPercipitation.append(precip[i])
+
+high = np.max(myBdayPercipitation)
+#print(high)
+low = np.min(myBdayPercipitation)
+#print(low)
+mean = f"{np.mean(myBdayPercipitation):.3f}"
+
+highi = np.where(myBdayPercipitation == high)
+#print(highi)
+lowi = np.where(myBdayPercipitation == low)
+#print(lowi)
+
+print("the average precipitation on my birthday January 30th in Boulder Colorado is, ", mean, "inhes of rain")
+print("\n", "the highest precipitation January 30th in Boulder occoured in, ", *year[highi], "and was, ", high, "inches of rain")
+print("\n", "the lowest precipitation on Januaray 30th in Boulder was 0 inches and occoured on many years")
+
+
+#print("\n", "the lowest perception on January 30th in Boulder occoured in, ", *year[lowi], "and was, ", max, "inches ofo rain")
+# The lowest precipitation occurred frequently as it was 0.0 so I did not include this in the final print
+the average precipitation on my birthday January 30th in Boulder Colorado is,  0.026 inhes of rain
+
+ the highest precipitation January 30th in Boulder occoured in,  1897.0 and was,  0.61 inches of rain
+
+ the lowest precipitation on Januaray 30th in Boulder was 0 inches and occoured on many years
+5 think+type+code: average highs
+avgMonthlyHi = []
+avgMonthlyAverage = []
+monthNums = np.arange(1, 13)
+for monthNum in monthNums:
+    
+    monthTmax = np.max(month[monthNums])
+    
+    monthAvg = np.mean(month[monthNums])
+
+    avgMonthlyHi.append(monthTmax)
+
+    avgMonthlyAverage.append(monthAvg)
+
+print(avgMonthlyHi)
+    
+#idk how to do this right now so Im just skipping this gor now
+[5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0]
+6 think+type: Goldilocks days
+#redefining all the data because I'm worried I may have accidentaly changed some values earlier in the code
+
+data = np.genfromtxt('cleaned-boulder-weather.txt') 
+year, month, day, tmax, tmin, precip, snow, snowcover = np.transpose(data) 
+baddays = 0
+gooddays = 0
+for i in range(len(day)):
+    if snow[i] >0: #adding 1 good day for every snow day
+        gooddays +=1
+    elif tmin[i] < 55 or tmax[i] >= 90 or precip[i] > 0.25: #calculating the total number of bad days
+        baddays +=1
+    else: #if a day is not a bad dat or a snow day than it is a good day
+        gooddays +=1
+
+
+#print(len(day)==(gooddays+baddays)) #checking to make sure the total amount of days checked is corrcet
+
+percent_good = gooddays/len(day)
+print("the percent of good days that occoured in Boulder between 1879 and 2023 was, ", percent_good, "% of days")
+the percent of good days that occoured in Boulder between 1879 and 2023 was,  0.17459861752169784 % of days
+7 think+write: Goldilocks days
+in code cell [151], where I created my for loop to find golidlocks days, the first condition I checked in my if statement was if it was a snow day. If it were a snow day, the good day counter would increase by 1 and end the if statement. This ensured that every day that had snow was counted as a good day. The other conditions were only checked if the snow was not greater than zero. I then checked if any of the bad day statements were true with an elif statement. If any bad day statement was true, then the bad day counter would be increased by 1. If this were also false, then I ended my if statement with an else statement, increasing the good day counter by 1. Using just one if-elif-else statement to check all the conditions ensured that no day was counted twice, and if snow was present, the statement wouldn't even check any of the other conditions. I also checked at the end if my if-elif-else loop had correctly counted all of the days with the code, print(len(day)==(gooddays+baddays)) this code checks if the length of the array, days is equal to the total number of good days plus bad days. This returned True so I believe my code correctly counted all of the good days with the given statements
