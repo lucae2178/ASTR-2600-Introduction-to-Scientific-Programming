@@ -1,0 +1,297 @@
+import numpy as np
+import matplotlib.pyplot as plt
+2 hink+type: numerical derivatives of arrays
+x = np.linspace(0, 1, 11) # creating an array of 11 values equally spaced between 0 and 1 
+y = 2 * x #defining another array with values of 2* the asrray defined in the line above
+
+plt.scatter(x,y) #plotting the points of each array
+plt.plot(x,y) #plotting the linear relationship between the two arrays
+[<matplotlib.lines.Line2D at 0x7ff5e8183410>]
+No description has been provided for this image
+Calculating the derivative
+dx = np.diff(x) #calculating the difference between points in the x array
+
+dy = np.diff(y) #calculating the difference between points in the y array
+for i in range(len(x)-1):
+    print("here are the two x values, ", x[i], x[i+1], "here is the dx, ", dx[i])
+
+    #checking exavtly what np.diff does
+here are the two x values,  0.0 0.1 here is the dx,  0.1
+here are the two x values,  0.1 0.2 here is the dx,  0.1
+here are the two x values,  0.2 0.30000000000000004 here is the dx,  0.10000000000000003
+here are the two x values,  0.30000000000000004 0.4 here is the dx,  0.09999999999999998
+here are the two x values,  0.4 0.5 here is the dx,  0.09999999999999998
+here are the two x values,  0.5 0.6000000000000001 here is the dx,  0.10000000000000009
+here are the two x values,  0.6000000000000001 0.7000000000000001 here is the dx,  0.09999999999999998
+here are the two x values,  0.7000000000000001 0.8 here is the dx,  0.09999999999999998
+here are the two x values,  0.8 0.9 here is the dx,  0.09999999999999998
+here are the two x values,  0.9 1.0 here is the dx,  0.09999999999999998
+print("y=  ",y)
+print("dy= ",dy)
+#checking the y values in a more simple way
+y=   [0.  0.2 0.4 0.6 0.8 1.  1.2 1.4 1.6 1.8 2. ]
+dy=  [0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2]
+# Calculating the rough derivative (while this will return the correct value of the derivative in this case I'm not sure this would work for a more complicated function as the derivative requires a limit taken to infity)
+dydx = dy/dx
+print(dydx) #this should also return an array because an array/arraay = array
+[2. 2. 2. 2. 2. 2. 2. 2. 2. 2.]
+plt.plot(x,y) #plotting the orginal function again
+plt.plot(x[:-1], dydx) #plotting the derivative whcih should be a flat line at 2.0
+[<matplotlib.lines.Line2D at 0x7ff5e68b5d50>]
+No description has been provided for this image
+3 think+write: Explaining array lengths
+think + write
+x[:-1] represents the entire array of x except that the last element is moved to the previous-to-last element.
+
+If I were to replot the graph, except I plotted the derivative as plt.plot(x, dydx), an error message would occur because of the definition of dydx. The definition of dydx only calculates values for an array with 1 less length than the array given. This is because of how we are currently calculating the derivative, which requires the value of x[i+1]. Once we hit the last value of the array, x there is no element with index position [i+1] so we cannot calculate the derivative at the end because it is a discontinuity.
+
+4 think+type+pair+code+write: calculate dT/dz in Earth’s atmosphere
+I was not present on monday, so I am doing this by myself
+#importing the file, earth-standard-atmosphere.txt
+import pandas as pd
+
+table = pd.read_csv("earth-standard-atmosphere.txt", sep='\s+')
+altitude = table['altitude'].values
+temperature = table['temperature'].values
+#plotting the Altitude vs tempature
+plt.plot(altitude,temperature) #plotting the relation ship between tempureture and alttitude
+plt.xlabel("altitude (kilometers above sea level")
+plt.ylabel("temperature (kelvin)")
+plt.title("Alttitude Vs. Tempureute")
+
+# The txt file has no labels for the units of each data so these are just what I am assuming tthey are. Also these units are given later in the tutorial when it asks for the derivative so I am just assuming that these are the units of the data
+Text(0.5, 1.0, 'Alttitude Vs. Tempureute')
+No description has been provided for this image
+My graph looks similar to the graph on http://www.physicalgeography.net/fundamentals/7b.html. The one major difference is that we have are axis labeled differently. I have altitude on the x axis and temp on the y axis, while PhysicalGeography.net has the temperature on the x axis and the altitude on the y axis
+
+#print(altitude)
+altitude[1]=0.00000001 #this will help for the dTdZ calculation as you cant divide by zero
+
+#print(altitude)
+dTdZ=np.empty(len(temperature))
+
+#print(len(dTdZ))
+
+#defining the derivtive using a for loop
+for i in range(len(temperature)-2):
+    #print(i)
+    dTdZ = np.insert(dTdZ, i, (temperature[i+1]-temperature[i])/(altitude[i+1]-altitude[i])) #in K/km
+#print(dTdZ)
+ok, I realize now I was being stupid and I could have just done this:
+
+dT = np.diff(temperature) #calculating the difference between points in the x array
+
+dZ = np.diff(altitude) 
+
+dTdZ = dT/dZ
+
+new_altitude = altitude[:-1] #removing the last element of the altitude list so it's equal length to the derivtive list
+print(len(new_altitude))
+print(len(dTdZ))
+44
+44
+#plotting the Altitude vs derivative
+plt.plot(altitude, dTdZ) #plotting the relation ship between tempureture and alttitude
+plt.xlabel("altitude (kilometers above sea level")
+plt.ylabel("Kelvin/(kilometers above sea level)")
+plt.title("Alttitude Vs. Tempurature/Alttitude")
+Text(0.5, 1.0, 'Alttitude Vs. Tempurature/Alttitude')
+No description has been provided for this image
+The plot generated on line [52] looks mostly flat with a spike at 0. This is because I tried to keep zero in the data by replacing it with 1e-8. Due to how the derivative was calculated, this drastically changed the value at altitude(z) = 0
+
+To solve this, I will simply just pop zero from the altitude array and the 2nd element (which corresponds to zero) from the dTdZ array
+
+#print(altitude)
+altitude = np.delete(altitude, 1) #removing the 0 from the altitude array
+#print(altitude)
+
+
+#print(dTdZ)
+dTdZ = np.delete(dTdZ, 1) # removing the same value from tje dTdZ array
+#print(dTdZ)
+
+print(len(dTdZ) == len(altitude)) #checking to make sure both arrays are the same size
+False
+#plotting the Altitude vs derivative
+plt.plot(new_altitude, dTdZ) #plotting the relation ship between tempureture and alttitude
+plt.xlabel("altitude (kilometers above sea level")
+plt.ylabel("Kelvin/(kilometers above sea level)")
+plt.title("Alttitude Vs. d(Tempurature)/d(Alttitude)")
+plt.grid() #adding some grid lines to make the gra[h more readable
+No description has been provided for this image
+Woohoo!!! I finally got the derivgative working and I was able to graph it!!!
+
+Since the derivative of the derivative is around -6 degrees kelvin per kilometer between zerp and like 10 kilometers above sea level, and Boulder is at an elevation of around 1.6 kilometers above sea level, I will use the -6degrees kelvin per kilometer in elevation to estimate the temperature at the top of Green Mountain. Since Green Mountain is roughly 1 kilometer high in elevation above sea level than Boulder and the rate of change is -6 degrees kelvin per kilometer, the top of Green Mountain should be around 6 degrees kelevin cooler than Boulder.
+
+5 think+type: differentiating (mathematical/python) functions
+ #function for calculating derivatives
+def derivative( f, x, h):
+    '''
+    -------inputs-------
+    
+    f= function
+    f is a function that you want to take the derivative of
+        ie: y=mx+b
+    x = float or integer
+        The x value at which you want to take the derivative
+    h = float or integer > x
+        The stepsize to use for the separation of derivatives
+
+    --------function--------
+
+    derivative( f, x, h) calculates that values of the derivtive of
+    the function, f at everu x value in the array
+
+    ------output----------
+
+    The function will return a float with the value of the
+    derivative at the given value of x rounded to 3 decmil points
+
+    '''
+    y1 = float(f(x))
+    y2 = float(f(x+h))
+
+    return f"{(y2 - y1)/h:.3f}"
+    
+    
+# defining my function f(x)
+def f(x):
+    '''
+    -----input-------
+    x = float or integer
+    x is the value you want to put inot the function
+
+    ------function-------
+    f(x) will square the inputted number, (x) then 
+    Multiply the squared value by 2
+
+    -------output---------
+    This will return a float with the value of 
+    the squared number rounded to three decmil places
+
+    '''
+    result = f"{2*x**2:.3f}"
+
+    return result
+derivative( f, 2, 0.1)
+# This should output the derivitve of 2x^2 at x =2 so around 8ish
+'8.200'
+derivative( f, 2, 0.001)
+#if I coded my derivative function coprrectly this should be closer to 8 than line [143] as I am making the h value smaller
+'8.000'
+true_dydx = 8.0 # actual derivative
+
+# array of h-values from 10**-12 to 0.1
+h_array = np.logspace(12, 1, 1000)
+
+dydxOfH = []
+error = []
+for i in range(len(h_array)):
+    h = h_array[i] #my function doesnt accept arrays so I must put int this value
+    dydx = float(derivative(f, 2.0, h)) #ca;ci;ating the derivatives with each value of h
+    dydxOfH.append(dydx)
+    
+#calcultint the error of each derivative
+
+Error = np.abs(dydx - true_dydx) / true_dydx
+error.append(Error)
+
+plt.loglog(h_array, error)
+plt.xlabel('h')
+plt.ylabel('Fractional Error')
+plt.xlim(1,1e-13);
+# Note this is an inverted x-axis. Numbers get smaller to the right!
+---------------------------------------------------------------------------
+ValueError                                Traceback (most recent call last)
+Cell In[165], line 18
+     15 Error = np.abs(dydx - true_dydx) / true_dydx
+     16 error.append(Error)
+---> 18 plt.loglog(h_array, error)
+     19 plt.xlabel('h')
+     20 plt.ylabel('Fractional Error')
+
+File /opt/anaconda3/envs/current/lib/python3.11/site-packages/matplotlib/pyplot.py:3602, in loglog(*args, **kwargs)
+   3600 @_copy_docstring_and_deprecators(Axes.loglog)
+   3601 def loglog(*args, **kwargs) -> list[Line2D]:
+-> 3602     return gca().loglog(*args, **kwargs)
+
+File /opt/anaconda3/envs/current/lib/python3.11/site-packages/matplotlib/axes/_axes.py:1920, in Axes.loglog(self, *args, **kwargs)
+   1916 dy = {k: v for k, v in kwargs.items()
+   1917       if k in ['base', 'subs', 'nonpositive',
+   1918                'basey', 'subsy', 'nonposy']}
+   1919 self.set_yscale('log', **dy)
+-> 1920 return self.plot(
+   1921     *args, **{k: v for k, v in kwargs.items() if k not in {*dx, *dy}})
+
+File /opt/anaconda3/envs/current/lib/python3.11/site-packages/matplotlib/axes/_axes.py:1779, in Axes.plot(self, scalex, scaley, data, *args, **kwargs)
+   1536 """
+   1537 Plot y versus x as lines and/or markers.
+   1538 
+   (...)
+   1776 (``'green'``) or hex strings (``'#008000'``).
+   1777 """
+   1778 kwargs = cbook.normalize_kwargs(kwargs, mlines.Line2D)
+-> 1779 lines = [*self._get_lines(self, *args, data=data, **kwargs)]
+   1780 for line in lines:
+   1781     self.add_line(line)
+
+File /opt/anaconda3/envs/current/lib/python3.11/site-packages/matplotlib/axes/_base.py:296, in _process_plot_var_args.__call__(self, axes, data, *args, **kwargs)
+    294     this += args[0],
+    295     args = args[1:]
+--> 296 yield from self._plot_args(
+    297     axes, this, kwargs, ambiguous_fmt_datakey=ambiguous_fmt_datakey)
+
+File /opt/anaconda3/envs/current/lib/python3.11/site-packages/matplotlib/axes/_base.py:486, in _process_plot_var_args._plot_args(self, axes, tup, kwargs, return_kwargs, ambiguous_fmt_datakey)
+    483     axes.yaxis.update_units(y)
+    485 if x.shape[0] != y.shape[0]:
+--> 486     raise ValueError(f"x and y must have same first dimension, but "
+    487                      f"have shapes {x.shape} and {y.shape}")
+    488 if x.ndim > 2 or y.ndim > 2:
+    489     raise ValueError(f"x and y can be no greater than 2D, but have "
+    490                      f"shapes {x.shape} and {y.shape}")
+
+ValueError: x and y must have same first dimension, but have shapes (1000,) and (1,)
+No description has been provided for this image
+I cannot ge thte graphing of the error to work
+
+6 think(+pair)+code: backward derivative
+I did this by myself as I wasnot in class on monday
+ #function for calculating derivatives
+def backward_derivative( f, x, h):
+    '''
+    -------inputs-------
+    
+    f= function
+    f is a function that you want to take the derivative of
+        ie: y=mx+b
+    x = float or integer
+        The x value at which you want to take the derivative
+    h = float or integer > x
+        The stepsize to use for the separation of derivatives
+
+    --------function--------
+
+    derivative( f, x, h) calculates that values of the derivtive of
+    the function, f at everu x value in the array
+
+    ------output----------
+
+    The function will return a float with the value of the
+    derivative at the given value of x rounded to 3 decmil points
+
+    '''
+    y1 = float(f(x))
+    y2 = float(f(x-h))
+
+    return f"{(y1 - y2)/h:.3f}"
+
+    #this is essentially my derivative function just with y2 switched from f(x+h) to f(x-h) and the order of subtraction between y2 and y1 is also reveresed
+    
+#using my function f(x) to test the backwards derivtive function
+backward_derivative( f, 2, 0.1) #hopefully this should be less than 8. It should be like 7.8 as the forward derivtive was 8.2
+'7.800'
+backward_derivative( f, 2, 0.05) #testing if backwards_derivative also approaches 8 as h approaches zero
+'7.900'
+backward_derivative( f, 2, 0.01) #this should be really close to 8
+'8.000'
+For increasing functions (functions with a derivative greater than zero, the positive derivative calculation will be an overestimate with h>0 and the backward derivative estimate will be an underestimate with h>0
