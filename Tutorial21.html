@@ -1,0 +1,499 @@
+Tutorial 21 - Animations
+#importing the usual libraries and modules
+import matplotlib.pyplot as plt
+import numpy as np
+2 think+type: make a movie
+import matplotlib.animation as ani #importing the animation module for matplotlib
+writer = ani.ImageMagickWriter(fps=5) # create a movie writer object, and set the frames/s it should record at
+# create a figure, 5x5 in size
+fig = plt.figure(figsize=(5,5))
+<Figure size 500x500 with 0 Axes>
+print(fig)
+Figure(500x500)
+ #set things up to save frames to a movie:
+    
+    # fig = the figure the writer will record from
+    # 'swarm.mp4' = the name of the movie file to save
+    # 100 = dpi (dots per inch)
+
+with writer.saving(fig, 'swarm.mp4', 100):
+    
+    # Create an array for centroids
+    center_arr = np.linspace(-7, 7, 26)
+    # loop 25 times
+    for i, center in enumerate(center_arr): #sets i as the index number and center as the element in center_arr 
+        
+        # clear the previous plot
+        plt.cla()
+        
+        # create the x array
+        x= np.random.normal(center, size=[1,1000])
+        
+        # create the y array
+        y= -1*np.random.normal(center, size=[1,1000])
+        
+        #print(f" at i = {i}, x = {x} and y = {y}")
+        #checking the points
+        
+        # plot the x and y values
+        plt.scatter(x, y, color="black")
+        plt.axis('scaled')
+        plt.xlim(-7,7)
+        plt.ylim(-7,7)
+        # Provide an update of how far we've gone
+        if i % 5 == 0:
+            print(f'writing frame #{i}: centered at {center:.1f},{center:.1f}')
+            #getting a progress update when the code is running
+        
+        # save the current plot as one frame of the movie
+        writer.grab_frame()
+---------------------------------------------------------------------------
+FileNotFoundError                         Traceback (most recent call last)
+File /opt/anaconda3/envs/current/lib/python3.11/site-packages/matplotlib/__init__.py:399, in _get_executable_info.<locals>.impl(args, regex, min_ver, ignore_exit_code)
+    398 try:
+--> 399     output = subprocess.check_output(
+    400         args, stderr=subprocess.STDOUT,
+    401         text=True, errors="replace")
+    402 except subprocess.CalledProcessError as _cpe:
+
+File /opt/anaconda3/envs/current/lib/python3.11/subprocess.py:466, in check_output(timeout, *popenargs, **kwargs)
+    464     kwargs['input'] = empty
+--> 466 return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+    467            **kwargs).stdout
+
+File /opt/anaconda3/envs/current/lib/python3.11/subprocess.py:548, in run(input, capture_output, timeout, check, *popenargs, **kwargs)
+    546     kwargs['stderr'] = PIPE
+--> 548 with Popen(*popenargs, **kwargs) as process:
+    549     try:
+
+File /opt/anaconda3/envs/current/lib/python3.11/subprocess.py:1026, in Popen.__init__(self, args, bufsize, executable, stdin, stdout, stderr, preexec_fn, close_fds, shell, cwd, env, universal_newlines, startupinfo, creationflags, restore_signals, start_new_session, pass_fds, user, group, extra_groups, encoding, errors, text, umask, pipesize, process_group)
+   1023             self.stderr = io.TextIOWrapper(self.stderr,
+   1024                     encoding=encoding, errors=errors)
+-> 1026     self._execute_child(args, executable, preexec_fn, close_fds,
+   1027                         pass_fds, cwd, env,
+   1028                         startupinfo, creationflags, shell,
+   1029                         p2cread, p2cwrite,
+   1030                         c2pread, c2pwrite,
+   1031                         errread, errwrite,
+   1032                         restore_signals,
+   1033                         gid, gids, uid, umask,
+   1034                         start_new_session, process_group)
+   1035 except:
+   1036     # Cleanup if the child failed starting.
+
+File /opt/anaconda3/envs/current/lib/python3.11/subprocess.py:1955, in Popen._execute_child(self, args, executable, preexec_fn, close_fds, pass_fds, cwd, env, startupinfo, creationflags, shell, p2cread, p2cwrite, c2pread, c2pwrite, errread, errwrite, restore_signals, gid, gids, uid, umask, start_new_session, process_group)
+   1954 if err_filename is not None:
+-> 1955     raise child_exception_type(errno_num, err_msg, err_filename)
+   1956 else:
+
+FileNotFoundError: [Errno 2] No such file or directory: 'convert'
+
+The above exception was the direct cause of the following exception:
+
+ExecutableNotFoundError                   Traceback (most recent call last)
+Cell In[44], line 7
+      1 #set things up to save frames to a movie:
+      2    
+      3    # fig = the figure the writer will record from
+      4    # 'swarm.mp4' = the name of the movie file to save
+      5    # 100 = dpi (dots per inch)
+----> 7 with writer.saving(fig, 'swarm.mp4', 100):
+      8    
+      9    # Create an array for centroids
+     10    center_arr = np.linspace(-7, 7, 26)
+     11    # loop 25 times
+
+File /opt/anaconda3/envs/current/lib/python3.11/contextlib.py:137, in _GeneratorContextManager.__enter__(self)
+    135 del self.args, self.kwds, self.func
+    136 try:
+--> 137     return next(self.gen)
+    138 except StopIteration:
+    139     raise RuntimeError("generator didn't yield") from None
+
+File /opt/anaconda3/envs/current/lib/python3.11/site-packages/matplotlib/animation.py:220, in AbstractMovieWriter.saving(self, fig, outfile, dpi, *args, **kwargs)
+    215     _log.info("Disabling savefig.bbox = 'tight', as it may cause "
+    216               "frame size to vary, which is inappropriate for "
+    217               "animation.")
+    219 # This particular sequence is what contextlib.contextmanager wants
+--> 220 self.setup(fig, outfile, dpi, *args, **kwargs)
+    221 with mpl.rc_context({'savefig.bbox': None}):
+    222     try:
+
+File /opt/anaconda3/envs/current/lib/python3.11/site-packages/matplotlib/animation.py:311, in MovieWriter.setup(self, fig, outfile, dpi)
+    308 self._w, self._h = self._adjust_frame_size()
+    309 # Run here so that grab_frame() can write the data to a pipe. This
+    310 # eliminates the need for temp files.
+--> 311 self._run()
+
+File /opt/anaconda3/envs/current/lib/python3.11/site-packages/matplotlib/animation.py:317, in MovieWriter._run(self)
+    313 def _run(self):
+    314     # Uses subprocess to call the program for assembling frames into a
+    315     # movie file.  *args* returns the sequence of command line arguments
+    316     # from a few configuration options.
+--> 317     command = self._args()
+    318     _log.info('MovieWriter._run: running command: %s',
+    319               cbook._pformat_subprocess(command))
+    320     PIPE = subprocess.PIPE
+
+File /opt/anaconda3/envs/current/lib/python3.11/site-packages/matplotlib/animation.py:626, in ImageMagickBase._args(self)
+    622 fmt = "rgba" if self.frame_format == "raw" else self.frame_format
+    623 extra_args = (self.extra_args if self.extra_args is not None
+    624               else mpl.rcParams[self._args_key])
+    625 return [
+--> 626     self.bin_path(),
+    627     "-size", "%ix%i" % self.frame_size,
+    628     "-depth", "8",
+    629     "-delay", str(100 / self.fps),
+    630     "-loop", "0",
+    631     f"{fmt}:{self.input_names}",
+    632     *extra_args,
+    633     self.outfile,
+    634 ]
+
+File /opt/anaconda3/envs/current/lib/python3.11/site-packages/matplotlib/animation.py:640, in ImageMagickBase.bin_path(cls)
+    638 binpath = super().bin_path()
+    639 if binpath == 'convert':
+--> 640     binpath = mpl._get_executable_info('magick').executable
+    641 return binpath
+
+File /opt/anaconda3/envs/current/lib/python3.11/site-packages/matplotlib/__init__.py:476, in _get_executable_info(name)
+    474 else:
+    475     path = "convert"
+--> 476 info = impl([path, "--version"], r"^Version: ImageMagick (\S*)")
+    477 if info.raw_version == "7.0.10-34":
+    478     # https://github.com/ImageMagick/ImageMagick/issues/2720
+    479     raise ExecutableNotFoundError(
+    480         f"You have ImageMagick {info.version}, which is unsupported")
+
+File /opt/anaconda3/envs/current/lib/python3.11/site-packages/matplotlib/__init__.py:408, in _get_executable_info.<locals>.impl(args, regex, min_ver, ignore_exit_code)
+    406         raise ExecutableNotFoundError(str(_cpe)) from _cpe
+    407 except OSError as _ose:
+--> 408     raise ExecutableNotFoundError(str(_ose)) from _ose
+    409 match = re.search(regex, output)
+    410 if match:
+
+ExecutableNotFoundError: [Errno 2] No such file or directory: 'convert'
+#trying the ivew thevideo file I just created
+from IPython.display import Video
+Video("swarm.mp4", embed=True)
+since I am struggling with the first video i'm trying to make the sine video from lecture
+!rm -rf flipbook
+!mkdir flipbook
+N = 25
+t = np.linspace(0, 10, N)
+y = np.sin(t)
+for i in range(N):
+    # plot the current point
+    plt.scatter(t[i], y[i], color='black', s=100)
+    # plot the line up to this point
+    plt.plot(t[0:i+1], y[0:i+1], color='orange', linewidth=2, alpha=0.5)
+
+    plt.title(f'This is frame #{i:02}')
+    
+    # save to a filename that depends on the frame number
+    filename = f'flipbook/image{i:02}.jpg'
+    print(f'Saving a plot to {filename}')
+    plt.savefig(filename, dpi=200, bbox_inches="tight")
+Saving a plot to flipbook/image00.jpg
+Saving a plot to flipbook/image01.jpg
+Saving a plot to flipbook/image02.jpg
+Saving a plot to flipbook/image03.jpg
+Saving a plot to flipbook/image04.jpg
+Saving a plot to flipbook/image05.jpg
+Saving a plot to flipbook/image06.jpg
+Saving a plot to flipbook/image07.jpg
+Saving a plot to flipbook/image08.jpg
+Saving a plot to flipbook/image09.jpg
+Saving a plot to flipbook/image10.jpg
+Saving a plot to flipbook/image11.jpg
+Saving a plot to flipbook/image12.jpg
+Saving a plot to flipbook/image13.jpg
+Saving a plot to flipbook/image14.jpg
+Saving a plot to flipbook/image15.jpg
+Saving a plot to flipbook/image16.jpg
+Saving a plot to flipbook/image17.jpg
+Saving a plot to flipbook/image18.jpg
+Saving a plot to flipbook/image19.jpg
+Saving a plot to flipbook/image20.jpg
+Saving a plot to flipbook/image21.jpg
+Saving a plot to flipbook/image22.jpg
+Saving a plot to flipbook/image23.jpg
+Saving a plot to flipbook/image24.jpg
+No description has been provided for this image
+!open flipbook/*.jpg
+xdg-open: unexpected argument 'flipbook/image01.jpg'
+Try 'xdg-open --help' for more information.
+for i in range(N):
+    # plot the current point
+    plt.scatter(t[i], y[i], color='black', s=100)
+    # plot the line up to this point
+    plt.plot(t[0:i+1], y[0:i+1], color='orange', linewidth=2, alpha=0.5)
+    plt.xlabel("$t$")
+    plt.ylabel("$\sin(t)$")
+    plt.title(f'This is frame #{i:02}')
+    
+    # set the x- & y-limits explicitly, so Python doesn't change them
+    plt.ylim(-1.1, 1.1)
+    plt.xlim(np.min(t)-1, np.max(t)+1)
+    
+    # save to a filename that depends on the frame number
+    filename = f'flipbook/image{i:02}.jpg'
+    print(f'Saving a plot to {filename}')
+    plt.savefig(filename, dpi=200, bbox_inches="tight")  
+    # clear the axes (= the plot rectangle)
+    plt.cla()
+Saving a plot to flipbook/image00.jpg
+Saving a plot to flipbook/image01.jpg
+Saving a plot to flipbook/image02.jpg
+Saving a plot to flipbook/image03.jpg
+Saving a plot to flipbook/image04.jpg
+Saving a plot to flipbook/image05.jpg
+Saving a plot to flipbook/image06.jpg
+Saving a plot to flipbook/image07.jpg
+Saving a plot to flipbook/image08.jpg
+Saving a plot to flipbook/image09.jpg
+Saving a plot to flipbook/image10.jpg
+Saving a plot to flipbook/image11.jpg
+Saving a plot to flipbook/image12.jpg
+Saving a plot to flipbook/image13.jpg
+Saving a plot to flipbook/image14.jpg
+Saving a plot to flipbook/image15.jpg
+Saving a plot to flipbook/image16.jpg
+Saving a plot to flipbook/image17.jpg
+Saving a plot to flipbook/image18.jpg
+Saving a plot to flipbook/image19.jpg
+Saving a plot to flipbook/image20.jpg
+Saving a plot to flipbook/image21.jpg
+Saving a plot to flipbook/image22.jpg
+Saving a plot to flipbook/image23.jpg
+Saving a plot to flipbook/image24.jpg
+No description has been provided for this image
+!open flipbook/*.jpg
+xdg-open: unexpected argument 'flipbook/image01.jpg'
+Try 'xdg-open --help' for more information.
+import matplotlib.animation as ani
+
+FFMpegWriter = ani.writers['ffmpeg'] # pull out the definition of a movie-maker CLASS
+
+writer = FFMpegWriter(fps=10) # create a movie write OBJECT, set frames per second
+
+myImage = plt.figure() # create a blank figure object (e.g. blank piece of paper)
+
+myImage.patch.set_alpha(1.0) # this is just a Python bug fix... don't worry about it
+
+with writer.saving(myImage, "sine.mp4", 150):
+    
+    for i in range(len(t)):
+
+        # Same plotting code as before
+        plt.plot(t[0:i+1], y[0:i+1], color='orange', linewidth=2, alpha=0.5)
+        plt.scatter(t[i], y[i], color='black', s=100)
+        plt.title(f'This is frame #{i:02}')
+        plt.ylim(-1.1,1.1)
+        plt.xlim(np.min(t)-1, np.max(t)+1)
+        
+        writer.grab_frame() # add the plot to the movie
+
+        #plt.cla() # clear the axes
+No description has been provided for this image
+!open sine.mp4
+Error: no "view" rule for type "video/mp4" passed its test case
+       (for more information, add "--debug=1" on the command line)
+/usr/bin/open: 882: www-browser: not found
+/usr/bin/open: 882: links2: not found
+/usr/bin/open: 882: elinks: not found
+/usr/bin/open: 882: links: not found
+/usr/bin/open: 882: lynx: not found
+/usr/bin/open: 882: w3m: not found
+xdg-open: no method available for opening 'sine.mp4'
+from IPython.display import Video
+Video("sine.mp4", embed=True)
+well, that seemed to actually work!!! Now I know how to create a video succsefully I can apply this to the swarm.mp3
+
+2 think+type: make a movie (attempt 2)
+ #set things up to save frames to a movie:
+    
+    # fig = the figure the writer will record from
+    # 'swarm.mp4' = the name of the movie file to save
+    # 100 = dpi (dots per inch)
+import matplotlib.animation as ani
+
+FFMpegWriter = ani.writers['ffmpeg'] # pull out the definition of a movie-maker CLASS
+
+writer = FFMpegWriter(fps=10) # create a movie write OBJECT, set frames per second
+
+myImage2 = plt.figure() # create a blank figure object (e.g. blank piece of paper)
+
+myImage2.patch.set_alpha(1.0) # this is just a Python bug fix... don't worry about it
+
+with writer.saving(myImage2, 'swarm.mp4', 100):
+    
+    # Create an array for centroids
+    center_arr = np.linspace(-7, 7, 26)
+    # loop 25 times
+    for i, center in enumerate(center_arr): #sets i as the index number and center as the element in center_arr 
+        
+        # clear the previous plot
+        plt.cla()
+        
+        # create the x array
+        x= np.random.normal(center, size=[1,1000])
+        
+        # create the y array
+        y= -1*np.random.normal(center, size=[1,1000])
+        
+        #print(f" at i = {i}, x = {x} and y = {y}")
+        #checking the points
+        
+        # plot the x and y values
+        plt.scatter(x, y, color="black")
+        plt.axis('scaled')
+        plt.xlim(-7,7)
+        plt.ylim(-7,7)
+        # Provide an update of how far we've gone
+        if i % 5 == 0:
+            print(f'writing frame #{i}: centered at {center:.1f},{center:.1f}')
+            #getting a progress update when the code is running
+        
+        # save the current plot as one frame of the movie
+        writer.grab_frame()
+writing frame #0: centered at -7.0,-7.0
+writing frame #5: centered at -4.2,-4.2
+writing frame #10: centered at -1.4,-1.4
+writing frame #15: centered at 1.4,1.4
+writing frame #20: centered at 4.2,4.2
+writing frame #25: centered at 7.0,7.0
+No description has been provided for this image
+!open swarm.mp4
+Error: no "view" rule for type "video/mp4" passed its test case
+       (for more information, add "--debug=1" on the command line)
+/usr/bin/open: 882: www-browser: not found
+/usr/bin/open: 882: links2: not found
+/usr/bin/open: 882: elinks: not found
+/usr/bin/open: 882: links: not found
+/usr/bin/open: 882: lynx: not found
+/usr/bin/open: 882: w3m: not found
+xdg-open: no method available for opening 'swarm.mp4'
+well, this already looks to be a lot more successful than my first attempt...
+
+Time to see if the video works and is not just a blank white screen
+
+from IPython.display import Video
+Video("swarm.mp4", embed=True)
+OMG YESSS! The swarm video actually worked that time!!!!
+3 think+type: make one plot of a light curve
+!mkdir lightcurve-plots
+# Set directory to the kepler directory where you unzipped the files
+# or leave as is if kepler/ is in the same directory as this tutorial
+# (Be sure to use \\ for directories if on Windows.)
+directory = 'kepler/'
+#this took forever for me to figure out but I finally did it after re reading the pseudo code like 8 times
+filename = "test.npy"
+# load this file into time and flux arrays
+time, flux = np.load(directory + filename)
+# clear the existing axes (even if they don't exist yet!)
+plt.cla()
+# make the plot, add labels, set the limits
+plt.plot(time, flux)
+plt.title(filename)
+plt.xlabel('Time (BJD)')
+plt.ylabel('Relative Brightness of Star')
+plt.ylim(0.99, 1.01)
+# adjust the spacing around the plot, to make it look prettier
+plt.tight_layout()
+# save the current figure out to a single file
+output_filename = 'lightcurve-plots/plot-test.png'
+plt.savefig(output_filename)
+# in addition to writing the plot to a file, show it in your notebook
+plt.show()
+No description has been provided for this image
+4 think+pair+code: find the exoplanet!
+import glob
+filenames = glob.glob("kepler/KIC*.npy")
+#getting all of the files from the kepler folder
+print(filenames) #making sure that I acutally have a list of all of the files. (You hvae no idea how long this took me to figure out)
+['kepler/KIC6019923.npy', 'kepler/KIC9692092.npy', 'kepler/KIC3641239.npy', 'kepler/KIC4383982.npy', 'kepler/KIC11512270.npy', 'kepler/KIC3660142.npy', 'kepler/KIC7581614.npy', 'kepler/KIC10485913.npy', 'kepler/KIC3424397.npy', 'kepler/KIC7137132.npy', 'kepler/KIC4846450.npy', 'kepler/KIC4048899.npy', 'kepler/KIC3557043.npy', 'kepler/KIC8429812.npy', 'kepler/KIC4756519.npy', 'kepler/KIC8560657.npy', 'kepler/KIC2303988.npy', 'kepler/KIC7220273.npy', 'kepler/KIC4175473.npy', 'kepler/KIC3559535.npy', 'kepler/KIC2449053.npy', 'kepler/KIC8288864.npy', 'kepler/KIC10678220.npy', 'kepler/KIC3116575.npy', 'kepler/KIC3336937.npy', 'kepler/KIC4476369.npy', 'kepler/KIC3936562.npy', 'kepler/KIC1295597.npy', 'kepler/KIC4378237.npy', 'kepler/KIC4265675.npy', 'kepler/KIC2585767.npy', 'kepler/KIC3527214.npy', 'kepler/KIC9959966.npy', 'kepler/KIC4844677.npy', 'kepler/KIC10329669.npy', 'kepler/KIC3656267.npy', 'kepler/KIC7598745.npy', 'kepler/KIC3938241.npy', 'kepler/KIC4390927.npy', 'kepler/KIC6949326.npy', 'kepler/KIC11136173.npy', 'kepler/KIC4060965.npy', 'kepler/KIC8098228.npy', 'kepler/KIC5350780.npy', 'kepler/KIC3954596.npy', 'kepler/KIC3327828.npy', 'kepler/KIC4248763.npy', 'kepler/KIC7120146.npy', 'kepler/KIC4553972.npy', 'kepler/KIC8610251.npy', 'kepler/KIC3342636.npy', 'kepler/KIC9761158.npy', 'kepler/KIC8814872.npy', 'kepler/KIC2982816.npy', 'kepler/KIC2167151.npy', 'kepler/KIC6350563.npy', 'kepler/KIC3347046.npy', 'kepler/KIC8279651.npy', 'kepler/KIC8909833.npy', 'kepler/KIC11134691.npy', 'kepler/KIC2853668.npy', 'kepler/KIC8508865.npy', 'kepler/KIC3241079.npy', 'kepler/KIC9265875.npy', 'kepler/KIC4367157.npy', 'kepler/KIC9839824.npy', 'kepler/KIC10750514.npy', 'kepler/KIC8903898.npy', 'kepler/KIC4379563.npy', 'kepler/KIC1721911.npy', 'kepler/KIC6531981.npy', 'kepler/KIC3431662.npy', 'kepler/KIC3643036.npy', 'kepler/KIC4853320.npy', 'kepler/KIC5374713.npy', 'kepler/KIC7516478.npy', 'kepler/KIC6184044.npy', 'kepler/KIC4736809.npy', 'kepler/KIC4756244.npy', 'kepler/KIC12257338.npy', 'kepler/KIC12007544.npy', 'kepler/KIC5780885.npy', 'kepler/KIC6782860.npy', 'kepler/KIC5098460.npy', 'kepler/KIC5211083.npy', 'kepler/KIC6866031.npy', 'kepler/KIC10800330.npy', 'kepler/KIC3247780.npy', 'kepler/KIC7177589.npy', 'kepler/KIC5006728.npy', 'kepler/KIC10721728.npy', 'kepler/KIC9075364.npy', 'kepler/KIC5511366.npy', 'kepler/KIC4280748.npy']
+print(len(filenames)) #this should be 94 elements long
+94
+test.npu does not appear in the list because test. npy does not begin with the characters KIC, All the other files begin with the 3 characters KIC
+
+import matplotlib.animation as ani
+
+FFMpegWriter = ani.writers['ffmpeg'] # pull out the definition of a movie-maker CLASS
+
+writer = FFMpegWriter(fps=1) # create a movie write OBJECT, set to 1 frame per second so I can actually analyze the light curves
+
+myImage = plt.figure() # create a blank figure object (e.g. blank piece of paper)
+
+myImage.patch.set_alpha(1.0) # this is just a Python bug fix... don't worry about it
+
+with writer.saving(myImage, "light_curve.mp4", 150):
+    
+       
+    for i in range(9):
+        
+        directory = 'kepler/'
+        #this took forever for me to figure out but I finally did it after re reading the pseudo code like 8 times
+        filename = filenames[i]
+        # load this file into time and flux arrays
+        time, flux = np.load(filename)
+        # clear the existing axes (even if they don't exist yet!)
+        plt.cla()
+        # make the plot, add labels, set the limits
+        plt.plot(time, flux)
+        plt.title(f"lightcurve-plots/plot-0{i}.png,")
+        plt.xlabel('Time (BJD)')
+        plt.ylabel('Relative Brightness of Star')
+        plt.ylim(0.99, 1.01)
+        # adjust the spacing around the plot, to make it look prettier
+        plt.tight_layout()
+        # save the current figure out to a single file
+        output_filename = 'lightcurve-plots/plot-test.png'
+        plt.savefig(output_filename)
+        # in addition to writing the plot to a file, show it in your notebook
+        writer.grab_frame()
+    
+    for i in range(10, 94):
+        
+        directory = 'kepler/'
+        #this took forever for me to figure out but I finally did it after re reading the pseudo code like 8 times
+        filename = filenames[i]
+        # load this file into time and flux arrays
+        time, flux = np.load(filename)
+        # clear the existing axes (even if they don't exist yet!)
+        plt.cla()
+        # make the plot, add labels, set the limits
+        plt.plot(time, flux)
+        plt.title(f"lightcurve-plots/plot-{i}.png,")
+        plt.xlabel('Time (BJD)')
+        plt.ylabel('Relative Brightness of Star')
+        plt.ylim(0.99, 1.01)
+        # adjust the spacing around the plot, to make it look prettier
+        plt.tight_layout()
+        # save the current figure out to a single file
+        output_filename = 'lightcurve-plots/plot-test.png'
+        plt.savefig(output_filename)
+        # in addition to writing the plot to a file, show it in your notebook
+        writer.grab_frame()
+No description has been provided for this image
+from IPython.display import Video
+Video("light_curve.mp4", embed=True)
+Wow you know that feeling when your code actually works the first time?
+
+plot-27 has an unusual solo bump that could be caused by an exoplanet transit
+
+plot 54 also has an unusual solo bump that could denote an exoplanet transit
+
+The rest of the plots seem to vary cyclically
+
+5 think+write
+print(f" the plot-27 is, {filenames[27]} \n the plot-34 is  {filenames[34]}")
+ the plot-27 is, kepler/KIC1295597.npy 
+ the plot-34 is  kepler/KIC10329669.npy
+for light curve plot 27, I searched on Google, "does KIC1295597 have exoplanet", and found that the system, KIC1295597, does not have any "confirmed exoplanets". This means I was probably just overanalyzing a systematic abnormality.
+
+For light curve plot 34, I searched on Google, "does KIC10329669 have exoplanet", and found that the system, KIC10329669, also does not currently have any exoplanets.
+
+In both cases, I misunderstood what the light curve was representing with "unusual solo bumps". Sadly, I was not able to find the star system with an exoplanet. Also, please know that I significantly slowed down the video by both lowering the frames per second(fps) and playing the video at 0.25x speed. These were the two star systems I identified as having unusual fluctuations in their relative brightness.
+
+ 
