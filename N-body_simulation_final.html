@@ -1,0 +1,3144 @@
+time-varying N-body simulation
+#importing the usual libraries
+import numpy as np
+
+import matplotlib.pyplot as plt
+1 code from homework D Net Forces vectors
+I copied this code from the solution, as I was not able to figure it out on my own in homework D
+
+I am just copying and pasting the code from the homework D solutions below:
+
+au = 1.496e+11    # in meters
+
+masses = [2.0e24, 30.0e24, 65.0e24, 40.0e24, 3.0e24]   # in kg
+
+positions = [np.array([ 0.6,  2.5,  0.04])*au,
+             np.array([ 0.9,  9.2,  0.12])*au,
+             np.array([-4.3, -2.1,  0.85])*au,
+             np.array([10.9,  3.2,  0.00])*au,
+             np.array([-2.5, -1.6, -0.42])*au]
+print(type(masses))
+<class 'list'>
+# define the gravitational constant
+G = 6.67e-11 # m**3 kg / s
+
+def magnitude(a):
+    '''
+    This function returns the magnitude of a vector.
+    
+    Parmeters
+    ---------
+    a : numpy array
+        An array representing a physical vector.
+        It can have any number of elements,
+        but 2 or 3 elements will be most common:
+            in 2D, a = np.array([x, y])
+            in 3D, a = np.array([x, y, z])
+
+    Returns
+    -------
+    |a| : float
+        The magnitude (length) of the array.
+    '''
+
+    return np.sqrt(np.sum(a**2))
+
+def unit(a):
+    '''
+    This function returns a vector's unit vector
+    (the vector that is parallel to it but has length of 1)
+    
+    Parmeters
+    ---------
+    a : numpy array
+        An array representing a physical vector.
+        It can have any number of elements,
+        but 2 or 3 elements will be most common:
+            in 2D, a = np.array([x, y])
+            in 3D, a = np.array([x, y, z])
+
+    Returns
+    -------
+    a_hat : float
+        The unit vector parallel to the vector
+    '''
+
+    return a/magnitude(a)
+
+def separation(p_i, p_j):
+    '''
+    This function returns the separation between two vectors.
+    
+    Parmeters
+    ---------
+    p_i : numpy array
+        An array representing a physical vector.
+    
+    p_j : numpy array
+        An array representing a second physical vector.
+
+    Returns
+    -------
+    r_ij : numpy array
+        The separation vector, p_j - p_i.
+    '''
+
+    return p_j - p_i
+    
+def force_magnitude(m_i, m_j, r):
+    '''
+    This function returns the magnitude of the 
+    gravitational force, given two masses
+    and a separation.
+    
+    Parmeters
+    ---------
+    m_i : float
+        A mass, in kg.
+    
+    m_j : float
+        A mass, in kg.
+        
+    r : float
+        The distance between the two masses, in kg.
+
+    Returns
+    -------
+    F_g : float
+        The magnitude of the force of gravity between them, in N.
+    '''
+
+    return (G*m_i*m_j)/(r**2)
+def forceVector(m_i, m_j, p_i, p_j):
+    '''
+    This function returns the full gravitational force vector
+    for the force acting on particle i, caused by particle j.
+    
+
+
+    Parmeters
+    ---------
+    m_i : float
+        A mass representing particle i, in kg.
+    
+    m_j : float
+        A mass representing particle j, in kg.
+        
+    p_i : numpy array
+        A vector representing the position of particle i.
+    
+    p_j : numpy array
+        A vector representing the position of particle j.
+
+
+    Returns
+    -------
+    F_g : numpy array
+        The force vector acting on particle i, in N.
+    '''
+    
+    # calculate the separation vector, and its magnitude
+    r_vector = separation(p_i, p_j)
+    r_magnitude = magnitude(r_vector)
+    #print(f" the seperation is, {r_vector}")
+    # calculate the magnitude of the force
+    F_magnitude = force_magnitude(m_i, m_j, r_magnitude)
+
+    # calculate the direction of the force, as a unit vector
+    F_unit = unit(r_vector)
+    
+    # return the full force vector
+    return F_magnitude * F_unit
+def netForces(masses, positions):
+    """
+    Compute net gravitational force vector exerted on 
+    particle i by all particles j, and do this for all i.
+    
+    Parameters
+    ----------
+    masses : list of floats
+        Particle masses in kg.
+    positions : list of numpy arrays
+        Particle positions in cartesian coordinates in m.
+        
+    Returns
+    -------
+    netForces : list of numpy arrays
+        Components of gravitational force vectors in N.
+        
+    Example
+    -------
+    >>> # forces between Earth and 70 kg person on surface
+    >>> masses = [6e24,70]
+    >>> radiusEarth = 6380000 # m
+    >>> positions = [np.array([0, 0, 0])*radiusEarth, np.array([1, 1, 1])*radiusEarth]
+    >>> netForces(masses,positions)
+    [array([   0.        ,    0.        ,  688.23026503]),
+     array([   0.        ,    0.        , -688.23026503])]
+    
+    """
+    # empty force list
+    force_list = []
+    
+    # for each body i
+    for i in range(len(masses)):
+
+        # zero net force vector; add to this for each j
+        net_force_i = np.zeros(3)
+
+        # vector sum all forces on i by bodies j
+        for j in range(len(masses)):
+            # omit self-interactions (body i on itself):
+            if i != j:  
+                # vector sum of net force with additional force from body j
+                net_force_i += forceVector(masses[i],masses[j],positions[i],positions[j])
+
+        # add net force to force list:
+        force_list.append(net_force_i)
+        
+    return force_list
+print(masses)
+forces = netForces(masses,positions)
+print(forces)
+print(len(masses))
+print(len(forces[0]))
+accelerations = []
+
+
+acceleration = []
+print(f"\n")
+for i in range(len(forces)):
+    print(f"\n")
+    
+    local = []
+    for j in range(len(forces[i])):
+        print(f" i = {i} mass = {masses[i]} dimension ={forces[i][j]}")
+        local.append(forces[i][j]/masses[i])
+
+    acceleration.append(local)
+
+
+print(acceleration)
+
+
+
+#print(forces/masses)
+[2e+24, 3e+25, 6.5e+25, 4e+25, 3e+24]
+[array([-4.11343427e+15, -2.15614139e+15,  9.90522230e+14]), array([ 6.12126538e+15, -5.34319947e+16,  1.77549137e+15]), array([ 1.40608183e+17,  7.47025316e+16, -6.88057387e+16]), array([-5.45556893e+16,  2.97690767e+15,  1.79960353e+15]), array([-8.80603249e+16, -2.20913032e+16,  6.42401215e+16])]
+5
+3
+
+
+
+
+ i = 0 mass = 2e+24 dimension =-4113434268164187.0
+ i = 0 mass = 2e+24 dimension =-2156141386413789.0
+ i = 0 mass = 2e+24 dimension =990522229545991.8
+
+
+ i = 1 mass = 3e+25 dimension =6121265379904856.0
+ i = 1 mass = 3e+25 dimension =-5.343199467396957e+16
+ i = 1 mass = 3e+25 dimension =1775491372789684.8
+
+
+ i = 2 mass = 6.5e+25 dimension =1.4060818300865992e+17
+ i = 2 mass = 6.5e+25 dimension =7.470253163851154e+16
+ i = 2 mass = 6.5e+25 dimension =-6.880573867309763e+16
+
+
+ i = 3 mass = 4e+25 dimension =-5.455568925828258e+16
+ i = 3 mass = 4e+25 dimension =2976907671500970.0
+ i = 3 mass = 4e+25 dimension =1799603528631289.5
+
+
+ i = 4 mass = 3e+24 dimension =-8.806032486211802e+16
+ i = 4 mass = 3e+24 dimension =-2.209130324962916e+16
+ i = 4 mass = 3e+24 dimension =6.4240121542130664e+16
+[[-2.0567171340820935e-09, -1.0780706932068946e-09, 4.952611147729959e-10], [2.0404217933016185e-10, -1.781066489132319e-09, 5.918304575965616e-11], [2.163202815517845e-09, 1.149269717515562e-09, -1.0585498257399635e-09], [-1.3638922314570643e-09, 7.442269178752424e-11, 4.4990088215782235e-11], [-2.9353441620706005e-08, -7.363767749876387e-09, 2.141337384737689e-08]]
+I am plotting all of the force vectors to make sure I copied the code correctly
+
+def plotParticles2WithQuivers(masses, positions, forces):
+    xPositions = []
+    yPositions = []
+    xForces = []
+    yForces = []
+    for i in range(len(masses)):
+        xPositions.append(positions[i][0]/au)
+        yPositions.append(positions[i][1]/au)
+        xForces.append(forces[i][0])
+        yForces.append(forces[i][1])
+
+    areaForSymbol = masses/np.max(masses)*100
+    plt.scatter(xPositions,yPositions, s=areaForSymbol)
+    plt.quiver(xPositions,yPositions,xForces,yForces)
+
+    plt.axis('scaled')
+    plt.xlabel('X (AU)')
+    plt.ylabel('Y (AU)')
+
+plotParticles2WithQuivers(masses, positions, forces)
+No description has been provided for this image
+print(f"forces, {len(forces)} {type(forces)}")
+print(f"positions, {len(positions)} {type(positions)}")
+print(len(forces) == len(positions))
+
+#testing to make sure I can accsses each particels position and each force
+for i in range(len(forces)):
+    print(f"\n index = {i} particle = {positions[i]} force =  {forces[i]}")
+forces, 5 <class 'list'>
+positions, 5 <class 'list'>
+True
+
+ index = 0 particle = [8.976e+10 3.740e+11 5.984e+09] force =  [-4.11343427e+15 -2.15614139e+15  9.90522230e+14]
+
+ index = 1 particle = [1.34640e+11 1.37632e+12 1.79520e+10] force =  [ 6.12126538e+15 -5.34319947e+16  1.77549137e+15]
+
+ index = 2 particle = [-6.4328e+11 -3.1416e+11  1.2716e+11] force =  [ 1.40608183e+17  7.47025316e+16 -6.88057387e+16]
+
+ index = 3 particle = [1.63064e+12 4.78720e+11 0.00000e+00] force =  [-5.45556893e+16  2.97690767e+15  1.79960353e+15]
+
+ index = 4 particle = [-3.7400e+11 -2.3936e+11 -6.2832e+10] force =  [-8.80603249e+16 -2.20913032e+16  6.42401215e+16]
+Ok, so using a few of the functions from homework D, I can calculate a list of 3-dimensional force vectors from a list of 3-dimensional positions, a list of masses and a list of separations.
+
+2 leapfrog integrator
+Leapfrog integratioon formula
+r
+i
+(
+t
++
+Δ
+t
+)
+=
+r
+i
+(
+t
+)
++
+v
+i
+(
+t
+)
+(
+Δ
+t
+)
++
+1
+/
+2
+a
+i
+(
+t
+)
+(
+Δ
+t
+)
+2
+v
+i
+(
+t
++
+Δ
+t
+)
+=
+v
+i
+(
+t
+)
++
+1
+/
+2
+[
+a
+i
+(
+t
+)
++
+a
+i
+(
+t
++
+Δ
+t
+)
+]
+(
+Δ
+t
+)
+a
+i
+(
+t
++
+Δ
+t
+)
+=
+F
+i
+(
+t
++
+Δ
+t
+)
+m
+i
+
+#leapfrog function
+def leapfrogStep(r_i, v_i, F, masses, delta_t, display):
+    '''
+    Calculate the position of a particle
+    given the force, initial position r_i,
+    initial velocity, Force on the particle and 
+    the time step between start_t and end_t
+
+    -----inputs-----------------
+
+    *All inputs are for the same one spatial dimension
+
+    r_i: float or integer 
+    The initial position of the particle in one dimension 
+    r_i has units of meters
+
+    v_i: float or integer
+    The initial velocity of the particle in one dimension
+    v_i has units of meters per second
+
+    a_i: float or integer
+    The initial acceleration of the particle in one dimension
+    a_i has units of meters per second squared
+
+    F: function
+    a function that describes the force at every time interval for the particle in one dimension
+    f has units of newtons
+
+    display: boolean
+    the display boolean will tell if the function should print the values or just return them 
+    
+    -------------function------------
+
+    the leapstep function calculates the new velocities for one delta time
+
+    -----output-------------
+
+    The lestep function outputs
+
+    
+    '''
+    #assigning all of the inputs in the functions as variables insiee the function
+    
+    
+    
+    
+    
+    a_i = F(masses, r_i) #my function returns the acceleration
+
+    r_i = np.array(r_i)
+
+    v_i = np.array(v_i)
+    
+    r_t = r_i+v_i*delta_t+1/2*(a_i)*delta_t**2
+
+    a_t = F( masses, r_t) #my function returns the acceleration
+
+    v_t = v_i+1/2*(a_i + a_t)*delta_t
+
+    if display == True:
+        print(f" a = {a_t} v = {v_t} r = {r_t}")
+        return( a_t, v_t, r_t)
+    else:
+        return( a_t, v_t, r_t)
+    
+
+    
+    current_t += delta_t #incrementing current_t by delta_t
+
+
+
+    
+print(masses)
+[2e+24, 3e+25, 6.5e+25, 4e+25, 3e+24]
+r_i = 0
+v_i = 1
+a_i = 0
+m_i = 1
+delta_t = 1
+current_t = 1
+display = True
+forces = force
+
+leapfrogStep(r_i, v_i, forces, m_i, delta_t, display)
+---------------------------------------------------------------------------
+TypeError                                 Traceback (most recent call last)
+Cell In[62], line 10
+      7 display = True
+      8 forces = force
+---> 10 leapfrogStep(r_i, v_i, forces, m_i, delta_t, display)
+
+Cell In[60], line 48, in leapfrogStep(r_i, v_i, F, masses, delta_t, display)
+      3 '''
+      4 Calculate the position of a particle
+      5 given the force, initial position r_i,
+   (...)
+     40 
+     41 '''
+     42 #assigning all of the inputs in the functions as variables insiee the function
+---> 48 a_i = F(masses, r_i) #my function returns the acceleration
+     50 r_i = np.array(r_i)
+     52 v_i = np.array(v_i)
+
+Cell In[15], line 4, in force(masses, positions)
+      1 def force(masses, positions): # defining the graviational potential force between two positions
+      2     #print(masses)
+      3     #print(type(masses))
+----> 4     forces = netForces(masses,positions)
+      5     #print(forces)
+      6     #print(len(masses))
+      7     #print(len(forces[0]))
+      8     accelerations = []
+
+Cell In[56], line 33, in netForces(masses, positions)
+     30 force_list = []
+     32 # for each body i
+---> 33 for i in range(len(masses)):
+     34 
+     35     # zero net force vector; add to this for each j
+     36     net_force_i = np.zeros(3)
+     38     # vector sum all forces on i by bodies j
+
+TypeError: object of type 'int' has no len()
+my code for my leapfrogStep looks to be working with a test acceleration function of 2*time
+
+Please note that this is the first version of my leapfrog integrator, and I still need to work out taking in the masses and calling the calculateForceVectors function to calculate the force
+
+def force(masses, positions): # defining the graviational potential force between two positions
+    #print(masses)
+    #print(type(masses))
+    forces = netForces(masses,positions)
+    #print(forces)
+    #print(len(masses))
+    #print(len(forces[0]))
+    accelerations = []
+
+    
+    acceleration = []
+    count = 0
+    for i in range(len(forces)):
+       
+        #print(f"\n")
+        local = []
+
+        for j in range(len(forces[i])):
+           
+   
+            local.append(forces[i][j]/masses[i])
+            count +=1
+        acceleration.append(local)
+        
+    accel_numpy = np.array(acceleration)
+    #print(accel_numpy)
+    #print("force function ran")
+ 
+    return accel_numpy
+fixed leapfrogStep function with netforce function
+list = [[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]]
+v_i = np.array(list)
+F = force
+r_i = positions
+masses = masses
+delta_t = 1
+display = False
+
+a_t, v_t, r_t = leapfrogStep(r_i, v_i, F, masses, delta_t, display)
+
+print(f"a_t is the acceleration in three dimensions of the five particles and have values: \n \n {a_t} \n")
+print(f"v_t is the velocity in three dimensions of the five particles and have values: \n \n {v_t} \n")
+print(f"r_t is the position in three dimensions of the five particles and have values: \n \n {r_t} \n")
+a_t is the acceleration in three dimensions of the five particles and have values: 
+ 
+ [[-2.05671713e-09 -1.07807069e-09  4.95261115e-10]
+ [ 2.04042179e-10 -1.78106649e-09  5.91830458e-11]
+ [ 2.16320282e-09  1.14926972e-09 -1.05854983e-09]
+ [-1.36389223e-09  7.44226918e-11  4.49900882e-11]
+ [-2.93534416e-08 -7.36376775e-09  2.14133738e-08]] 
+
+v_t is the velocity in three dimensions of the five particles and have values: 
+ 
+ [[-2.05671713e-09 -1.07807069e-09  4.95261115e-10]
+ [ 2.04042179e-10 -1.78106649e-09  5.91830458e-11]
+ [ 2.16320282e-09  1.14926972e-09 -1.05854983e-09]
+ [-1.36389223e-09  7.44226918e-11  4.49900882e-11]
+ [-2.93534416e-08 -7.36376775e-09  2.14133738e-08]] 
+
+r_t is the position in three dimensions of the five particles and have values: 
+ 
+ [[ 8.97600000e+10  3.74000000e+11  5.98400000e+09]
+ [ 1.34640000e+11  1.37632000e+12  1.79520000e+10]
+ [-6.43280000e+11 -3.14160000e+11  1.27160000e+11]
+ [ 1.63064000e+12  4.78720000e+11  2.24950441e-11]
+ [-3.74000000e+11 -2.39360000e+11 -6.28320000e+10]] 
+
+#testing my function with the earth and me 
+list = [[0,0,0],[0,0,0]]
+v_i = np.array(list)
+F = force
+earth_center = np.array([ 0,  0,  0])
+luca_position = np.array([ 0,  6378137,  0]) #the equatorial radius of Earth is 6378.137 km from NASA Earth Fact Sheet: https://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html
+r_i = [earth_center, luca_position]
+earth_mass = 5.9722e24 #mass of Earth is also from NASA EarthFact Sheet
+luca_mass = 7e1
+masses = [earth_mass, luca_mass]
+delta_t = 1
+display = False
+
+a_t, v_t, r_t = leapfrogStep(r_i, v_i, F, masses, delta_t, display)
+
+print(f"a_t is the acceleration in three dimensions of the Earth and me are: \n \n {a_t} \n")
+print(f"v_t is the velocity in three dimensions of the Earth and me are: \n \n {v_t} \n")
+print(f"r_t is the position in three dimensions of the Earth and me are: \n \n {r_t} \n")
+a_t is the acceleration in three dimensions of the Earth and me are: 
+ 
+ [[ 0.00000000e+00  1.14772239e-22  0.00000000e+00]
+ [ 0.00000000e+00 -9.79203950e+00  0.00000000e+00]] 
+
+v_t is the velocity in three dimensions of the Earth and me are: 
+ 
+ [[ 0.00000000e+00  1.14772151e-22  0.00000000e+00]
+ [ 0.00000000e+00 -9.79203199e+00  0.00000000e+00]] 
+
+r_t is the position in three dimensions of the Earth and me are: 
+ 
+ [[0.00000000e+00 5.73860314e-23 0.00000000e+00]
+ [0.00000000e+00 6.37813210e+06 0.00000000e+00]] 
+
+YESSSSS! The code I just ran in the code cell above! This demonstrates that both my fixed leapfrogStep function and my force function are working correctly! I simulated what would happen to a person such as myself standing 1 Earth radius away from the center of the Earth at rest, and my functions calculated that the person would accelerate down towards the center of the Earth at 9.79 meters per second squared! The Earth would barely accelerate up. The velocity after 1 second would be 0.70 meters per second down, and the position would be a little closer together!
+
+3 Write a function called calculateTrajectories
+For this, I will simply rewrite the for loop in my current leapfrogStep function to remove it. I will then rewrite that for loop into a function called calculateTrajectories. The calculateTrajectories function will have the outputs:
+
+1 times (1D array, with elements identifying each time step)
+2 positions at all times (multi-dimensional array or arrays)
+3 velocities at all times (multi-dimensional array or arrays)
+Your returned times, positions, and velocities arrays should all contain your initial time (t=0), positions, and velocities as well.
+
+#leapfrog function
+def calculateTrajectories(r_i, v_i, F, masses, delta_t, start_t, end_t, display):
+    '''
+    Calculate the position of a particle
+    given the force, initial position r_i,
+    initial velocity, Force on the particle and 
+    the time step between start_t and end_t
+
+    -----inputs-----------------
+
+    *All inputs are for the same one spatial dimension
+
+    r_i: a list of the initial positions of the particles
+    r_i has units of meters
+
+    v_i: a list of the initial velocities of the particles
+    v_i has units of meters per second
+
+
+    F: function
+    a function that describes the force at every time interval for the particle in one dimension
+    f has units of newtons
+
+    delta_t: flaot
+    The time increment you would like to subdivide the time period from start_time to end_time in
+
+    start_t: float
+    The time you would like to start calculating the trajectory of the particle at
+
+    end_t: float
+    The time you would like to end calculating the trajectory of the particle at
+    
+    display: boolean
+    The display boolean will tell if the function should print the values or just return them 
+    
+    
+    -----------what the function actualy does---------------
+
+    The calculateTrajectories function will use the leapfrogStep function to calculate the 
+    position, veelcoty and acceleration of each particle at each time, then add it to a list
+
+    -----------output----------------
+
+    if display == True then the function will print all of the positions, velocities, and accelerations in a
+    nice f string
+
+    if display == false then the function will just return the lists for position, velocity, and acceleration
+
+    
+    '''
+    #assigning all of the inputs in the functions as variables insiee the function
+
+
+    # making four global lists to store the times, positions, velocities and accelerations
+    #print(type(F))
+    global position
+    position = [r_i]
+    global velocity
+    velocity = [v_i]
+    global acceleration
+    acceleration = [[[0,0,0], [0,0,0]]]
+    masses = np.array(masses)
+    r_i = np.array(r_i)
+    
+
+ 
+    global time
+    time = [start_t]
+    
+
+ 
+    current_t = start_t
+    v_t = v_i #setting the first veloecity v_t as the inital velovity v_i
+    if display == True:
+        while current_t <= end_t: #looping through all t including end_t
+            if current_t == start_t:
+                
+                a_t, v_t, r_t = leapfrogStep(r_i, v_i, F, masses, delta_t, display)
+                current_t += delta_t #incrementing current_t by delta_t
+                position.append(r_t)
+                velocity.append(v_t)
+                acceleration.append(a_t)
+                time.append(current_t)
+            else:
+                a_t, v_t, r_t = leapfrogStep(r_t, v_t, F, masses, delta_t, display)
+                current_t += delta_t #incrementing current_t by delta_t
+                position.append(r_t)
+                velocity.append(v_t)
+                acceleration.append(a_t)
+                time.append(current_t)
+        
+        print(f"the final position is, {position[-1]}, the final velocity is, {v_t} meters/seocnd")
+
+    else:
+        while current_t <= end_t: #looping through all t including end_t
+            
+            if current_t == start_t: 
+                a_t, v_t, r_t = leapfrogStep(r_i, v_i, F, masses, delta_t, display)
+                current_t += delta_t #incrementing current_t by delta_t
+                position.append(r_t)
+                velocity.append(v_t)
+                acceleration.append(a_t)
+                time.append(current_t)
+            else:
+                a_t, v_t, r_t = leapfrogStep(r_t, v_t, F, masses, delta_t, display)
+                current_t += delta_t #incrementing current_t by delta_t
+                position.append(r_t)
+                velocity.append(v_t)
+                acceleration.append(a_t)
+                time.append(current_t)
+        
+            
+    
+#testing the calculateTrajectories function with display == True
+earth_center = np.array([ 0,  0,  0])
+luca_position = np.array([ 0,  6378137,  0]) #the equatorial radius of Earth is 6378.137 km from NASA Earth Fact Sheet: https://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html
+r_i = [earth_center, luca_position]
+
+list = [[0,0,0],[0,0,0]]
+v_i = np.array(list)
+
+earth_mass = 5.9722e24 #mass of Earth is also from NASA EarthFact Sheet
+luca_mass = 7e1
+masses = [earth_mass, luca_mass]
+delta_t = 1
+start_t = 0
+end_t = 10
+display == True
+
+calculateTrajectories(r_i, v_i, force, masses, delta_t, start_t, end_t, display)
+print(f" acceleration = {type(acceleration)} with length, {len(acceleration)} with elements, {acceleration}")
+print(f" velocity = {type(velocity)} with length, {len(velocity)} with elements, {velocity}")
+print(f" position = {type(position)} with length, {len(position)} with elements, {position}")
+print(f" time = {type(time)} with length, {len(time)} with elements, {time}")
+ acceleration = <class 'list'> with length, 12 with elements, [[[0, 0, 0], [0, 0, 0]], array([[ 0.00000000e+00,  1.14772239e-22,  0.00000000e+00],
+       [ 0.00000000e+00, -9.79203950e+00,  0.00000000e+00]]), array([[ 0.00000000e+00,  1.14772768e-22,  0.00000000e+00],
+       [ 0.00000000e+00, -9.79208460e+00,  0.00000000e+00]]), array([[ 0.00000000e+00,  1.14773649e-22,  0.00000000e+00],
+       [ 0.00000000e+00, -9.79215977e+00,  0.00000000e+00]]), array([[ 0.00000000e+00,  1.14774882e-22,  0.00000000e+00],
+       [ 0.00000000e+00, -9.79226501e+00,  0.00000000e+00]]), array([[ 0.00000000e+00,  1.14776468e-22,  0.00000000e+00],
+       [ 0.00000000e+00, -9.79240031e+00,  0.00000000e+00]]), array([[ 0.00000000e+00,  1.14778406e-22,  0.00000000e+00],
+       [ 0.00000000e+00, -9.79256569e+00,  0.00000000e+00]]), array([[ 0.00000000e+00,  1.14780697e-22,  0.00000000e+00],
+       [ 0.00000000e+00, -9.79276115e+00,  0.00000000e+00]]), array([[ 0.00000000e+00,  1.14783341e-22,  0.00000000e+00],
+       [ 0.00000000e+00, -9.79298668e+00,  0.00000000e+00]]), array([[ 0.00000000e+00,  1.14786337e-22,  0.00000000e+00],
+       [ 0.00000000e+00, -9.79324230e+00,  0.00000000e+00]]), array([[ 0.00000000e+00,  1.14789686e-22,  0.00000000e+00],
+       [ 0.00000000e+00, -9.79352800e+00,  0.00000000e+00]]), array([[ 0.00000000e+00,  1.14793387e-22,  0.00000000e+00],
+       [ 0.00000000e+00, -9.79384380e+00,  0.00000000e+00]])]
+ velocity = <class 'list'> with length, 12 with elements, [array([[0, 0, 0],
+       [0, 0, 0]]), array([[ 0.00000000e+00,  1.14772151e-22,  0.00000000e+00],
+       [ 0.00000000e+00, -9.79203199e+00,  0.00000000e+00]]), array([[ 0.00000000e+00,  2.29544654e-22,  0.00000000e+00],
+       [ 0.00000000e+00, -1.95840940e+01,  0.00000000e+00]]), array([[ 0.00000000e+00,  3.44317862e-22,  0.00000000e+00],
+       [ 0.00000000e+00, -2.93762162e+01,  0.00000000e+00]]), array([[ 0.00000000e+00,  4.59092127e-22,  0.00000000e+00],
+       [ 0.00000000e+00, -3.91684286e+01,  0.00000000e+00]]), array([[ 0.00000000e+00,  5.73867802e-22,  0.00000000e+00],
+       [ 0.00000000e+00, -4.89607613e+01,  0.00000000e+00]]), array([[ 0.00000000e+00,  6.88645240e-22,  0.00000000e+00],
+       [ 0.00000000e+00, -5.87532443e+01,  0.00000000e+00]]), array([[ 0.00000000e+00,  8.03424791e-22,  0.00000000e+00],
+       [ 0.00000000e+00, -6.85459077e+01,  0.00000000e+00]]), array([[ 0.00000000e+00,  9.18206810e-22,  0.00000000e+00],
+       [ 0.00000000e+00, -7.83387816e+01,  0.00000000e+00]]), array([[ 0.00000000e+00,  1.03299165e-21,  0.00000000e+00],
+       [ 0.00000000e+00, -8.81318961e+01,  0.00000000e+00]]), array([[ 0.00000000e+00,  1.14777966e-21,  0.00000000e+00],
+       [ 0.00000000e+00, -9.79252812e+01,  0.00000000e+00]]), array([[ 0.00000000e+00,  1.26257120e-21,  0.00000000e+00],
+       [ 0.00000000e+00, -1.07718967e+02,  0.00000000e+00]])]
+ position = <class 'list'> with length, 12 with elements, [[array([0, 0, 0]), array([      0, 6378137,       0])], array([[0.00000000e+00, 5.73860314e-23, 0.00000000e+00],
+       [0.00000000e+00, 6.37813210e+06, 0.00000000e+00]]), array([[0.00000000e+00, 2.29544302e-22, 0.00000000e+00],
+       [0.00000000e+00, 6.37811742e+06, 0.00000000e+00]]), array([[0.00000000e+00, 5.16475339e-22, 0.00000000e+00],
+       [0.00000000e+00, 6.37809294e+06, 0.00000000e+00]]), array([[0.00000000e+00, 9.18180026e-22, 0.00000000e+00],
+       [0.00000000e+00, 6.37805866e+06, 0.00000000e+00]]), array([[0.00000000e+00, 1.43465959e-21, 0.00000000e+00],
+       [0.00000000e+00, 6.37801460e+06, 0.00000000e+00]]), array([[0.00000000e+00, 2.06591563e-21, 0.00000000e+00],
+       [0.00000000e+00, 6.37796074e+06, 0.00000000e+00]]), array([[0.00000000e+00, 2.81195007e-21, 0.00000000e+00],
+       [0.00000000e+00, 6.37789709e+06, 0.00000000e+00]]), array([[0.00000000e+00, 3.67276521e-21, 0.00000000e+00],
+       [0.00000000e+00, 6.37782365e+06, 0.00000000e+00]]), array([[0.00000000e+00, 4.64836369e-21, 0.00000000e+00],
+       [0.00000000e+00, 6.37774041e+06, 0.00000000e+00]]), array([[0.00000000e+00, 5.73874851e-21, 0.00000000e+00],
+       [0.00000000e+00, 6.37764739e+06, 0.00000000e+00]]), array([[0.00000000e+00, 6.94392301e-21, 0.00000000e+00],
+       [0.00000000e+00, 6.37754456e+06, 0.00000000e+00]])]
+ time = <class 'list'> with length, 12 with elements, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+my calculateTrajectories function seems to be working with the test case of me falling towards the center of mass of the Earth.. My acceleration stayed relatively constant which makes sense for the time scale of 11 seconds
+
+my acceleration started at -9.79203950e+00 m/s/s at time = 0 and ended at -9.79384380e+00 m/s/s at time = 11 However, it did increase in magnitude as time increased because I was getting closer to the center of the Earth This shows that I am successfully calling my force(masses, positions) function
+
+Similarly, my velocity started at [0, 0, 0] m/s at time = 0 my velocity ended at [ 0.00000000e+00, -9.79252812e+01, 0.00000000e+00] m/s at time = 11 after ten seconds of free falll. This is the correct amount as velocity = acceleration*time and since the acceleration was nearly constant 9.79203950e+00 and only slightly increased, and I fell for 10 seconds, my final velocity should be slightly greater in magnitude than -97.920395 m/s. Since my final velocity is -97.9252812m/s, which is just slightly greater in order of magnitude than -97.920395 m/s, this is another good sign that both my leapfrogStep and my calculateTrajectories function are working correctly
+
+Finally, my position started at [ 0, 6378137, 0] at time = 0 my position ended at [0.00000000e+00, 6.37754456e+06, 0.00000000e+00] at time = 11 This demonstrates again that both my leapfrogStep and my calculateTrajectories function are working correctly, as my ending position has a smaller y-value than my starting position, as I am moving towards the center of mass of the Earth.
+
+#testing the calculateTrajectories function with display == False
+r_i = [[0,0,0], [10,10,20],[40,30,70]]
+v_i = [[1,1,1],[4,5,6],[2,3,4]]
+
+m_i = [10,20,10]
+delta_t = 1
+start_t = 5
+end_t = 10
+display = True
+
+calculateTrajectories(r_i, v_i, force, m_i, delta_t, start_t, end_t, display)
+print(f" acceleration = {type(acceleration)} with length, {len(acceleration)} with elements, {acceleration}")
+print(f" velocity = {type(velocity)} with length, {len(velocity)} with elements, {velocity}")
+print(f" position = {type(position)} with length, {len(position)} with elements, {position}")
+print(f" time = {type(time)} with length, {len(time)} with elements, {time}")
+ a = [[ 5.94708502e-13  6.29197813e-13  1.13825520e-12]
+ [-1.84659499e-13 -2.39538933e-13 -3.74679542e-13]
+ [-2.25389504e-13 -1.50119947e-13 -3.88896113e-13]] v = [[1. 1. 1.]
+ [4. 5. 6.]
+ [2. 3. 4.]] r = [[ 1.  1.  1.]
+ [14. 15. 26.]
+ [42. 33. 74.]]
+ a = [[ 4.09418049e-13  4.49696914e-13  7.65396912e-13]
+ [-8.43792817e-14 -1.47446033e-13 -1.69111394e-13]
+ [-2.40659486e-13 -1.54804848e-13 -4.27174124e-13]] v = [[1. 1. 1.]
+ [4. 5. 6.]
+ [2. 3. 4.]] r = [[ 2.  2.  2.]
+ [18. 20. 32.]
+ [44. 36. 78.]]
+ a = [[ 3.00665774e-13  3.38024625e-13  5.53703583e-13]
+ [-2.09661858e-14 -8.95446707e-14 -3.96183798e-14]
+ [-2.58733403e-13 -1.58935283e-13 -4.74466823e-13]] v = [[1. 1. 1.]
+ [4. 5. 6.]
+ [2. 3. 4.]] r = [[ 3.  3.  3.]
+ [22. 25. 38.]
+ [46. 39. 82.]]
+ a = [[ 2.31298092e-13  2.64158093e-13  4.21855443e-13]
+ [ 2.42305188e-14 -5.11840028e-14  5.54583559e-14]
+ [-2.79759130e-13 -1.61790087e-13 -5.32772155e-13]] v = [[1. 1. 1.]
+ [4. 5. 6.]
+ [2. 3. 4.]] r = [[ 4.  4.  4.]
+ [26. 30. 44.]
+ [48. 42. 86.]]
+ a = [[ 1.84229440e-13  2.12812870e-13  3.33973695e-13]
+ [ 5.97845471e-14 -2.52927654e-14  1.35336248e-13]
+ [-3.03798534e-13 -1.62227340e-13 -6.04646191e-13]] v = [[1. 1. 1.]
+ [4. 5. 6.]
+ [2. 3. 4.]] r = [[ 5.  5.  5.]
+ [30. 35. 50.]
+ [50. 45. 90.]]
+ a = [[ 1.50734521e-13  1.75659706e-13  2.72286085e-13]
+ [ 8.99861537e-14 -8.60328138e-15  2.10511823e-13]
+ [-3.30706829e-13 -1.58453143e-13 -6.93309731e-13]] v = [[1. 1. 1.]
+ [4. 5. 6.]
+ [2. 3. 4.]] r = [[ 6.  6.  6.]
+ [34. 40. 56.]
+ [52. 48. 94.]]
+the final position is, [[ 6.  6.  6.]
+ [34. 40. 56.]
+ [52. 48. 94.]], the final velocity is, [[1. 1. 1.]
+ [4. 5. 6.]
+ [2. 3. 4.]] meters/seocnd
+ acceleration = <class 'list'> with length, 7 with elements, [[[0, 0, 0], [0, 0, 0]], array([[ 5.94708502e-13,  6.29197813e-13,  1.13825520e-12],
+       [-1.84659499e-13, -2.39538933e-13, -3.74679542e-13],
+       [-2.25389504e-13, -1.50119947e-13, -3.88896113e-13]]), array([[ 4.09418049e-13,  4.49696914e-13,  7.65396912e-13],
+       [-8.43792817e-14, -1.47446033e-13, -1.69111394e-13],
+       [-2.40659486e-13, -1.54804848e-13, -4.27174124e-13]]), array([[ 3.00665774e-13,  3.38024625e-13,  5.53703583e-13],
+       [-2.09661858e-14, -8.95446707e-14, -3.96183798e-14],
+       [-2.58733403e-13, -1.58935283e-13, -4.74466823e-13]]), array([[ 2.31298092e-13,  2.64158093e-13,  4.21855443e-13],
+       [ 2.42305188e-14, -5.11840028e-14,  5.54583559e-14],
+       [-2.79759130e-13, -1.61790087e-13, -5.32772155e-13]]), array([[ 1.84229440e-13,  2.12812870e-13,  3.33973695e-13],
+       [ 5.97845471e-14, -2.52927654e-14,  1.35336248e-13],
+       [-3.03798534e-13, -1.62227340e-13, -6.04646191e-13]]), array([[ 1.50734521e-13,  1.75659706e-13,  2.72286085e-13],
+       [ 8.99861537e-14, -8.60328138e-15,  2.10511823e-13],
+       [-3.30706829e-13, -1.58453143e-13, -6.93309731e-13]])]
+ velocity = <class 'list'> with length, 7 with elements, [[[1, 1, 1], [4, 5, 6], [2, 3, 4]], array([[1., 1., 1.],
+       [4., 5., 6.],
+       [2., 3., 4.]]), array([[1., 1., 1.],
+       [4., 5., 6.],
+       [2., 3., 4.]]), array([[1., 1., 1.],
+       [4., 5., 6.],
+       [2., 3., 4.]]), array([[1., 1., 1.],
+       [4., 5., 6.],
+       [2., 3., 4.]]), array([[1., 1., 1.],
+       [4., 5., 6.],
+       [2., 3., 4.]]), array([[1., 1., 1.],
+       [4., 5., 6.],
+       [2., 3., 4.]])]
+ position = <class 'list'> with length, 7 with elements, [[[0, 0, 0], [10, 10, 20], [40, 30, 70]], array([[ 1.,  1.,  1.],
+       [14., 15., 26.],
+       [42., 33., 74.]]), array([[ 2.,  2.,  2.],
+       [18., 20., 32.],
+       [44., 36., 78.]]), array([[ 3.,  3.,  3.],
+       [22., 25., 38.],
+       [46., 39., 82.]]), array([[ 4.,  4.,  4.],
+       [26., 30., 44.],
+       [48., 42., 86.]]), array([[ 5.,  5.,  5.],
+       [30., 35., 50.],
+       [50., 45., 90.]]), array([[ 6.,  6.,  6.],
+       [34., 40., 56.],
+       [52., 48., 94.]])]
+ time = <class 'list'> with length, 7 with elements, [5, 6, 7, 8, 9, 10, 11]
+m_i = 10 #kg
+m_j = 100 #kg
+p_i = np.array([0,0,0])
+p_j = np.array([1,1,1])
+
+
+
+forceVector(m_i, m_j, p_i, p_j) 
+array([1.2836421e-08, 1.2836421e-08, 1.2836421e-08])
+ 
+#testing the calculateTrajectories function with the forceVector function and with posiotns, veloctiy and acceleration vectors  arrays in 3 dimensions
+r_i = [[0,0,0], [10,10,10]]
+v_i = [[0,0,0], [0,0,0]]
+
+m_i = np.array([100,100])
+delta_t = 1
+start_t = 0
+end_t = 2
+display = True
+
+p_j = np.array([10,10,10])
+
+
+calculateTrajectories(r_i, v_i, force, m_i, delta_t, start_t, end_t, display)
+print(f" acceleration = {type(acceleration)} with length, {len(acceleration)} with elements, {acceleration}")
+print(f" velocity = {type(velocity)} with length, {len(velocity)} with elements, {velocity}")
+print(f" position = {type(position)} with length, {len(position)} with elements, {position}")
+print(f" time = {type(time)} with length, {len(time)} with elements, {time}")
+ a = [[ 1.2836421e-11  1.2836421e-11  1.2836421e-11]
+ [-1.2836421e-11 -1.2836421e-11 -1.2836421e-11]] v = [[ 1.2836421e-11  1.2836421e-11  1.2836421e-11]
+ [-1.2836421e-11 -1.2836421e-11 -1.2836421e-11]] r = [[6.41821049e-12 6.41821049e-12 6.41821049e-12]
+ [1.00000000e+01 1.00000000e+01 1.00000000e+01]]
+ a = [[ 1.2836421e-11  1.2836421e-11  1.2836421e-11]
+ [-1.2836421e-11 -1.2836421e-11 -1.2836421e-11]] v = [[ 2.5672842e-11  2.5672842e-11  2.5672842e-11]
+ [-2.5672842e-11 -2.5672842e-11 -2.5672842e-11]] r = [[2.5672842e-11 2.5672842e-11 2.5672842e-11]
+ [1.0000000e+01 1.0000000e+01 1.0000000e+01]]
+ a = [[ 1.2836421e-11  1.2836421e-11  1.2836421e-11]
+ [-1.2836421e-11 -1.2836421e-11 -1.2836421e-11]] v = [[ 3.8509263e-11  3.8509263e-11  3.8509263e-11]
+ [-3.8509263e-11 -3.8509263e-11 -3.8509263e-11]] r = [[5.77638944e-11 5.77638944e-11 5.77638944e-11]
+ [1.00000000e+01 1.00000000e+01 1.00000000e+01]]
+the final position is, [[5.77638944e-11 5.77638944e-11 5.77638944e-11]
+ [1.00000000e+01 1.00000000e+01 1.00000000e+01]], the final velocity is, [[ 3.8509263e-11  3.8509263e-11  3.8509263e-11]
+ [-3.8509263e-11 -3.8509263e-11 -3.8509263e-11]] meters/seocnd
+ acceleration = <class 'list'> with length, 4 with elements, [[[0, 0, 0], [0, 0, 0]], array([[ 1.2836421e-11,  1.2836421e-11,  1.2836421e-11],
+       [-1.2836421e-11, -1.2836421e-11, -1.2836421e-11]]), array([[ 1.2836421e-11,  1.2836421e-11,  1.2836421e-11],
+       [-1.2836421e-11, -1.2836421e-11, -1.2836421e-11]]), array([[ 1.2836421e-11,  1.2836421e-11,  1.2836421e-11],
+       [-1.2836421e-11, -1.2836421e-11, -1.2836421e-11]])]
+ velocity = <class 'list'> with length, 4 with elements, [[[0, 0, 0], [0, 0, 0]], array([[ 1.2836421e-11,  1.2836421e-11,  1.2836421e-11],
+       [-1.2836421e-11, -1.2836421e-11, -1.2836421e-11]]), array([[ 2.5672842e-11,  2.5672842e-11,  2.5672842e-11],
+       [-2.5672842e-11, -2.5672842e-11, -2.5672842e-11]]), array([[ 3.8509263e-11,  3.8509263e-11,  3.8509263e-11],
+       [-3.8509263e-11, -3.8509263e-11, -3.8509263e-11]])]
+ position = <class 'list'> with length, 4 with elements, [[[0, 0, 0], [10, 10, 10]], array([[6.41821049e-12, 6.41821049e-12, 6.41821049e-12],
+       [1.00000000e+01, 1.00000000e+01, 1.00000000e+01]]), array([[2.5672842e-11, 2.5672842e-11, 2.5672842e-11],
+       [1.0000000e+01, 1.0000000e+01, 1.0000000e+01]]), array([[5.77638944e-11, 5.77638944e-11, 5.77638944e-11],
+       [1.00000000e+01, 1.00000000e+01, 1.00000000e+01]])]
+ time = <class 'list'> with length, 4 with elements, [0, 1, 2, 3]
+Yes! The test run worked and produced the
+
+4 Testing my code with the Earth in (circular) orbit around the Sun
+# I googled, "how to make a data table using panda", because I want to more clearly visualize the data table from the FinalProject-NBodyDynamics.pdf
+
+import pandas as pd
+
+data = [
+    ['Sun', 1.989e30, -3e-6, 0.0, 0.0, 0.0, -8.94e-2 , 0.0],
+    ['Earth', 5.972e24, 0.999997, 0.0, 0.0, 0.0, 2.98e4, 0.0]
+]
+
+columns = ['name', 'mass(kg)', 'x(AU)', 'y(AU)',  'z(AU)', '𝑣𝑥(m/s)', '𝑣𝑦(m/s)', '𝑣𝑧(m/s)']
+
+
+df = pd.DataFrame(data, columns=columns)
+
+df.index.name = "particle #"
+print(df)
+             name      mass(kg)     x(AU)  y(AU)  z(AU)  𝑣𝑥(m/s)     𝑣𝑦(m/s)  \
+particle #                                                                     
+0             Sun  1.989000e+30 -0.000003    0.0    0.0      0.0     -0.0894   
+1           Earth  5.972000e+24  0.999997    0.0    0.0      0.0  29800.0000   
+
+            𝑣𝑧(m/s)  
+particle #           
+0               0.0  
+1               0.0  
+p_Earth = np.array([data[1][2]1.496e+11,data[1][3]1.496e+11,data[1][4]*1.496e+11]) #converting the position into meters. OMG, you have no idea how long I was completely and toatly confused on why my distance looked so weird. Then I relized I was doing velocity and aceleration in meters and distance in AU and it all made sense! I had forgotten to convert the units!
+
+p_Earth = np.array([data[1][2]*1.496e+11,data[1][3]*1.496e+11,data[1][4]*1.496e+11]) #converting the position into meters.
+
+v_earth = np.array([data[1][5],data[1][6],data[1][7]])
+v_sun = np.array([data[0][5],data[0][6],data[0][7]])
+#F = force()
+a_i = np.array([0,0,0])
+m_Earth = data[1][1]
+delta_t = 15*24*60*60 #setting delta_t to the number of seconds in a day times the number of days I want (15)
+start_t = 0
+end_t = 146024*60*60 # setting the end time to 1825 days(5ush years) multiplied by the number of seconds in a day 
+display2 = False
+m_sun = data[0][1]
+p_sun = np.array([data[0][2],data[0][3],data[0][4]])
+masses = [m_Earth, m_sun]
+positions = [p_Earth, p_sun]
+velocities = [v_earth, v_sun]
+
+calculateTrajectories(positions, velocities, force, masses, delta_t, start_t, end_t, display2)
+well, I am somewhat shocked and happy my functions seem to be working, so time to try printing the time, positions and velocity list in a nice table
+
+#making sure each of my lists/arrays looks good
+position_array = np.array(position)
+#position_array = position_array/1.496e+11 #converting from meters to AU
+position_array = position_array/1.496e+11
+print(position_array.shape)
+
+velocity_array = np.array(velocity)
+print(velocity_array.shape)
+
+acceleration_array = np.array(acceleration)
+print(acceleration_array.shape)
+
+time_array = np.array(time)
+print(time_array.shape)
+
+mass_array = np.array(masses)
+print(mass_array.shape)
+
+print(len(position))
+print(position_array[:, 0, 0])
+(407, 2, 3)
+(407, 2, 3)
+(407, 2, 3)
+(407,)
+(2,)
+407
+[ 0.999997    0.96671967  0.86921809  0.71427282  0.51251525  0.27752871
+  0.02477176 -0.22955022 -0.46955868 -0.68064742 -0.85026124 -0.9684976
+ -1.02853934 -1.02693381 -0.96373269 -0.84249981 -0.67018424 -0.4568468
+ -0.21522206  0.03990132  0.29248862  0.52624037  0.72570017  0.87740559
+  0.97096653  0.99994086  0.96238812  0.86102234  0.70294546  0.49900746
+  0.26289039  0.01003881 -0.24344312 -0.48183087 -0.69069117 -0.85763467
+ -0.97290336 -1.0298011  -1.02498084 -0.95859852 -0.83433626 -0.65928703
+ -0.44368422 -0.20045483  0.05542197  0.30775529  0.54016124  0.73720394
+  0.88556494  0.97511749  0.99977265  0.95798306  0.85283703  0.69173898
+  0.48573453  0.24858364 -0.00429701 -0.25690916 -0.49367808 -0.70033277
+ -0.86463601 -0.97696111 -1.03072342 -1.02267751 -0.95308614 -0.82575838
+ -0.64794414 -0.4300639  -0.18524943  0.07132312  0.32330914  0.55425258
+  0.74875827  0.89367542  0.97916151  0.99949295  0.95351537  0.84467928
+  0.68067121  0.47270971  0.2346135  -0.01824013 -0.2699611  -0.5051185
+ -0.70959194 -0.87128266 -0.98068291 -1.03131126 -1.02002165 -0.9471879
+ -0.81675612 -0.63614709 -0.41598294 -0.16961165  0.08758918  0.33912615
+  0.56848578  0.76033548  0.90171588  0.98308793  0.99910265  0.94899538
+  0.83656425  0.66975657  0.4599418   0.22098009 -0.03179975 -0.28261582
+ -0.51617343 -0.71849056 -0.87759336 -0.98408156 -1.03157017 -1.01701188
+ -0.94089753 -0.80732173 -0.62389073 -0.40144275 -0.15355215  0.10419966
+  0.35517811  0.58282936  0.77190652  0.90966505  0.98688657  0.99860285
+  0.9444326   0.82850484  0.65900587  0.447435    0.20767861 -0.04498963
+ -0.294894   -0.52686706 -0.7270524  -0.88358793 -0.98717046 -1.03150618
+ -1.01364765 -0.93421029 -0.79744993 -0.61117348 -0.38644921 -0.13708652
+  0.12112936  0.371433    0.59724942  0.78344146  0.91750189  0.99054781
+  0.99799472  0.93983536  0.82051136  0.64842604  0.43518891  0.19469955
+ -0.05782787 -0.30681982 -0.53722607 -0.73530278 -0.88928701 -0.98996347
+ -1.03112576 -1.00992921 -0.92712302 -0.78713808 -0.59799745 -0.3710127
+ -0.12023518  0.13834866  0.38785542  0.61171018  0.79490991  0.92520587
+  0.99406267  0.9972793   0.93521063  0.81259128  0.63802002  0.42319851
+  0.1820288  -0.07033658 -0.31842061 -0.5472793  -0.74326829 -0.89471187
+ -0.99247468 -1.03043571 -1.00585768 -0.91963429 -0.7763863  -0.58436856
+ -0.35514816 -0.10302323  0.15582382  0.40440711  0.62617453  0.80628151
+  0.9327572   0.99742276  0.99645732  0.93056367  0.804749    0.6277867
+  0.41145435  0.16964796 -0.08254153 -0.32972648 -0.5570574  -0.75097644
+ -0.89988408 -0.99471829 -1.02944311 -1.00143504 -0.91174446 -0.76519764
+ -0.57029666 -0.33887504 -0.08548024  0.17351741  0.42104747  0.64060453
+  0.81752633  0.94013701  1.00062028  0.99552902  0.92589785  0.79698576
+  0.61772091  0.3999426   0.15753459 -0.09447183 -0.34076987 -0.56659239
+ -0.75845535 -0.90482526 -0.9967084  -1.02815524 -0.99666415 -0.90345577
+ -0.75357815 -0.55579554 -0.32221724 -0.06763999  0.19138877  0.43773412
+  0.65496202  0.82861521  0.94732751  1.0036479   0.99449392  0.92121444
+  0.78929946  0.60781349  0.38864536  0.14566256 -0.10615948 -0.35158523
+ -0.57591734 -0.76573337 -0.90955687 -0.99845887 -1.02657948 -0.99154878
+ -0.89477247 -0.74153698 -0.54088299 -0.30520289 -0.04954005  0.20939459
+  0.45442354  0.66920907  0.83952016  0.95431205  1.00649867  0.99335067
+  0.91651245  0.7816847   0.59805139  0.37754087  0.13400241 -0.11763897
+ -0.36220848 -0.58506591 -0.77283877 -0.91409987 -0.9999831  -1.02472328
+ -0.98609365 -0.88570086 -0.72908648 -0.52558069 -0.2878642  -0.03122141
+  0.22748941  0.47107164  0.68330855  0.85021458  0.9610752   1.00916593
+  0.99209683  0.91178852  0.77413278  0.58841789  0.36660383  0.12252177
+ -0.12894684 -0.37267665 -0.59407197 -0.77979938 -0.91847449 -1.00129394
+ -1.02259411 -0.98030448 -0.87624943 -0.71624221 -0.50991421 -0.27023713
+ -0.01272795  0.2456263   0.48763441  0.69722452  0.8606735   0.96760276
+  1.01164314  0.99072878  0.90703688  0.76663179  0.5788928   0.35580579
+  0.11118577 -0.14012119 -0.38302738 -0.60296917 -0.78664223 -0.92269998
+ -1.00240349 -1.02019942 -0.97418803 -0.86642887 -0.70302293 -0.49391274
+ -0.252361    0.00589408  0.26375749  0.50406844  0.71092267  0.87087376
+  0.97388167  1.01392377  0.98924157  0.90224933  0.75916671  0.56945275
+  0.3451155   0.0999575  -0.15120127 -0.39329848 -0.61179054 -0.79339322
+ -0.92679436 -1.00332299 -1.01754662 -0.96775217 -0.85625218 -0.68945062
+ -0.47760899 -0.23427811  0.0245967   0.28183498  0.52033151  0.72437065
+  0.88079413  0.97990004  1.0160012   0.98762885  0.89741526  0.75171965
+  0.56007149  0.33449932  0.08879846 -0.16222693 -0.40352748 -0.62056806
+ -0.80007681 -0.9307742  -1.00406274 -1.0146431  -0.96100593 -0.8457347
+ -0.67555034 -0.46103882 -0.21603323  0.0433308   0.29981123  0.53638312
+  0.73753839  0.89041541  0.98564704  1.01786861  0.98588286  0.89252178
+  0.74427006  0.55072027  0.32392166  0.07766906 -0.17323817]
+columns = [ 'x(AU)', 'y(AU)',  'z(AU)', '𝑣𝑥(m/sec)', '𝑣𝑦(m/sec)', '𝑣𝑧(m/sec)', 'ax(m/sec/sec)', 'ay(m/sec/sec)', 'az(m/sec/sec)']
+dataEarth = { 
+ 
+    'x(AU)': position_array[:, 0, 0],
+    'y(AU)': position_array[:, 0, 1],
+    'z(AU)': position_array[:, 0, 2],
+    '𝑣𝑥(m/sec)': velocity_array[:, 0, 0],
+    '𝑣𝑦(m/sec)': velocity_array[:, 0, 1],
+    '𝑣𝑧(m/sec)': velocity_array[:, 0, 2],
+    'ax(m/sec/sec)': acceleration_array[:, 0, 0],
+    'ay(m/sec/sec)': acceleration_array[:, 0, 1],
+    'az(m/sec/sec)': acceleration_array[:, 0, 2]
+            }
+
+df = pd.DataFrame(dataEarth, index = time_array/(24*60*60), columns=columns)
+
+df.index.name = "time in days"
+print(" Earth data over a year")
+print(df)
+ Earth data over a year
+                 x(AU)     y(AU)  z(AU)     𝑣𝑥(m/sec)     𝑣𝑦(m/sec)  \
+time in days                                                          
+0.0           0.999997  0.000000    0.0      0.000000  29800.000000   
+15.0          0.966720  0.258160    0.0  -7548.041757  28810.111921   
+30.0          0.869218  0.499170    0.0 -14570.234864  25916.254024   
+45.0          0.714273  0.707191    0.0 -20587.478907  21337.241023   
+60.0          0.512515  0.868863    0.0 -25207.144665  15410.870861   
+...                ...       ...    ...           ...           ...   
+6030.0        0.744270  0.712371    0.0 -19727.432282  21157.146566   
+6045.0        0.550720  0.873980    0.0 -24260.848688  15609.356180   
+6060.0        0.323922  0.982822    0.0 -27302.647155   9157.168117   
+6075.0        0.077669  1.032638    0.0 -28694.101419   2178.491727   
+6090.0       -0.173238  1.020567    0.0 -28362.832411  -4927.520052   
+
+              𝑣𝑧(m/sec)  ax(m/sec/sec)  ay(m/sec/sec)  az(m/sec/sec)  
+time in days                                                          
+0.0                 0.0       0.000000       0.000000            0.0  
+15.0                0.0      -0.005720      -0.001528            0.0  
+30.0                0.0      -0.005116      -0.002938            0.0  
+45.0                0.0      -0.004169      -0.004128            0.0  
+60.0                0.0      -0.002960      -0.005017            0.0  
+...                 ...            ...            ...            ...  
+6030.0              0.0      -0.004035      -0.003862            0.0  
+6045.0              0.0      -0.002961      -0.004700            0.0  
+6060.0              0.0      -0.001733      -0.005257            0.0  
+6075.0              0.0      -0.000415      -0.005512            0.0  
+6090.0              0.0       0.000926      -0.005454            0.0  
+
+[407 rows x 9 columns]
+I cannot figure out why my vx velocity in meters/second is just stuck at -1.719355e+26, and why my vy velocity in meters/second is stuck at 29800 launching the Earth away. I'm pretty confident that this is from an error in my calculateTrajectories function, but I have not been able to find it. It could also be an error in my force function but I cannot figure out what mistake I made in it either.
+
+5 Make three plots summarizing the results
+the first plot should have time on the horizontal axis, and show the 𝑥 positions of both particles on the vertical axis. Estimate the period of orbit by eye; does this make sense?
+
+the second plot should show the trajectories that the particles trace out in the 𝑥-𝑦 plane. The Earth’s orbit should be pretty close to a perfect circle. Scale the axes so it appears this way.
+
+the third plot should show the 𝑥 velocity of the Sun as a function of time. Based on this plot, to what precision would we need to measure the radial velocity of a Sun-like star to see an Earth-like planet orbiting it? (Estimate this by eye.)
+For all positions and times, convert back to AU and days for the above plots.
+
+5.1 first plot x vs time
+print(type(time))
+positions = np.array(position) #converting the position list from the calculateTrajectories function to a numpy array
+xpos_earth = position_array[:, 0, 0] #geting all of the x positions of the earth from the positions array
+xpos_sun = position_array[:, 1, 0] #geting all of the x positions of the earth from the positions array
+
+print(f"len of time array: {len(time_array)}")
+print(f"len of xpos_earth array: {len(xpos_earth)}")
+print(f"len of xpos_sun array: {len(xpos_sun)}")
+<class 'list'>
+len of time array: 407
+len of xpos_earth array: 407
+len of xpos_sun array: 407
+plt.plot(time_array/(24*60*60), xpos_earth, color = "blue", label="Earth's x-position")
+plt.plot(time_array/(24*60*60), xpos_sun, color = "yellow", label="Sun's x-position")
+plt.xlabel(" time in days")
+plt.ylabel(" x distance from the sun in AU")
+plt.title("x-positions vs time")
+plt.legend()
+plt.grid()
+No description has been provided for this image
+Well, this graph looks correct as it shows Earth's x position as a cosine wave as a function of time with a period of about 365 days!
+
+5.2 Second plot trajectories on x-y plane
+xpos_earth = position_array[:, 0, 0] #geting all of the x positions of the earth from the positions array
+ypos_earth = position_array[:, 0, 1] # getting all of the y positions of the earth from the positions array
+xpos_sun = position_array[:, 1, 0] #geting all of the x positions of the earth from the positions array
+ypos_sun = position_array[:, 1, 1] #geting all of the y positions of the earth from the positions array
+plt.plot(xpos_earth, ypos_earth, color = "blue", label="Earth's xy-position")
+plt.scatter( xpos_sun, ypos_sun, s=300, color = "yellow", label="Sun's xy-position")
+plt.xlabel("  X position from the sun in AU")
+plt.ylabel(" Y position from the sun in AU")
+plt.title("x-positions vs time")
+plt.legend()
+plt.grid()
+No description has been provided for this image
+5.3 third plot x velocity of sun vs time
+xvelocity_sun = velocity_array[:, 1, 0] #geting all of the x velocities of the earth from thevelocity array
+plt.plot(time_array/(24*60*60), xvelocity_sun, color = "yellow", label="Sun's x-velocity")
+plt.xlabel(" time in days")
+plt.ylabel(" x velocity in meters/second")
+plt.title("x-velocity vs time")
+plt.legend()
+plt.grid()
+No description has been provided for this image
+The Sun's x-velocity looks to be the derivative of the Earth's x-position. This would make sense as the Earth would pull on the sun, changing its velocity. Assuming the change in the Sun's x-velocity is caused solely by the inner terrestrial planets, we would need a telescope that can resolve centimeters from light-years away. This is becayse the variation of the sun's velocity is about 15 centimeters per/second(it has a minimum x velocity of -7.5centimeters/second and a maximum x velocity of about 7.5 centimeters per second). This would be extremely difficult for any modern telescope to resolve, as the closest star is about 4 light-years away, I believe, so resolving a difference of 15 centimeters would be nearly impossible at interstellar distances.
+
+6 Repeat the Earth-Sun calculation and plots
+starting from the same initial conditions but (with python) decreasing the initial velocities by a factor of 2. How does the orbit change?
+
+I cannot figure out how to do this
+
+7 Read in the initial conditions describing the Kepler-16ABb circumbinary planet system
+Stored in the file kepler16.txt on Canvas. The file contains 7 columns: one for masses, three for positions, and three for velocities. Read in the data file and organize these initial conditions into arrays that could be fed as inputs to your calculateTrajectories function
+
+This is quite simple. I will read the files from Canvas, sort the data, and then input that data into my calculateTrajectories function
+
+import pandas as pd # I'm going to use pandas to read the kepler-16.txt file
+file = 'kepler16.txt'
+row = 4
+
+mass = [] #kg
+x = [] #meters
+y = [] #meters
+z = [] #meters
+vx = [] # m/s
+vy = [] # m
+vz = [] # m/s
+
+for rows in range(row-1): #reading the data skipping over the first 8 rows of header
+
+
+    single_row = pd.read_csv(file, skiprows=rows + 1, nrows=1, header=None) ##assinign a single row to this list
+    #print(single_row[0][0])
+    #print(single_row[0][0][72:83]) #checking to make sure the indices are correct
+    
+    
+    #use slicing to get each value out that's separated by a space
+    
+    mass.append(single_row[0][0][0:11]) # assigning the first element of the row as the mass
+    x.append(single_row[0][0][12:23]) #assigning the second element of the row to x(m)
+    y.append(single_row[0][0][24:36]) #assigning the third element of the row to y(m)
+    z.append(single_row[0][0][36:47]) #assigning the fourth element of the row to z(m)
+    vx.append(single_row[0][0][48:59]) #assigning the second element of the row to vx(m/s)
+    vy.append(single_row[0][0][60:71]) #assigning the third element of the row to vy(m/s)
+    vz.append(single_row[0][0][72:83]) #assigning the fourth element of the row to vz(m/s)
+
+
+# converting the list to numpy arrays
+mass = np.array(mass)
+x = np.array(x)
+y = np.array(y)
+z = np.array(z)
+vx = np.array(vx)
+vy = np.array(vy)
+vz = np.array(vz)
+
+print(f" mass is type,{type(mass)} and has elements = {mass}")
+print(f" x is type,{type(x)} and has elements = {x}")
+print(f" y is type,{type(y)} and has elements = {y}")
+print(f" z is type,{type(z)} and has elements = {z}")
+print(f" vx is type,{type(vx)} and has elements = {vx}")
+print(f" vy is type,{type(vy)} and has elements = {vy}")
+print(f" vz is type,{type(vz)} and has elements = {vz}")
+ mass is type,<class 'numpy.ndarray'> and has elements = ['+1.3718e+30' '+4.0287e+29' '+6.3250e+26']
+ x is type,<class 'numpy.ndarray'> and has elements = ['+7.6349e+09' '-2.5998e+10' '+3.7761e+10']
+ y is type,<class 'numpy.ndarray'> and has elements = ['-9.6587e+05 ' '+3.2889e+06 ' '-4.0923e+07 ']
+ z is type,<class 'numpy.ndarray'> and has elements = ['+1.8447e+09' '-6.2813e+09' '+8.1934e+10']
+ vx is type,<class 'numpy.ndarray'> and has elements = ['-1.0502e+03' '+3.5760e+03' '-3.6298e+04']
+ vy is type,<class 'numpy.ndarray'> and has elements = ['-6.8224e+00' '+2.3231e+01' '-1.0812e+01']
+ vz is type,<class 'numpy.ndarray'> and has elements = ['+1.3030e+04' '-4.4368e+04' '+1.7020e+04']
+8 Plot the initial positions of these particles in the 𝑥-𝑧 plane (in AU units)
+I will use pyplot to plot the x-z positions of each particle.
+
+au = [149600000000, 149600000000, 149600000000] # creating a numpy array with equal length to the x and z arrays with 1 au in meters in all three locations
+au = np.array(au)
+
+# I googled, " how to convert a list of strings to a list of floats
+x_float = [float(s) for s in x]
+z_float = [float(s) for s in z]
+mass_float = [float(s) for s in mass]
+
+
+massive = [1371800000000000000000000000000, 1371800000000000000000000000000, 1371800000000000000000000000000]
+massive = np.array(massive)
+#print(type(mass), type(massive))
+
+
+scaler = (mass_float / massive *10000) #scaling them with the largest mass
+scale = scaler.tolist()
+#print(scale)
+
+#converting into au
+x_au = x_float/au
+z_au = z_float/au
+#print(len(x_au), len(z_au), len(scale))
+
+#creating velocity floats for the velocity vectors
+vx_float = [float(s) for s in vx]
+vz_float = [float(s) for s in vz]
+#print(vx_float)
+#print(vz_float)
+
+
+plt.scatter(x_au,z_au, s=scale) # there are 1.496e+11 meters in an AU
+plt.quiver(x_au,z_au,vx_float,vz_float) #adding in the velocity vectors
+plt.xlim(-0.3,0.3)
+plt.ylim(-0.7,0.7)
+plt.grid()
+plt.xlabel("X AU")
+plt.ylabel("Z AU")
+plt.title("Kepler-16ABb circumbinary stars and exoplanet")
+Text(0.5, 1.0, 'Kepler-16ABb circumbinary stars and exoplanet')
+No description has been provided for this image
+9 Use your N-body code to calculate the planet and stars’ orbits. Evolve the system for a total of 500 days, using a time step of Δ𝑡 = 0.5 days
+import matplotlib.animation as ani
+FFMpegWriter = ani.writers['ffmpeg']
+writer = FFMpegWriter(fps=10)
+
+fig = plt.figure(figsize=(7, 7))
+fig.patch.set_alpha(1.0) # Python bug fix... still
+
+# Write plots to frames of an animation
+with writer.saving(fig, "ecc_vec.mp4", 10):
+    
+    for i in range(0,len(time_array)):
+        
+        plt.quiver([0, 0], [0, 0], positions[i, :, 0], positions[i, :, 1], color=["blue", "orange"], scale=1)
+
+        plt.xlim(-0.4, 0.4); plt.ylim(-0.4, 0.4);
+        plt.xlabel(r'$e_x$'); plt.ylabel(r'$e_y$');
+        plt.title(f'Eccentricity Vector at time = {time_array[i]:02.2f}')
+
+        writer.grab_frame()
+        
+        plt.cla()
+No description has been provided for this image
+This should be simple. I should be able to use the pyplot from section 8 and then use the calculateTrajectories function to evolve the system with a delta_t of 0.5 days for 500 days.
+
+#getting the libraries for animation
+import matplotlib.animation as ani #importing the animation module for matplotlib
+writer = ani.ImageMagickWriter(fps=5) # create a movie writer object, and set the frames/second to 5
+fig.patch.set_alpha(1.0) # Python bug fix... still
+
+# create a figure, 5x5 in size
+c = ["yellow", "red", "brown"] #I googled, "kepler-16 ABb star color" for the colors of the stars and the planet Kepler-16 system
+
+
+# defining each object's x-z positions
+keplerA = [x_au[0], z_au[0]]
+keplerB = [x_au[1], z_au[1]]
+keplerb = [x_au[2], z_au[2]]
+
+keplerAv = [vx_float[0], vz_float[0]]
+keplerBv = [vx_float[1], vz_float[1]]
+keplerbv = [vx_float[2], vz_float[2]]
+
+
+position9 = [[keplerA, keplerB, keplerb]] #making a new list for the positions
+velocity9 = [[keplerAv, keplerBv, keplerbv]] #making a new list for the velocities
+
+print(len(position9[-1]))
+print(len(position9[-1]))
+
+ 
+day = 0 # defining the starting day
+delta_day = 0.5 #defining the change in days each run
+
+
+fig = plt.figure(figsize=(7, 7))
+fig.patch.set_alpha(1.0) # Python bug fix... still
+
+with writer.saving(fig, 'Kepler-16ABb.mp4', 10):
+    
+    while day <= 5:
+        print(day)
+        if day == 0:
+            print(day)
+            plt.scatter(x_au,z_au, s=scale) # there are 1.496e+11 meters in an AU
+            plt.quiver(x_au,z_au,vx_float,vz_float) #adding in the velocity vectors
+            plt.xlim(-0.3,0.3)
+            plt.ylim(-0.7,0.7)
+            plt.grid()
+            plt.xlabel("X AU")
+            plt.ylabel("Z AU")
+            plt.title("Kepler-16ABb circumbinary stars and exoplanet")
+        else:
+            
+            display = False
+            print(f"{position9[-1]}, \t, {len(velocity9[-1])}, \t {len(mass_float)}")
+            calculateTrajectories(position9[-1], velocity9, force, mass_float, delta_t, start_t, end_t, display)
+            position9.append(position[-1])
+            velocity9.append(velocity[-1])
+            print(f"position9[-1] = {position9[-1]}") 
+            print(f"velocity9[-1] = {velocity9[-1]}") 
+        
+        day += delta_day #incrementing day by delta time
+        writer.grab_frame()
+3
+3
+---------------------------------------------------------------------------
+FileNotFoundError                         Traceback (most recent call last)
+File /opt/anaconda3/envs/current/lib/python3.11/site-packages/matplotlib/__init__.py:399, in _get_executable_info.<locals>.impl(args, regex, min_ver, ignore_exit_code)
+    398 try:
+--> 399     output = subprocess.check_output(
+    400         args, stderr=subprocess.STDOUT,
+    401         text=True, errors="replace")
+    402 except subprocess.CalledProcessError as _cpe:
+
+File /opt/anaconda3/envs/current/lib/python3.11/subprocess.py:466, in check_output(timeout, *popenargs, **kwargs)
+    464     kwargs['input'] = empty
+--> 466 return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+    467            **kwargs).stdout
+
+File /opt/anaconda3/envs/current/lib/python3.11/subprocess.py:548, in run(input, capture_output, timeout, check, *popenargs, **kwargs)
+    546     kwargs['stderr'] = PIPE
+--> 548 with Popen(*popenargs, **kwargs) as process:
+    549     try:
+
+File /opt/anaconda3/envs/current/lib/python3.11/subprocess.py:1026, in Popen.__init__(self, args, bufsize, executable, stdin, stdout, stderr, preexec_fn, close_fds, shell, cwd, env, universal_newlines, startupinfo, creationflags, restore_signals, start_new_session, pass_fds, user, group, extra_groups, encoding, errors, text, umask, pipesize, process_group)
+   1023             self.stderr = io.TextIOWrapper(self.stderr,
+   1024                     encoding=encoding, errors=errors)
+-> 1026     self._execute_child(args, executable, preexec_fn, close_fds,
+   1027                         pass_fds, cwd, env,
+   1028                         startupinfo, creationflags, shell,
+   1029                         p2cread, p2cwrite,
+   1030                         c2pread, c2pwrite,
+   1031                         errread, errwrite,
+   1032                         restore_signals,
+   1033                         gid, gids, uid, umask,
+   1034                         start_new_session, process_group)
+   1035 except:
+   1036     # Cleanup if the child failed starting.
+
+File /opt/anaconda3/envs/current/lib/python3.11/subprocess.py:1955, in Popen._execute_child(self, args, executable, preexec_fn, close_fds, pass_fds, cwd, env, startupinfo, creationflags, shell, p2cread, p2cwrite, c2pread, c2pwrite, errread, errwrite, restore_signals, gid, gids, uid, umask, start_new_session, process_group)
+   1954 if err_filename is not None:
+-> 1955     raise child_exception_type(errno_num, err_msg, err_filename)
+   1956 else:
+
+FileNotFoundError: [Errno 2] No such file or directory: 'convert'
+
+The above exception was the direct cause of the following exception:
+
+ExecutableNotFoundError                   Traceback (most recent call last)
+Cell In[198], line 28
+     25 fig = plt.figure(figsize=(7, 7))
+     26 fig.patch.set_alpha(1.0) # Python bug fix... still
+---> 28 with writer.saving(fig, 'Kepler-16ABb.mp4', 10):
+     30     while day <= 5:
+     31         print(day)
+
+File /opt/anaconda3/envs/current/lib/python3.11/contextlib.py:137, in _GeneratorContextManager.__enter__(self)
+    135 del self.args, self.kwds, self.func
+    136 try:
+--> 137     return next(self.gen)
+    138 except StopIteration:
+    139     raise RuntimeError("generator didn't yield") from None
+
+File /opt/anaconda3/envs/current/lib/python3.11/site-packages/matplotlib/animation.py:220, in AbstractMovieWriter.saving(self, fig, outfile, dpi, *args, **kwargs)
+    215     _log.info("Disabling savefig.bbox = 'tight', as it may cause "
+    216               "frame size to vary, which is inappropriate for "
+    217               "animation.")
+    219 # This particular sequence is what contextlib.contextmanager wants
+--> 220 self.setup(fig, outfile, dpi, *args, **kwargs)
+    221 with mpl.rc_context({'savefig.bbox': None}):
+    222     try:
+
+File /opt/anaconda3/envs/current/lib/python3.11/site-packages/matplotlib/animation.py:311, in MovieWriter.setup(self, fig, outfile, dpi)
+    308 self._w, self._h = self._adjust_frame_size()
+    309 # Run here so that grab_frame() can write the data to a pipe. This
+    310 # eliminates the need for temp files.
+--> 311 self._run()
+
+File /opt/anaconda3/envs/current/lib/python3.11/site-packages/matplotlib/animation.py:317, in MovieWriter._run(self)
+    313 def _run(self):
+    314     # Uses subprocess to call the program for assembling frames into a
+    315     # movie file.  *args* returns the sequence of command line arguments
+    316     # from a few configuration options.
+--> 317     command = self._args()
+    318     _log.info('MovieWriter._run: running command: %s',
+    319               cbook._pformat_subprocess(command))
+    320     PIPE = subprocess.PIPE
+
+File /opt/anaconda3/envs/current/lib/python3.11/site-packages/matplotlib/animation.py:626, in ImageMagickBase._args(self)
+    622 fmt = "rgba" if self.frame_format == "raw" else self.frame_format
+    623 extra_args = (self.extra_args if self.extra_args is not None
+    624               else mpl.rcParams[self._args_key])
+    625 return [
+--> 626     self.bin_path(),
+    627     "-size", "%ix%i" % self.frame_size,
+    628     "-depth", "8",
+    629     "-delay", str(100 / self.fps),
+    630     "-loop", "0",
+    631     f"{fmt}:{self.input_names}",
+    632     *extra_args,
+    633     self.outfile,
+    634 ]
+
+File /opt/anaconda3/envs/current/lib/python3.11/site-packages/matplotlib/animation.py:640, in ImageMagickBase.bin_path(cls)
+    638 binpath = super().bin_path()
+    639 if binpath == 'convert':
+--> 640     binpath = mpl._get_executable_info('magick').executable
+    641 return binpath
+
+File /opt/anaconda3/envs/current/lib/python3.11/site-packages/matplotlib/__init__.py:476, in _get_executable_info(name)
+    474 else:
+    475     path = "convert"
+--> 476 info = impl([path, "--version"], r"^Version: ImageMagick (\S*)")
+    477 if info.raw_version == "7.0.10-34":
+    478     # https://github.com/ImageMagick/ImageMagick/issues/2720
+    479     raise ExecutableNotFoundError(
+    480         f"You have ImageMagick {info.version}, which is unsupported")
+
+File /opt/anaconda3/envs/current/lib/python3.11/site-packages/matplotlib/__init__.py:408, in _get_executable_info.<locals>.impl(args, regex, min_ver, ignore_exit_code)
+    406         raise ExecutableNotFoundError(str(_cpe)) from _cpe
+    407 except OSError as _ose:
+--> 408     raise ExecutableNotFoundError(str(_ose)) from _ose
+    409 match = re.search(regex, output)
+    410 if match:
+
+ExecutableNotFoundError: [Errno 2] No such file or directory: 'convert'
+<Figure size 700x700 with 0 Axes>
+display = False
+#print(f"{(position9[-1])} \n \n {velocity9[-1]} \n \n {mass_float}")
+
+
+#making mass list  the same length as the position9 list by adding the mass to both positions
+mass_list = []
+
+for i in range(len(position[0])):
+    for j in range(len(position[0][i])):
+        mass_list.append(mass_float[i])
+
+print(mass_list)
+calculateTrajectories(position9[-1], velocity9[-1], force, mass_list, delta_t, start_t, end_t, display)
+#position9.append(position[-1])
+#velocity9.append(velocity[-1])
+#print(f"position9[-1] = {position9[-1]}") 
+#print(f"velocity9[-1] = {velocity9[-1]}") 
+10 Make an animation, showing the motion of the three particles over that 500-day period.
+I will use the data and plots from section 9, along with matplotlib.animation to create an animation of the Kepler-16ABb circumbinary system.
+
+I will essentially just repeat what I did for the Kepler-16ABb system section for another system.
+
+12 Visualize your four-dimensional (𝑥, 𝑦, 𝑧, 𝑡) results in some manner that captures all four dimensions
+For this, I will make a 3d animation using what was covered in lecture 23
+
+Below is the code from lecture 23
+
+#code I will base my 3d plotting off from lecture 23
+from mpl_toolkits import mplot3d
+
+fig = plt.figure(figsize=(6,6))
+ax = plt.axes(projection='3d')
+
+ax.set_xlabel('x')
+ax.set_ylabel('y')
+ax.set_zlabel('t')
+ax.zaxis.labelpad=-2 # sets the z-axis label position
+
+# Data for a three-dimensional line
+tline = np.linspace(0, 15, 1000)
+xline = np.sin(tline)
+yline = np.cos(tline)
+ax.plot(xline, yline, tline, 'gray')
+
+# Data for three-dimensional scattered points
+tdata = 15 * np.random.random(100)
+tdata.sort()
+xdata = np.sin(tdata) + 0.1 * np.random.randn(100)
+ydata = np.cos(tdata) + 0.1 * np.random.randn(100)
+ax.scatter(xdata, ydata, tdata, c=tdata, cmap='coolwarm')
+#code I will base my 3d plotting off from lecture 23
+from mpl_toolkits import mplot3d
+
+fig = plt.figure(figsize=(6,6))
+ax = plt.axes(projection='3d')
+
+ax.set_xlabel('x')
+ax.set_ylabel('y')
+ax.set_zlabel('time')
+ax.zaxis.labelpad=-2 # sets the z-axis label position
+
+# Earth
+tline = time_array
+Earthx = position_array[:, 0, 0]
+Earthy = position_array[:, 0, 1]
+Earthz = position_array[:, 0, 2]
+ax.scatter(Earthx, Earthy, tline, 'blue')
+
+# Sun
+tline = time_array
+Sunx = position_array[:, 1, 0]
+Suny = position_array[:, 1, 1]
+Sunz = position_array[:, 1, 2]
+ax.scatter(Sunx, Suny, tline, 'yellow')
+print(len(tline))
+import matplotlib.animation as ani
+FFMpegWriter = ani.writers['ffmpeg']
+writer = FFMpegWriter(fps=10)
+
+fig = plt.figure(figsize=(7, 7))
+fig.patch.set_alpha(1.0) # Python bug fix... still
+
+# Write plots to frames of an animation
+with writer.saving(fig, "ecc_vec.mp4", 150):
+    
+    for i in range(0,len(time_array)):
+        
+        plt.quiver([0, 0], [0, 0], position_array[i, :, 0], position_array[i, :, 1], color=["blue", "orange"], scale=1)
+
+        plt.xlim(-0.4, 0.4); plt.ylim(-0.4, 0.4);
+        plt.xlabel(r'$e_x$'); plt.ylabel(r'$e_y$');
+        plt.title(f'Eccentricity Vector at time = {time_array[i]:02.2f}')
+
+        writer.grab_frame()
+        
+        plt.cla()
+#from IPython.display import Video
+#Video("ecc_vec.mp4", embed=True)
+#demo code from lecture 23 for 3d animation
+import matplotlib.animation as ani
+FFMpegWriter = ani.writers['ffmpeg']
+writer = FFMpegWriter(fps=10)
+
+fig = plt.figure(figsize=(7, 7))
+fig.patch.set_alpha(1.0) # Python bug fix... still
+
+from mpl_toolkits import mplot3d
+
+
+
+
+
+
+ax = plt.axes(projection='3d')
+
+ax.view_init(45)
+#setting the labels
+ax.set_xlabel('x-distance from sun in AU')
+ax.set_ylabel('y-distance from sun in AU')
+ax.set_zlabel('Z-distance from sun in AU')
+ax.zaxis.labelpad=-2 # sets the z-axis label position
+
+ax.set_xlim([-1.1, 1.1])  # Set x-axis limits
+ax.set_ylim([-1.1, 1.1])  # Set y-axis limits
+ax.set_zlim([-1.1, 1.1])  # Set z-axis limits
+
+earth_ratio = float(m_Earth/m_sun*1000)
+
+print(len(time_array))
+print(time_array[0])
+print(time_array[1])
+
+
+
+
+
+
+with writer.saving(fig, "Sun-Earth_3D.mp4", 500):
+    
+    for i in range(0,len(time_array)):
+
+       
+
+
+        
+        ax.set_xlabel('x-distance from sun in AU')
+        ax.set_ylabel('y-distance from sun in AU')
+        ax.set_zlabel('Z-distance from sun in AU')
+        ax.zaxis.labelpad=-2 # sets the z-axis label position
+        
+        ax.set_xlim([-1.1, 1.1])  # Set x-axis limits
+        ax.set_ylim([-1.1, 1.1])  # Set y-axis limits
+        ax.set_zlim([-1.1, 1.1])  # Set z-axis limits
+            
+        # Earth
+        tline = time_array
+        Earthx = position_array[i, 0, 0]
+        Earthy = position_array[i, 0, 1]
+        Earthz = position_array[i, 0, 2]
+        
+        
+        # Sun
+        tline = time_array
+        Sunx = position_array[i, 1, 0]
+        Suny = position_array[i, 1, 1]
+        Sun = position_array[i, 1, 2]
+
+        ax.scatter(Earthx, Earthy, Earthz, 'blue', label = 'the Earth')
+        ax.scatter(Sunx, Suny, Sunz, 'yellow', label = 'the sun')
+        plt.legend()
+        writer.grab_frame()
+        
+        plt.cla()
+407
+0
+1296000
+No description has been provided for this image
+from IPython.display import Video
+Video("/home/luel8892/ASTR 2600/Sun-Earth_3D.mp4", embed=True)
+11 Choose Your Own Adventure
+On Canvas, Dr. AKiba has provided additional sets of initial conditions in .txt file form to have fun and explore.
+
+Choose a set of initial conditions from among these options
+
+Read in the appropriate data file (or make your own)
+
+Then, calculate their trajectories
+from systems import planetesimalDisk#importing the tinyCluster function from system.py
+help(planetesimalDisk)
+Help on function planetesimalDisk in module systems:
+
+planetesimalDisk(num_of_particles=30, mass_ratio=1e-10, z_velocity=1000.0)
+    This function creates N-body initial conditions for a (very) cartoon
+    model of a disk of planetesimals (baby planets) orbiting around the
+    star.
+    
+    At very small values, the gravity is totally dominated by the central
+    star. At larger values (above about 1e-6, roughly an Earth mass per
+    particle), the orbits may start to go unstable due to the interactions
+    between the particles.
+    
+    The disk will be created mostly in the x-y plane, but you can add
+    random velocities with a standard deviation set by z_velocity
+    (in units of m/s) to perturb their orbits above and below the plane.
+    
+    Arguments
+    ---------
+        num_of_particles : int
+            The total number of particles to create with the first particle
+            being a solar-mass star
+    
+        mass_ratio : float
+            The ratio of the mass of each planetesimal to the mass of the
+            central star.
+    
+        z_velocity : float
+            z-axis velocity standard deviation
+    
+    Returns
+    -------
+        masses, positions, velocities :
+            masses 1D np.array whose shape is (nParticles)
+            positions 2D np.array whose shape is (nParticles, nDimensions)
+            velocities 2D np.array whose shape is (nParticles, nDimensions)
+
+mass10, pos10, vel10 = planetesimalDisk(num_of_particles = 10) #this shold generate 10 random particles then assigning the reuslts to mass10, pos10, vel10
+delta_t = 60 #setting delta_t to the number of seconds in a minute
+start_t = 0 # settomg the start t to 0 seconds
+end_t = 60*60 # setting the end time to 1 hours
+display = False
+time_array =np.linspace(start_t, end_t, delta_t+1)
+
+
+calculateTrajectories(pos10, vel10, force, mass10, delta_t, start_t, end_t, display)
+print(time_array)
+[   0.   60.  120.  180.  240.  300.  360.  420.  480.  540.  600.  660.
+  720.  780.  840.  900.  960. 1020. 1080. 1140. 1200. 1260. 1320. 1380.
+ 1440. 1500. 1560. 1620. 1680. 1740. 1800. 1860. 1920. 1980. 2040. 2100.
+ 2160. 2220. 2280. 2340. 2400. 2460. 2520. 2580. 2640. 2700. 2760. 2820.
+ 2880. 2940. 3000. 3060. 3120. 3180. 3240. 3300. 3360. 3420. 3480. 3540.
+ 3600.]
+position = np.array(position)
+position = position/(1.496e+11) #converting the position into AU
+print(f" acceleration = {type(acceleration)} with length, {len(acceleration)} with elements, {acceleration}")
+print(f" velocity = {type(velocity)} with length, {len(velocity)} with elements, {velocity}")
+print(f" position = {type(position)} with length, {len(position)} with elements, {position}")
+print(f" time = {type(time)} with length, {len(time)} with elements, {time}")
+ acceleration = <class 'list'> with length, 62 with elements, [[[0, 0, 0], [0, 0, 0]], array([[ 4.02616257e-12, -3.73876305e-13,  2.54155894e-18],
+       [-2.68420133e-02, -1.65486584e-02, -3.13140955e-08],
+       [ 2.41249646e-03, -5.55216304e-03, -3.26096925e-10],
+       [ 3.35715425e-02,  2.21746089e-02,  8.16863382e-08],
+       [ 1.88888426e-02, -1.27615189e-02,  2.63707721e-08],
+       [ 1.17228301e-02, -5.50763646e-03, -1.20022880e-08],
+       [-4.95633537e-02,  1.99033831e-02, -6.50030497e-08],
+       [-4.19857634e-03,  7.44301126e-03,  1.10343119e-10],
+       [-1.75408883e-02,  5.00585283e-03, -3.42666088e-09],
+       [-8.71250571e-03, -1.04181162e-02, -2.15108519e-08]]), array([[ 4.02627036e-12, -3.73640083e-13,  5.08311787e-18],
+       [-2.68413208e-02, -1.65497817e-02, -6.26281909e-08],
+       [ 2.41256384e-03, -5.55213376e-03, -6.52193851e-10],
+       [ 3.35704284e-02,  2.21762954e-02,  1.63372676e-07],
+       [ 1.88892613e-02, -1.27608992e-02,  5.27415441e-08],
+       [ 1.17229484e-02, -5.50738476e-03, -2.40045759e-08],
+       [-4.95645902e-02,  1.99003037e-02, -1.30006099e-07],
+       [-4.19869333e-03,  7.44294527e-03,  2.20686238e-10],
+       [-1.75410272e-02,  5.00536594e-03, -6.85332175e-09],
+       [-8.71227393e-03, -1.04183101e-02, -4.30217038e-08]]), array([[ 4.02637813e-12, -3.73403852e-13,  7.62467679e-18],
+       [-2.68406282e-02, -1.65509049e-02, -9.39422862e-08],
+       [ 2.41263123e-03, -5.55210448e-03, -9.78290776e-10],
+       [ 3.35693142e-02,  2.21779819e-02,  2.45059014e-07],
+       [ 1.88896800e-02, -1.27602794e-02,  7.91123161e-08],
+       [ 1.17230666e-02, -5.50713306e-03, -3.60068639e-08],
+       [-4.95658266e-02,  1.98972241e-02, -1.95009148e-07],
+       [-4.19881032e-03,  7.44287927e-03,  3.31029357e-10],
+       [-1.75411662e-02,  5.00487904e-03, -1.02799826e-08],
+       [-8.71204213e-03, -1.04185039e-02, -6.45325556e-08]]), array([[ 4.02648589e-12, -3.73167612e-13,  1.01662357e-17],
+       [-2.68399355e-02, -1.65520281e-02, -1.25256381e-07],
+       [ 2.41269861e-03, -5.55207520e-03, -1.30438770e-09],
+       [ 3.35682000e-02,  2.21796684e-02,  3.26745351e-07],
+       [ 1.88900986e-02, -1.27596597e-02,  1.05483088e-07],
+       [ 1.17231849e-02, -5.50688135e-03, -4.80091518e-08],
+       [-4.95670627e-02,  1.98941444e-02, -2.60012196e-07],
+       [-4.19892731e-03,  7.44281328e-03,  4.41372475e-10],
+       [-1.75413051e-02,  5.00439213e-03, -1.37066435e-08],
+       [-8.71181034e-03, -1.04186977e-02, -8.60434075e-08]]), array([[ 4.02659363e-12, -3.72931364e-13,  1.27077945e-17],
+       [-2.68392428e-02, -1.65531513e-02, -1.56570476e-07],
+       [ 2.41276600e-03, -5.55204591e-03, -1.63048463e-09],
+       [ 3.35670857e-02,  2.21813548e-02,  4.08431687e-07],
+       [ 1.88905172e-02, -1.27590399e-02,  1.31853860e-07],
+       [ 1.17233031e-02, -5.50662964e-03, -6.00114397e-08],
+       [-4.95682987e-02,  1.98910647e-02, -3.25015243e-07],
+       [-4.19904429e-03,  7.44274728e-03,  5.51715594e-10],
+       [-1.75414440e-02,  5.00390522e-03, -1.71333043e-08],
+       [-8.71157854e-03, -1.04188915e-02, -1.07554259e-07]]), array([[ 4.02670136e-12, -3.72695106e-13,  1.52493533e-17],
+       [-2.68385501e-02, -1.65542745e-02, -1.87884571e-07],
+       [ 2.41283338e-03, -5.55201663e-03, -1.95658155e-09],
+       [ 3.35659713e-02,  2.21830411e-02,  4.90118022e-07],
+       [ 1.88909358e-02, -1.27584202e-02,  1.58224631e-07],
+       [ 1.17234213e-02, -5.50637793e-03, -7.20137276e-08],
+       [-4.95695345e-02,  1.98879849e-02, -3.90018289e-07],
+       [-4.19916128e-03,  7.44268127e-03,  6.62058712e-10],
+       [-1.75415829e-02,  5.00341831e-03, -2.05599652e-08],
+       [-8.71134674e-03, -1.04190854e-02, -1.29065111e-07]]), array([[ 4.02680908e-12, -3.72458840e-13,  1.77909121e-17],
+       [-2.68378573e-02, -1.65553976e-02, -2.19198665e-07],
+       [ 2.41290077e-03, -5.55198735e-03, -2.28267847e-09],
+       [ 3.35648568e-02,  2.21847274e-02,  5.71804356e-07],
+       [ 1.88913544e-02, -1.27578004e-02,  1.84595403e-07],
+       [ 1.17235396e-02, -5.50612622e-03, -8.40160154e-08],
+       [-4.95707700e-02,  1.98849050e-02, -4.55021334e-07],
+       [-4.19927826e-03,  7.44261527e-03,  7.72401831e-10],
+       [-1.75417218e-02,  5.00293139e-03, -2.39866260e-08],
+       [-8.71111493e-03, -1.04192792e-02, -1.50575963e-07]]), array([[ 4.02691678e-12, -3.72222566e-13,  2.03324708e-17],
+       [-2.68371645e-02, -1.65565207e-02, -2.50512759e-07],
+       [ 2.41296815e-03, -5.55195806e-03, -2.60877540e-09],
+       [ 3.35637422e-02,  2.21864136e-02,  6.53490688e-07],
+       [ 1.88917729e-02, -1.27571806e-02,  2.10966174e-07],
+       [ 1.17236578e-02, -5.50587450e-03, -9.60183032e-08],
+       [-4.95720054e-02,  1.98818251e-02, -5.20024376e-07],
+       [-4.19939525e-03,  7.44254927e-03,  8.82744949e-10],
+       [-1.75418606e-02,  5.00244447e-03, -2.74132868e-08],
+       [-8.71088312e-03, -1.04194730e-02, -1.72086814e-07]]), array([[ 4.02702447e-12, -3.71986282e-13,  2.28740294e-17],
+       [-2.68364716e-02, -1.65576437e-02, -2.81826853e-07],
+       [ 2.41303553e-03, -5.55192877e-03, -2.93487232e-09],
+       [ 3.35626276e-02,  2.21880998e-02,  7.35177019e-07],
+       [ 1.88921914e-02, -1.27565608e-02,  2.37336945e-07],
+       [ 1.17237760e-02, -5.50562278e-03, -1.08020591e-07],
+       [-4.95732406e-02,  1.98787450e-02, -5.85027417e-07],
+       [-4.19951223e-03,  7.44248326e-03,  9.93088067e-10],
+       [-1.75419995e-02,  5.00195755e-03, -3.08399476e-08],
+       [-8.71065130e-03, -1.04196668e-02, -1.93597666e-07]]), array([[ 4.02713214e-12, -3.71749990e-13,  2.54155879e-17],
+       [-2.68357787e-02, -1.65587667e-02, -3.13140945e-07],
+       [ 2.41310292e-03, -5.55189949e-03, -3.26096925e-09],
+       [ 3.35615128e-02,  2.21897859e-02,  8.16863348e-07],
+       [ 1.88926100e-02, -1.27559409e-02,  2.63707716e-07],
+       [ 1.17238942e-02, -5.50537106e-03, -1.20022879e-07],
+       [-4.95744756e-02,  1.98756649e-02, -6.50030455e-07],
+       [-4.19962921e-03,  7.44241725e-03,  1.10343118e-09],
+       [-1.75421383e-02,  5.00147062e-03, -3.42666083e-08],
+       [-8.71041948e-03, -1.04198606e-02, -2.15108517e-07]]), array([[ 4.02723980e-12, -3.71513689e-13,  2.79571464e-17],
+       [-2.68350857e-02, -1.65598897e-02, -3.44455038e-07],
+       [ 2.41317030e-03, -5.55187020e-03, -3.58706617e-09],
+       [ 3.35603980e-02,  2.21914719e-02,  8.98549674e-07],
+       [ 1.88930284e-02, -1.27553211e-02,  2.90078486e-07],
+       [ 1.17240124e-02, -5.50511934e-03, -1.32025166e-07],
+       [-4.95757104e-02,  1.98725847e-02, -7.15033491e-07],
+       [-4.19974619e-03,  7.44235124e-03,  1.21377430e-09],
+       [-1.75422771e-02,  5.00098369e-03, -3.76932690e-08],
+       [-8.71018765e-03, -1.04200543e-02, -2.36619368e-07]]), array([[ 4.02734744e-12, -3.71277379e-13,  3.04987048e-17],
+       [-2.68343927e-02, -1.65610127e-02, -3.75769130e-07],
+       [ 2.41323768e-03, -5.55184091e-03, -3.91316309e-09],
+       [ 3.35592831e-02,  2.21931579e-02,  9.80235999e-07],
+       [ 1.88934469e-02, -1.27547012e-02,  3.16449256e-07],
+       [ 1.17241306e-02, -5.50486761e-03, -1.44027454e-07],
+       [-4.95769450e-02,  1.98695045e-02, -7.80036524e-07],
+       [-4.19986317e-03,  7.44228523e-03,  1.32411742e-09],
+       [-1.75424159e-02,  5.00049675e-03, -4.11199297e-08],
+       [-8.70995582e-03, -1.04202481e-02, -2.58130220e-07]]), array([[ 4.02745507e-12, -3.71041060e-13,  3.30402630e-17],
+       [-2.68336996e-02, -1.65621357e-02, -4.07083221e-07],
+       [ 2.41330506e-03, -5.55181162e-03, -4.23926001e-09],
+       [ 3.35581681e-02,  2.21948439e-02,  1.06192232e-06],
+       [ 1.88938654e-02, -1.27540814e-02,  3.42820026e-07],
+       [ 1.17242488e-02, -5.50461588e-03, -1.56029741e-07],
+       [-4.95781795e-02,  1.98664241e-02, -8.45039554e-07],
+       [-4.19998015e-03,  7.44221921e-03,  1.43446054e-09],
+       [-1.75425547e-02,  5.00000981e-03, -4.45465904e-08],
+       [-8.70972399e-03, -1.04204419e-02, -2.79641071e-07]]), array([[ 4.02756268e-12, -3.70804733e-13,  3.55818211e-17],
+       [-2.68330065e-02, -1.65632586e-02, -4.38397311e-07],
+       [ 2.41337244e-03, -5.55178233e-03, -4.56535693e-09],
+       [ 3.35570530e-02,  2.21965297e-02,  1.14360864e-06],
+       [ 1.88942838e-02, -1.27534615e-02,  3.69190796e-07],
+       [ 1.17243670e-02, -5.50436415e-03, -1.68032029e-07],
+       [-4.95794137e-02,  1.98633437e-02, -9.10042581e-07],
+       [-4.20009712e-03,  7.44215319e-03,  1.54480365e-09],
+       [-1.75426935e-02,  4.99952287e-03, -4.79732511e-08],
+       [-8.70949215e-03, -1.04206357e-02, -3.01151921e-07]]), array([[ 4.02767028e-12, -3.70568397e-13,  3.81233791e-17],
+       [-2.68323134e-02, -1.65643814e-02, -4.69711401e-07],
+       [ 2.41343982e-03, -5.55175304e-03, -4.89145385e-09],
+       [ 3.35559378e-02,  2.21982156e-02,  1.22529496e-06],
+       [ 1.88947022e-02, -1.27528416e-02,  3.95561565e-07],
+       [ 1.17244852e-02, -5.50411241e-03, -1.80034316e-07],
+       [-4.95806477e-02,  1.98602632e-02, -9.75045604e-07],
+       [-4.20021410e-03,  7.44208718e-03,  1.65514677e-09],
+       [-1.75428323e-02,  4.99903592e-03, -5.13999116e-08],
+       [-8.70926031e-03, -1.04208294e-02, -3.22662772e-07]]), array([[ 4.02777786e-12, -3.70332052e-13,  4.06649370e-17],
+       [-2.68316202e-02, -1.65655043e-02, -5.01025490e-07],
+       [ 2.41350721e-03, -5.55172375e-03, -5.21755077e-09],
+       [ 3.35548225e-02,  2.21999013e-02,  1.30698127e-06],
+       [ 1.88951206e-02, -1.27522217e-02,  4.21932333e-07],
+       [ 1.17246033e-02, -5.50386068e-03, -1.92036604e-07],
+       [-4.95818816e-02,  1.98571827e-02, -1.04004862e-06],
+       [-4.20033107e-03,  7.44202116e-03,  1.76548988e-09],
+       [-1.75429710e-02,  4.99854897e-03, -5.48265722e-08],
+       [-8.70902846e-03, -1.04210232e-02, -3.44173623e-07]]), array([[ 4.02788543e-12, -3.70095699e-13,  4.32064948e-17],
+       [-2.68309269e-02, -1.65666271e-02, -5.32339578e-07],
+       [ 2.41357459e-03, -5.55169445e-03, -5.54364769e-09],
+       [ 3.35537072e-02,  2.22015870e-02,  1.38866758e-06],
+       [ 1.88955390e-02, -1.27516017e-02,  4.48303101e-07],
+       [ 1.17247215e-02, -5.50360894e-03, -2.04038891e-07],
+       [-4.95831152e-02,  1.98541020e-02, -1.10505164e-06],
+       [-4.20044805e-03,  7.44195513e-03,  1.87583300e-09],
+       [-1.75431098e-02,  4.99806202e-03, -5.82532327e-08],
+       [-8.70879661e-03, -1.04212170e-02, -3.65684473e-07]]), array([[ 4.02799299e-12, -3.69859336e-13,  4.57480523e-17],
+       [-2.68302336e-02, -1.65677499e-02, -5.63653665e-07],
+       [ 2.41364197e-03, -5.55166516e-03, -5.86974461e-09],
+       [ 3.35525918e-02,  2.22032727e-02,  1.47035388e-06],
+       [ 1.88959573e-02, -1.27509818e-02,  4.74673869e-07],
+       [ 1.17248397e-02, -5.50335719e-03, -2.16041178e-07],
+       [-4.95843487e-02,  1.98510213e-02, -1.17005465e-06],
+       [-4.20056502e-03,  7.44188911e-03,  1.98617611e-09],
+       [-1.75432485e-02,  4.99757506e-03, -6.16798932e-08],
+       [-8.70856475e-03, -1.04214107e-02, -3.87195323e-07]]), array([[ 4.02810053e-12, -3.69622965e-13,  4.82896098e-17],
+       [-2.68295403e-02, -1.65688727e-02, -5.94967751e-07],
+       [ 2.41370935e-03, -5.55163587e-03, -6.19584153e-09],
+       [ 3.35514763e-02,  2.22049583e-02,  1.55204019e-06],
+       [ 1.88963756e-02, -1.27503619e-02,  5.01044636e-07],
+       [ 1.17249578e-02, -5.50310545e-03, -2.28043465e-07],
+       [-4.95855820e-02,  1.98479405e-02, -1.23505766e-06],
+       [-4.20068199e-03,  7.44182308e-03,  2.09651923e-09],
+       [-1.75433872e-02,  4.99708810e-03, -6.51065536e-08],
+       [-8.70833289e-03, -1.04216044e-02, -4.08706173e-07]]), array([[ 4.02820805e-12, -3.69386586e-13,  5.08311670e-17],
+       [-2.68288469e-02, -1.65699954e-02, -6.26281836e-07],
+       [ 2.41377673e-03, -5.55160657e-03, -6.52193844e-09],
+       [ 3.35503607e-02,  2.22066438e-02,  1.63372649e-06],
+       [ 1.88967939e-02, -1.27497419e-02,  5.27415403e-07],
+       [ 1.17250760e-02, -5.50285370e-03, -2.40045752e-07],
+       [-4.95868151e-02,  1.98448596e-02, -1.30006066e-06],
+       [-4.20079896e-03,  7.44175706e-03,  2.20686234e-09],
+       [-1.75435259e-02,  4.99660113e-03, -6.85332140e-08],
+       [-8.70810103e-03, -1.04217982e-02, -4.30217023e-07]]), array([[ 4.02831556e-12, -3.69150197e-13,  5.33727241e-17],
+       [-2.68281534e-02, -1.65711181e-02, -6.57595919e-07],
+       [ 2.41384410e-03, -5.55157727e-03, -6.84803536e-09],
+       [ 3.35492450e-02,  2.22083293e-02,  1.71541278e-06],
+       [ 1.88972122e-02, -1.27491219e-02,  5.53786169e-07],
+       [ 1.17251941e-02, -5.50260195e-03, -2.52048039e-07],
+       [-4.95880479e-02,  1.98417786e-02, -1.36506365e-06],
+       [-4.20091593e-03,  7.44169103e-03,  2.31720545e-09],
+       [-1.75436646e-02,  4.99611416e-03, -7.19598743e-08],
+       [-8.70786916e-03, -1.04219919e-02, -4.51727873e-07]]), array([[ 4.02842306e-12, -3.68913800e-13,  5.59142810e-17],
+       [-2.68274599e-02, -1.65722408e-02, -6.88910002e-07],
+       [ 2.41391148e-03, -5.55154798e-03, -7.17413227e-09],
+       [ 3.35481292e-02,  2.22100148e-02,  1.79709907e-06],
+       [ 1.88976305e-02, -1.27485019e-02,  5.80156934e-07],
+       [ 1.17253123e-02, -5.50235020e-03, -2.64050325e-07],
+       [-4.95892806e-02,  1.98386976e-02, -1.43006665e-06],
+       [-4.20103290e-03,  7.44162500e-03,  2.42754857e-09],
+       [-1.75438033e-02,  4.99562718e-03, -7.53865346e-08],
+       [-8.70763728e-03, -1.04221857e-02, -4.73238722e-07]]), array([[ 4.02853054e-12, -3.68677394e-13,  5.84558377e-17],
+       [-2.68267664e-02, -1.65733635e-02, -7.20224084e-07],
+       [ 2.41397886e-03, -5.55151868e-03, -7.50022919e-09],
+       [ 3.35470134e-02,  2.22117001e-02,  1.87878535e-06],
+       [ 1.88980487e-02, -1.27478819e-02,  6.06527699e-07],
+       [ 1.17254304e-02, -5.50209844e-03, -2.76052612e-07],
+       [-4.95905132e-02,  1.98356165e-02, -1.49506963e-06],
+       [-4.20114987e-03,  7.44155896e-03,  2.53789168e-09],
+       [-1.75439419e-02,  4.99514021e-03, -7.88131948e-08],
+       [-8.70740541e-03, -1.04223794e-02, -4.94749571e-07]]), array([[ 4.02863801e-12, -3.68440979e-13,  6.09973942e-17],
+       [-2.68260728e-02, -1.65744861e-02, -7.51538164e-07],
+       [ 2.41404624e-03, -5.55148938e-03, -7.82632610e-09],
+       [ 3.35458974e-02,  2.22133855e-02,  1.96047163e-06],
+       [ 1.88984670e-02, -1.27472619e-02,  6.32898463e-07],
+       [ 1.17255485e-02, -5.50184669e-03, -2.88054898e-07],
+       [-4.95917455e-02,  1.98325353e-02, -1.56007261e-06],
+       [-4.20126683e-03,  7.44149293e-03,  2.64823479e-09],
+       [-1.75440806e-02,  4.99465322e-03, -8.22398549e-08],
+       [-8.70717352e-03, -1.04225731e-02, -5.16260420e-07]]), array([[ 4.02874546e-12, -3.68204556e-13,  6.35389504e-17],
+       [-2.68253792e-02, -1.65756087e-02, -7.82852243e-07],
+       [ 2.41411362e-03, -5.55146008e-03, -8.15242301e-09],
+       [ 3.35447814e-02,  2.22150707e-02,  2.04215791e-06],
+       [ 1.88988852e-02, -1.27466419e-02,  6.59269226e-07],
+       [ 1.17256667e-02, -5.50159493e-03, -3.00057184e-07],
+       [-4.95929776e-02,  1.98294541e-02, -1.62507558e-06],
+       [-4.20138380e-03,  7.44142689e-03,  2.75857790e-09],
+       [-1.75442192e-02,  4.99416624e-03, -8.56665150e-08],
+       [-8.70694164e-03, -1.04227668e-02, -5.37771268e-07]]), array([[ 4.02885290e-12, -3.67968124e-13,  6.60805065e-17],
+       [-2.68246855e-02, -1.65767312e-02, -8.14166320e-07],
+       [ 2.41418099e-03, -5.55143078e-03, -8.47851992e-09],
+       [ 3.35436653e-02,  2.22167559e-02,  2.12384418e-06],
+       [ 1.88993033e-02, -1.27460218e-02,  6.85639989e-07],
+       [ 1.17257848e-02, -5.50134316e-03, -3.12059471e-07],
+       [-4.95942095e-02,  1.98263727e-02, -1.69007855e-06],
+       [-4.20150076e-03,  7.44136085e-03,  2.86892101e-09],
+       [-1.75443578e-02,  4.99367925e-03, -8.90931750e-08],
+       [-8.70670975e-03, -1.04229605e-02, -5.59282116e-07]]), array([[ 4.02896032e-12, -3.67731683e-13,  6.86220623e-17],
+       [-2.68239918e-02, -1.65778538e-02, -8.45480396e-07],
+       [ 2.41424837e-03, -5.55140148e-03, -8.80461683e-09],
+       [ 3.35425491e-02,  2.22184411e-02,  2.20553044e-06],
+       [ 1.88997215e-02, -1.27454017e-02,  7.12010751e-07],
+       [ 1.17259029e-02, -5.50109140e-03, -3.24061757e-07],
+       [-4.95954413e-02,  1.98232913e-02, -1.75508151e-06],
+       [-4.20161773e-03,  7.44129481e-03,  2.97926412e-09],
+       [-1.75444964e-02,  4.99319226e-03, -9.25198349e-08],
+       [-8.70647785e-03, -1.04231542e-02, -5.80792964e-07]]), array([[ 4.02906773e-12, -3.67495233e-13,  7.11636179e-17],
+       [-2.68232980e-02, -1.65789763e-02, -8.76794471e-07],
+       [ 2.41431575e-03, -5.55137218e-03, -9.13071373e-09],
+       [ 3.35414328e-02,  2.22201262e-02,  2.28721670e-06],
+       [ 1.89001396e-02, -1.27447817e-02,  7.38381512e-07],
+       [ 1.17260210e-02, -5.50083963e-03, -3.36064042e-07],
+       [-4.95966728e-02,  1.98202098e-02, -1.82008447e-06],
+       [-4.20173469e-03,  7.44122877e-03,  3.08960723e-09],
+       [-1.75446350e-02,  4.99270526e-03, -9.59464948e-08],
+       [-8.70624595e-03, -1.04233479e-02, -6.02303812e-07]]), array([[ 4.02917512e-12, -3.67258775e-13,  7.37051732e-17],
+       [-2.68226042e-02, -1.65800988e-02, -9.08108544e-07],
+       [ 2.41438312e-03, -5.55134288e-03, -9.45681064e-09],
+       [ 3.35403164e-02,  2.22218112e-02,  2.36890296e-06],
+       [ 1.89005578e-02, -1.27441616e-02,  7.64752273e-07],
+       [ 1.17261391e-02, -5.50058786e-03, -3.48066328e-07],
+       [-4.95979042e-02,  1.98171282e-02, -1.88508741e-06],
+       [-4.20185165e-03,  7.44116273e-03,  3.19995034e-09],
+       [-1.75447736e-02,  4.99221826e-03, -9.93731546e-08],
+       [-8.70601405e-03, -1.04235416e-02, -6.23814659e-07]]), array([[ 4.02928250e-12, -3.67022308e-13,  7.62467283e-17],
+       [-2.68219103e-02, -1.65812212e-02, -9.39422615e-07],
+       [ 2.41445050e-03, -5.55131357e-03, -9.78290754e-09],
+       [ 3.35392000e-02,  2.22234962e-02,  2.45058920e-06],
+       [ 1.89009759e-02, -1.27435415e-02,  7.91123032e-07],
+       [ 1.17262572e-02, -5.50033609e-03, -3.60068614e-07],
+       [-4.95991353e-02,  1.98140466e-02, -1.95009035e-06],
+       [-4.20196861e-03,  7.44109668e-03,  3.31029344e-09],
+       [-1.75449122e-02,  4.99173125e-03, -1.02799814e-07],
+       [-8.70578214e-03, -1.04237353e-02, -6.45325507e-07]]), array([[ 4.02938986e-12, -3.66785832e-13,  7.87882831e-17],
+       [-2.68212164e-02, -1.65823436e-02, -9.70736685e-07],
+       [ 2.41451787e-03, -5.55128427e-03, -1.01090044e-08],
+       [ 3.35380835e-02,  2.22251811e-02,  2.53227544e-06],
+       [ 1.89013939e-02, -1.27429213e-02,  8.17493791e-07],
+       [ 1.17263753e-02, -5.50008431e-03, -3.72070899e-07],
+       [-4.96003663e-02,  1.98109649e-02, -2.01509329e-06],
+       [-4.20208557e-03,  7.44103063e-03,  3.42063655e-09],
+       [-1.75450507e-02,  4.99124424e-03, -1.06226474e-07],
+       [-8.70555022e-03, -1.04239290e-02, -6.66836353e-07]]), array([[ 4.02949721e-12, -3.66549348e-13,  8.13298376e-17],
+       [-2.68205224e-02, -1.65834660e-02, -1.00205075e-06],
+       [ 2.41458525e-03, -5.55125496e-03, -1.04351013e-08],
+       [ 3.35369668e-02,  2.22268660e-02,  2.61396168e-06],
+       [ 1.89018120e-02, -1.27423012e-02,  8.43864549e-07],
+       [ 1.17264934e-02, -5.49983253e-03, -3.84073184e-07],
+       [-4.96015971e-02,  1.98078831e-02, -2.08009621e-06],
+       [-4.20220253e-03,  7.44096458e-03,  3.53097965e-09],
+       [-1.75451893e-02,  4.99075723e-03, -1.09653134e-07],
+       [-8.70531831e-03, -1.04241227e-02, -6.88347200e-07]]), array([[ 4.02960455e-12, -3.66312855e-13,  8.38713919e-17],
+       [-2.68198284e-02, -1.65845884e-02, -1.03336482e-06],
+       [ 2.41465262e-03, -5.55122566e-03, -1.07611982e-08],
+       [ 3.35358501e-02,  2.22285508e-02,  2.69564790e-06],
+       [ 1.89022300e-02, -1.27416811e-02,  8.70235305e-07],
+       [ 1.17266115e-02, -5.49958075e-03, -3.96075469e-07],
+       [-4.96028277e-02,  1.98048012e-02, -2.14509913e-06],
+       [-4.20231948e-03,  7.44089853e-03,  3.64132276e-09],
+       [-1.75453278e-02,  4.99027021e-03, -1.13079793e-07],
+       [-8.70508638e-03, -1.04243163e-02, -7.09858046e-07]]), array([[ 4.02971187e-12, -3.66076353e-13,  8.64129458e-17],
+       [-2.68191344e-02, -1.65857107e-02, -1.06467888e-06],
+       [ 2.41472000e-03, -5.55119635e-03, -1.10872951e-08],
+       [ 3.35347333e-02,  2.22302355e-02,  2.77733412e-06],
+       [ 1.89026481e-02, -1.27410609e-02,  8.96606061e-07],
+       [ 1.17267296e-02, -5.49932897e-03, -4.08077754e-07],
+       [-4.96040581e-02,  1.98017192e-02, -2.21010203e-06],
+       [-4.20243644e-03,  7.44083248e-03,  3.75166586e-09],
+       [-1.75454663e-02,  4.98978319e-03, -1.16506452e-07],
+       [-8.70485446e-03, -1.04245100e-02, -7.31368891e-07]]), array([[ 4.02981917e-12, -3.65839842e-13,  8.89544995e-17],
+       [-2.68184403e-02, -1.65868330e-02, -1.09599295e-06],
+       [ 2.41478737e-03, -5.55116704e-03, -1.14133920e-08],
+       [ 3.35336165e-02,  2.22319202e-02,  2.85902034e-06],
+       [ 1.89030661e-02, -1.27404407e-02,  9.22976816e-07],
+       [ 1.17268476e-02, -5.49907718e-03, -4.20080038e-07],
+       [-4.96052883e-02,  1.97986372e-02, -2.27510493e-06],
+       [-4.20255339e-03,  7.44076642e-03,  3.86200896e-09],
+       [-1.75456048e-02,  4.98929617e-03, -1.19933112e-07],
+       [-8.70462253e-03, -1.04247037e-02, -7.52879736e-07]]), array([[ 4.02992646e-12, -3.65603323e-13,  9.14960528e-17],
+       [-2.68177461e-02, -1.65879553e-02, -1.12730701e-06],
+       [ 2.41485475e-03, -5.55113773e-03, -1.17394889e-08],
+       [ 3.35324995e-02,  2.22336049e-02,  2.94070654e-06],
+       [ 1.89034840e-02, -1.27398206e-02,  9.49347570e-07],
+       [ 1.17269657e-02, -5.49882540e-03, -4.32082323e-07],
+       [-4.96065183e-02,  1.97955551e-02, -2.34010782e-06],
+       [-4.20267035e-03,  7.44070037e-03,  3.97235207e-09],
+       [-1.75457433e-02,  4.98880914e-03, -1.23359771e-07],
+       [-8.70439059e-03, -1.04248973e-02, -7.74390581e-07]]), array([[ 4.03003374e-12, -3.65366794e-13,  9.40376059e-17],
+       [-2.68170519e-02, -1.65890775e-02, -1.15862106e-06],
+       [ 2.41492212e-03, -5.55110842e-03, -1.20655858e-08],
+       [ 3.35313825e-02,  2.22352895e-02,  3.02239274e-06],
+       [ 1.89039020e-02, -1.27392004e-02,  9.75718323e-07],
+       [ 1.17270838e-02, -5.49857361e-03, -4.44084607e-07],
+       [-4.96077481e-02,  1.97924729e-02, -2.40511070e-06],
+       [-4.20278730e-03,  7.44063431e-03,  4.08269517e-09],
+       [-1.75458818e-02,  4.98832211e-03, -1.26786430e-07],
+       [-8.70415865e-03, -1.04250910e-02, -7.95901426e-07]]), array([[ 4.03014100e-12, -3.65130258e-13,  9.65791586e-17],
+       [-2.68163577e-02, -1.65901997e-02, -1.18993512e-06],
+       [ 2.41498949e-03, -5.55107911e-03, -1.23916827e-08],
+       [ 3.35302653e-02,  2.22369740e-02,  3.10407893e-06],
+       [ 1.89043199e-02, -1.27385801e-02,  1.00208907e-06],
+       [ 1.17272018e-02, -5.49832181e-03, -4.56086891e-07],
+       [-4.96089777e-02,  1.97893907e-02, -2.47011358e-06],
+       [-4.20290425e-03,  7.44056825e-03,  4.19303827e-09],
+       [-1.75460202e-02,  4.98783507e-03, -1.30213089e-07],
+       [-8.70392671e-03, -1.04252846e-02, -8.17412270e-07]]), array([[ 4.03024825e-12, -3.64893712e-13,  9.91207109e-17],
+       [-2.68156634e-02, -1.65913219e-02, -1.22124918e-06],
+       [ 2.41505686e-03, -5.55104980e-03, -1.27177796e-08],
+       [ 3.35291481e-02,  2.22386585e-02,  3.18576511e-06],
+       [ 1.89047379e-02, -1.27379599e-02,  1.02845983e-06],
+       [ 1.17273199e-02, -5.49807002e-03, -4.68089175e-07],
+       [-4.96102072e-02,  1.97863083e-02, -2.53511644e-06],
+       [-4.20302120e-03,  7.44050218e-03,  4.30338137e-09],
+       [-1.75461587e-02,  4.98734803e-03, -1.33639748e-07],
+       [-8.70369476e-03, -1.04254783e-02, -8.38923113e-07]]), array([[ 4.03035548e-12, -3.64657158e-13,  1.01662263e-16],
+       [-2.68149691e-02, -1.65924441e-02, -1.25256323e-06],
+       [ 2.41512424e-03, -5.55102049e-03, -1.30438765e-08],
+       [ 3.35280308e-02,  2.22403429e-02,  3.26745129e-06],
+       [ 1.89051558e-02, -1.27373397e-02,  1.05483057e-06],
+       [ 1.17274379e-02, -5.49781822e-03, -4.80091458e-07],
+       [-4.96114364e-02,  1.97832259e-02, -2.60011929e-06],
+       [-4.20313815e-03,  7.44043612e-03,  4.41372446e-09],
+       [-1.75462971e-02,  4.98686099e-03, -1.37066407e-07],
+       [-8.70346281e-03, -1.04256719e-02, -8.60433956e-07]]), array([[ 4.03046270e-12, -3.64420595e-13,  1.04203815e-16],
+       [-2.68142747e-02, -1.65935662e-02, -1.28387728e-06],
+       [ 2.41519161e-03, -5.55099118e-03, -1.33699734e-08],
+       [ 3.35269134e-02,  2.22420272e-02,  3.34913745e-06],
+       [ 1.89055736e-02, -1.27367194e-02,  1.08120132e-06],
+       [ 1.17275560e-02, -5.49756642e-03, -4.92093742e-07],
+       [-4.96126654e-02,  1.97801434e-02, -2.66512213e-06],
+       [-4.20325510e-03,  7.44037005e-03,  4.52406756e-09],
+       [-1.75464355e-02,  4.98637394e-03, -1.40493065e-07],
+       [-8.70323085e-03, -1.04258655e-02, -8.81944799e-07]]), array([[ 4.03056990e-12, -3.64184023e-13,  1.06745366e-16],
+       [-2.68135802e-02, -1.65946883e-02, -1.31519133e-06],
+       [ 2.41525898e-03, -5.55096187e-03, -1.36960703e-08],
+       [ 3.35257959e-02,  2.22437115e-02,  3.43082361e-06],
+       [ 1.89059915e-02, -1.27360991e-02,  1.10757207e-06],
+       [ 1.17276740e-02, -5.49731461e-03, -5.04096025e-07],
+       [-4.96138943e-02,  1.97770609e-02, -2.73012496e-06],
+       [-4.20337205e-03,  7.44030398e-03,  4.63441065e-09],
+       [-1.75465739e-02,  4.98588689e-03, -1.43919724e-07],
+       [-8.70299889e-03, -1.04260591e-02, -9.03455641e-07]]), array([[ 4.03067709e-12, -3.63947443e-13,  1.09286917e-16],
+       [-2.68128858e-02, -1.65958104e-02, -1.34650537e-06],
+       [ 2.41532635e-03, -5.55093255e-03, -1.40221672e-08],
+       [ 3.35246784e-02,  2.22453958e-02,  3.51250976e-06],
+       [ 1.89064093e-02, -1.27354789e-02,  1.13394282e-06],
+       [ 1.17277920e-02, -5.49706281e-03, -5.16098308e-07],
+       [-4.96151230e-02,  1.97739782e-02, -2.79512779e-06],
+       [-4.20348900e-03,  7.44023791e-03,  4.74475375e-09],
+       [-1.75467123e-02,  4.98539983e-03, -1.47346383e-07],
+       [-8.70276692e-03, -1.04262528e-02, -9.24966483e-07]]), array([[ 4.03078426e-12, -3.63710853e-13,  1.11828467e-16],
+       [-2.68121912e-02, -1.65969324e-02, -1.37781941e-06],
+       [ 2.41539372e-03, -5.55090324e-03, -1.43482640e-08],
+       [ 3.35235607e-02,  2.22470800e-02,  3.59419590e-06],
+       [ 1.89068271e-02, -1.27348586e-02,  1.16031356e-06],
+       [ 1.17279100e-02, -5.49681100e-03, -5.28100590e-07],
+       [-4.96163514e-02,  1.97708955e-02, -2.86013060e-06],
+       [-4.20360594e-03,  7.44017184e-03,  4.85509684e-09],
+       [-1.75468507e-02,  4.98491278e-03, -1.50773041e-07],
+       [-8.70253495e-03, -1.04264464e-02, -9.46477325e-07]]), array([[ 4.03089142e-12, -3.63474256e-13,  1.14370017e-16],
+       [-2.68114967e-02, -1.65980544e-02, -1.40913346e-06],
+       [ 2.41546109e-03, -5.55087392e-03, -1.46743609e-08],
+       [ 3.35224430e-02,  2.22487641e-02,  3.67588203e-06],
+       [ 1.89072449e-02, -1.27342383e-02,  1.18668430e-06],
+       [ 1.17280281e-02, -5.49655919e-03, -5.40102873e-07],
+       [-4.96175797e-02,  1.97678127e-02, -2.92513340e-06],
+       [-4.20372289e-03,  7.44010577e-03,  4.96543993e-09],
+       [-1.75469890e-02,  4.98442571e-03, -1.54199699e-07],
+       [-8.70230298e-03, -1.04266400e-02, -9.67988165e-07]]), array([[ 4.03099856e-12, -3.63237649e-13,  1.16911567e-16],
+       [-2.68108020e-02, -1.65991764e-02, -1.44044749e-06],
+       [ 2.41552846e-03, -5.55084460e-03, -1.50004578e-08],
+       [ 3.35213252e-02,  2.22504482e-02,  3.75756815e-06],
+       [ 1.89076627e-02, -1.27336179e-02,  1.21305505e-06],
+       [ 1.17281461e-02, -5.49630737e-03, -5.52105155e-07],
+       [-4.96188078e-02,  1.97647298e-02, -2.99013618e-06],
+       [-4.20383983e-03,  7.44003969e-03,  5.07578302e-09],
+       [-1.75471274e-02,  4.98393865e-03, -1.57626357e-07],
+       [-8.70207100e-03, -1.04268336e-02, -9.89499006e-07]]), array([[ 4.03110569e-12, -3.63001034e-13,  1.19453117e-16],
+       [-2.68101074e-02, -1.66002983e-02, -1.47176153e-06],
+       [ 2.41559583e-03, -5.55081529e-03, -1.53265547e-08],
+       [ 3.35202073e-02,  2.22521322e-02,  3.83925426e-06],
+       [ 1.89080805e-02, -1.27329976e-02,  1.23942579e-06],
+       [ 1.17282641e-02, -5.49605556e-03, -5.64107437e-07],
+       [-4.96200357e-02,  1.97616469e-02, -3.05513896e-06],
+       [-4.20395677e-03,  7.43997362e-03,  5.18612611e-09],
+       [-1.75472657e-02,  4.98345158e-03, -1.61053015e-07],
+       [-8.70183902e-03, -1.04270272e-02, -1.01100985e-06]]), array([[ 4.03121281e-12, -3.62764410e-13,  1.21994665e-16],
+       [-2.68094127e-02, -1.66014203e-02, -1.50307556e-06],
+       [ 2.41566320e-03, -5.55078597e-03, -1.56526515e-08],
+       [ 3.35190893e-02,  2.22538162e-02,  3.92094036e-06],
+       [ 1.89084982e-02, -1.27323772e-02,  1.26579653e-06],
+       [ 1.17283821e-02, -5.49580374e-03, -5.76109718e-07],
+       [-4.96212634e-02,  1.97585639e-02, -3.12014172e-06],
+       [-4.20407371e-03,  7.43990754e-03,  5.29646920e-09],
+       [-1.75474040e-02,  4.98296450e-03, -1.64479673e-07],
+       [-8.70160703e-03, -1.04272208e-02, -1.03252068e-06]]), array([[ 4.03131991e-12, -3.62527777e-13,  1.24536214e-16],
+       [-2.68087179e-02, -1.66025422e-02, -1.53438959e-06],
+       [ 2.41573057e-03, -5.55075665e-03, -1.59787484e-08],
+       [ 3.35179713e-02,  2.22555001e-02,  4.00262645e-06],
+       [ 1.89089159e-02, -1.27317569e-02,  1.29216727e-06],
+       [ 1.17285001e-02, -5.49555192e-03, -5.88111999e-07],
+       [-4.96224909e-02,  1.97554808e-02, -3.18514448e-06],
+       [-4.20419065e-03,  7.43984146e-03,  5.40681229e-09],
+       [-1.75475424e-02,  4.98247742e-03, -1.67906331e-07],
+       [-8.70137504e-03, -1.04274144e-02, -1.05403152e-06]]), array([[ 4.03142699e-12, -3.62291136e-13,  1.27077762e-16],
+       [-2.68080231e-02, -1.66036640e-02, -1.56570362e-06],
+       [ 2.41579794e-03, -5.55072733e-03, -1.63048453e-08],
+       [ 3.35168531e-02,  2.22571839e-02,  4.08431253e-06],
+       [ 1.89093336e-02, -1.27311365e-02,  1.31853800e-06],
+       [ 1.17286181e-02, -5.49530009e-03, -6.00114281e-07],
+       [-4.96237183e-02,  1.97523976e-02, -3.25014722e-06],
+       [-4.20430759e-03,  7.43977537e-03,  5.51715537e-09],
+       [-1.75476806e-02,  4.98199034e-03, -1.71332989e-07],
+       [-8.70114304e-03, -1.04276080e-02, -1.07554236e-06]]), array([[ 4.03153407e-12, -3.62054486e-13,  1.29619310e-16],
+       [-2.68073282e-02, -1.66047859e-02, -1.59701764e-06],
+       [ 2.41586531e-03, -5.55069801e-03, -1.66309421e-08],
+       [ 3.35157349e-02,  2.22588677e-02,  4.16599860e-06],
+       [ 1.89097513e-02, -1.27305161e-02,  1.34490874e-06],
+       [ 1.17287360e-02, -5.49504827e-03, -6.12116561e-07],
+       [-4.96249454e-02,  1.97493143e-02, -3.31514994e-06],
+       [-4.20442453e-03,  7.43970929e-03,  5.62749846e-09],
+       [-1.75478189e-02,  4.98150325e-03, -1.74759646e-07],
+       [-8.70091104e-03, -1.04278015e-02, -1.09705320e-06]]), array([[ 4.03164112e-12, -3.61817827e-13,  1.32160857e-16],
+       [-2.68066333e-02, -1.66059077e-02, -1.62833167e-06],
+       [ 2.41593267e-03, -5.55066869e-03, -1.69570390e-08],
+       [ 3.35146165e-02,  2.22605515e-02,  4.24768466e-06],
+       [ 1.89101689e-02, -1.27298957e-02,  1.37127947e-06],
+       [ 1.17288540e-02, -5.49479644e-03, -6.24118842e-07],
+       [-4.96261723e-02,  1.97462310e-02, -3.38015266e-06],
+       [-4.20454147e-03,  7.43964320e-03,  5.73784154e-09],
+       [-1.75479572e-02,  4.98101616e-03, -1.78186303e-07],
+       [-8.70067904e-03, -1.04279951e-02, -1.11856404e-06]]), array([[ 4.03174816e-12, -3.61581159e-13,  1.34702403e-16],
+       [-2.68059384e-02, -1.66070294e-02, -1.65964569e-06],
+       [ 2.41600004e-03, -5.55063937e-03, -1.72831358e-08],
+       [ 3.35134981e-02,  2.22622351e-02,  4.32937071e-06],
+       [ 1.89105865e-02, -1.27292753e-02,  1.39765020e-06],
+       [ 1.17289720e-02, -5.49454461e-03, -6.36121122e-07],
+       [-4.96273991e-02,  1.97431476e-02, -3.44515536e-06],
+       [-4.20465840e-03,  7.43957711e-03,  5.84818462e-09],
+       [-1.75480954e-02,  4.98052907e-03, -1.81612961e-07],
+       [-8.70044703e-03, -1.04281887e-02, -1.14007487e-06]]), array([[ 4.03185519e-12, -3.61344483e-13,  1.37243950e-16],
+       [-2.68052434e-02, -1.66081512e-02, -1.69095970e-06],
+       [ 2.41606741e-03, -5.55061004e-03, -1.76092327e-08],
+       [ 3.35123796e-02,  2.22639188e-02,  4.41105675e-06],
+       [ 1.89110042e-02, -1.27286548e-02,  1.42402093e-06],
+       [ 1.17290900e-02, -5.49429277e-03, -6.48123402e-07],
+       [-4.96286256e-02,  1.97400641e-02, -3.51015805e-06],
+       [-4.20477534e-03,  7.43951102e-03,  5.95852770e-09],
+       [-1.75482337e-02,  4.98004197e-03, -1.85039618e-07],
+       [-8.70021501e-03, -1.04283822e-02, -1.16158571e-06]]), array([[ 4.03196220e-12, -3.61107798e-13,  1.39785495e-16],
+       [-2.68045484e-02, -1.66092729e-02, -1.72227372e-06],
+       [ 2.41613478e-03, -5.55058072e-03, -1.79353296e-08],
+       [ 3.35112611e-02,  2.22656023e-02,  4.49274278e-06],
+       [ 1.89114217e-02, -1.27280344e-02,  1.45039166e-06],
+       [ 1.17292079e-02, -5.49404094e-03, -6.60125681e-07],
+       [-4.96298520e-02,  1.97369806e-02, -3.57516072e-06],
+       [-4.20489227e-03,  7.43944493e-03,  6.06887078e-09],
+       [-1.75483719e-02,  4.97955487e-03, -1.88466275e-07],
+       [-8.69998299e-03, -1.04285758e-02, -1.18309654e-06]]), array([[ 4.03206920e-12, -3.60871104e-13,  1.42327041e-16],
+       [-2.68038533e-02, -1.66103946e-02, -1.75358773e-06],
+       [ 2.41620214e-03, -5.55055139e-03, -1.82614264e-08],
+       [ 3.35101424e-02,  2.22672859e-02,  4.57442879e-06],
+       [ 1.89118393e-02, -1.27274139e-02,  1.47676239e-06],
+       [ 1.17293259e-02, -5.49378910e-03, -6.72127961e-07],
+       [-4.96310782e-02,  1.97338969e-02, -3.64016338e-06],
+       [-4.20500921e-03,  7.43937884e-03,  6.17921385e-09],
+       [-1.75485101e-02,  4.97906777e-03, -1.91892931e-07],
+       [-8.69975097e-03, -1.04287693e-02, -1.20460738e-06]]), array([[ 4.03217618e-12, -3.60634402e-13,  1.44868585e-16],
+       [-2.68031581e-02, -1.66115163e-02, -1.78490173e-06],
+       [ 2.41626951e-03, -5.55052207e-03, -1.85875233e-08],
+       [ 3.35090237e-02,  2.22689693e-02,  4.65611479e-06],
+       [ 1.89122569e-02, -1.27267934e-02,  1.50313312e-06],
+       [ 1.17294438e-02, -5.49353725e-03, -6.84130240e-07],
+       [-4.96323042e-02,  1.97308132e-02, -3.70516603e-06],
+       [-4.20512614e-03,  7.43931274e-03,  6.28955693e-09],
+       [-1.75486483e-02,  4.97858066e-03, -1.95319588e-07],
+       [-8.69951895e-03, -1.04289629e-02, -1.22611821e-06]]), array([[ 4.03228315e-12, -3.60397691e-13,  1.47410130e-16],
+       [-2.68024629e-02, -1.66126379e-02, -1.81621574e-06],
+       [ 2.41633687e-03, -5.55049274e-03, -1.89136201e-08],
+       [ 3.35079048e-02,  2.22706527e-02,  4.73780078e-06],
+       [ 1.89126744e-02, -1.27261730e-02,  1.52950384e-06],
+       [ 1.17295618e-02, -5.49328541e-03, -6.96132518e-07],
+       [-4.96335299e-02,  1.97277294e-02, -3.77016866e-06],
+       [-4.20524307e-03,  7.43924665e-03,  6.39990000e-09],
+       [-1.75487865e-02,  4.97809355e-03, -1.98746245e-07],
+       [-8.69928691e-03, -1.04291564e-02, -1.24762905e-06]]), array([[ 4.03239010e-12, -3.60160971e-13,  1.49951673e-16],
+       [-2.68017677e-02, -1.66137595e-02, -1.84752974e-06],
+       [ 2.41640424e-03, -5.55046341e-03, -1.92397169e-08],
+       [ 3.35067859e-02,  2.22723360e-02,  4.81948676e-06],
+       [ 1.89130919e-02, -1.27255525e-02,  1.55587456e-06],
+       [ 1.17296797e-02, -5.49303356e-03, -7.08134796e-07],
+       [-4.96347555e-02,  1.97246456e-02, -3.83517127e-06],
+       [-4.20536000e-03,  7.43918055e-03,  6.51024308e-09],
+       [-1.75489247e-02,  4.97760643e-03, -2.02172901e-07],
+       [-8.69905488e-03, -1.04293500e-02, -1.26913988e-06]]), array([[ 4.03249704e-12, -3.59924243e-13,  1.52493217e-16],
+       [-2.68010724e-02, -1.66148811e-02, -1.87884373e-06],
+       [ 2.41647161e-03, -5.55043409e-03, -1.95658138e-08],
+       [ 3.35056669e-02,  2.22740193e-02,  4.90117273e-06],
+       [ 1.89135094e-02, -1.27249319e-02,  1.58224529e-06],
+       [ 1.17297977e-02, -5.49278171e-03, -7.20137074e-07],
+       [-4.96359809e-02,  1.97215616e-02, -3.90017388e-06],
+       [-4.20547693e-03,  7.43911445e-03,  6.62058615e-09],
+       [-1.75490628e-02,  4.97711931e-03, -2.05599557e-07],
+       [-8.69882284e-03, -1.04295435e-02, -1.29065071e-06]]), array([[ 4.03260397e-12, -3.59687505e-13,  1.55034759e-16],
+       [-2.68003771e-02, -1.66160026e-02, -1.91015773e-06],
+       [ 2.41653897e-03, -5.55040476e-03, -1.98919106e-08],
+       [ 3.35045478e-02,  2.22757026e-02,  4.98285868e-06],
+       [ 1.89139269e-02, -1.27243114e-02,  1.60861600e-06],
+       [ 1.17299156e-02, -5.49252986e-03, -7.32139352e-07],
+       [-4.96372061e-02,  1.97184776e-02, -3.96517646e-06],
+       [-4.20559386e-03,  7.43904834e-03,  6.73092921e-09],
+       [-1.75492010e-02,  4.97663218e-03, -2.09026213e-07],
+       [-8.69859079e-03, -1.04297370e-02, -1.31216154e-06]])]
+ velocity = <class 'list'> with length, 62 with elements, [array([[-0.00000000e+00,  0.00000000e+00,  0.00000000e+00],
+       [-2.37398917e+04,  3.85098399e+04,  1.07352927e+03],
+       [-2.74646818e+04, -1.19334117e+04,  1.32907663e+02],
+       [ 2.64973399e+04, -4.01203810e+04, -1.94308271e+03],
+       [-2.33537403e+04, -3.45643753e+04, -1.47086224e+03],
+       [-1.54010758e+04, -3.27788743e+04,  1.56307243e+03],
+       [ 1.92352426e+04,  4.78909470e+04,  1.01093693e+03],
+       [ 2.84295755e+04,  1.60364340e+04, -2.68141554e+01],
+       [ 1.08281243e+04,  3.79385786e+04,  2.67005453e+02],
+       [-2.81127974e+04,  2.35113505e+04,  2.60907568e+03]]), array([[ 2.41566520e-10, -2.24396647e-11,  7.62467682e-17],
+       [-2.37415023e+04,  3.85088470e+04,  1.07352927e+03],
+       [-2.74645370e+04, -1.19337448e+04,  1.32907663e+02],
+       [ 2.64993542e+04, -4.01190505e+04, -1.94308271e+03],
+       [-2.33526070e+04, -3.45651410e+04, -1.47086224e+03],
+       [-1.54003724e+04, -3.27792048e+04,  1.56307243e+03],
+       [ 1.92322688e+04,  4.78921413e+04,  1.01093693e+03],
+       [ 2.84293236e+04,  1.60368806e+04, -2.68141554e+01],
+       [ 1.08270718e+04,  3.79388790e+04,  2.67005453e+02],
+       [-2.81133202e+04,  2.35107254e+04,  2.60907568e+03]]), array([[ 4.83139507e-10, -4.48651564e-11,  3.04987073e-16],
+       [-2.37431128e+04,  3.85078541e+04,  1.07352927e+03],
+       [-2.74643923e+04, -1.19340780e+04,  1.32907663e+02],
+       [ 2.65013684e+04, -4.01177200e+04, -1.94308270e+03],
+       [-2.33514737e+04, -3.45659067e+04, -1.47086224e+03],
+       [-1.53996690e+04, -3.27795352e+04,  1.56307243e+03],
+       [ 1.92292950e+04,  4.78933354e+04,  1.01093692e+03],
+       [ 2.84290717e+04,  1.60373272e+04, -2.68141554e+01],
+       [ 1.08260193e+04,  3.79391793e+04,  2.67005452e+02],
+       [-2.81138429e+04,  2.35101003e+04,  2.60907568e+03]]), array([[ 7.24718962e-10, -6.72764744e-11,  6.86220913e-16],
+       [-2.37447232e+04,  3.85068610e+04,  1.07352926e+03],
+       [-2.74642475e+04, -1.19344111e+04,  1.32907663e+02],
+       [ 2.65033826e+04, -4.01163894e+04, -1.94308269e+03],
+       [-2.33503403e+04, -3.45666723e+04, -1.47086223e+03],
+       [-1.53989657e+04, -3.27798657e+04,  1.56307243e+03],
+       [ 1.92263211e+04,  4.78945293e+04,  1.01093691e+03],
+       [ 2.84288197e+04,  1.60377737e+04, -2.68141554e+01],
+       [ 1.08249669e+04,  3.79394796e+04,  2.67005452e+02],
+       [-2.81143657e+04,  2.35094752e+04,  2.60907568e+03]]), array([[ 9.66304883e-10, -8.96736184e-11,  1.21994829e-15],
+       [-2.37463336e+04,  3.85058679e+04,  1.07352925e+03],
+       [-2.74641028e+04, -1.19347442e+04,  1.32907663e+02],
+       [ 2.65053968e+04, -4.01150587e+04, -1.94308267e+03],
+       [-2.33492069e+04, -3.45674379e+04, -1.47086223e+03],
+       [-1.53982623e+04, -3.27801961e+04,  1.56307242e+03],
+       [ 1.92233471e+04,  4.78957231e+04,  1.01093690e+03],
+       [ 2.84285678e+04,  1.60382203e+04, -2.68141553e+01],
+       [ 1.08239144e+04,  3.79397799e+04,  2.67005451e+02],
+       [-2.81148884e+04,  2.35088501e+04,  2.60907567e+03]]), array([[ 1.20789727e-09, -1.12056588e-10,  1.90616919e-15],
+       [-2.37479440e+04,  3.85048748e+04,  1.07352925e+03],
+       [-2.74639580e+04, -1.19350773e+04,  1.32907663e+02],
+       [ 2.65074108e+04, -4.01137278e+04, -1.94308265e+03],
+       [-2.33480735e+04, -3.45682035e+04, -1.47086222e+03],
+       [-1.53975589e+04, -3.27805265e+04,  1.56307242e+03],
+       [ 1.92203730e+04,  4.78969166e+04,  1.01093688e+03],
+       [ 2.84283159e+04,  1.60386669e+04, -2.68141553e+01],
+       [ 1.08228619e+04,  3.79400801e+04,  2.67005450e+02],
+       [-2.81154111e+04,  2.35082249e+04,  2.60907567e+03]]), array([[ 1.44949612e-09, -1.34425382e-10,  2.74488363e-15],
+       [-2.37495543e+04,  3.85038816e+04,  1.07352924e+03],
+       [-2.74638132e+04, -1.19354104e+04,  1.32907662e+02],
+       [ 2.65094248e+04, -4.01123969e+04, -1.94308262e+03],
+       [-2.33469400e+04, -3.45689690e+04, -1.47086221e+03],
+       [-1.53968555e+04, -3.27808569e+04,  1.56307242e+03],
+       [ 1.92173989e+04,  4.78981100e+04,  1.01093686e+03],
+       [ 2.84280639e+04,  1.60391134e+04, -2.68141553e+01],
+       [ 1.08218094e+04,  3.79403804e+04,  2.67005449e+02],
+       [-2.81159338e+04,  2.35075998e+04,  2.60907566e+03]]), array([[ 1.69110143e-09, -1.56780000e-10,  3.73609159e-15],
+       [-2.37511646e+04,  3.85028883e+04,  1.07352922e+03],
+       [-2.74636684e+04, -1.19357436e+04,  1.32907662e+02],
+       [ 2.65114387e+04, -4.01110659e+04, -1.94308259e+03],
+       [-2.33458066e+04, -3.45697345e+04, -1.47086220e+03],
+       [-1.53961521e+04, -3.27811873e+04,  1.56307241e+03],
+       [ 1.92144247e+04,  4.78993032e+04,  1.01093683e+03],
+       [ 2.84278120e+04,  1.60395600e+04, -2.68141552e+01],
+       [ 1.08207569e+04,  3.79406805e+04,  2.67005448e+02],
+       [-2.81164564e+04,  2.35069746e+04,  2.60907565e+03]]), array([[ 1.93271321e-09, -1.79120442e-10,  4.87979308e-15],
+       [-2.37527749e+04,  3.85018949e+04,  1.07352921e+03],
+       [-2.74635237e+04, -1.19360767e+04,  1.32907662e+02],
+       [ 2.65134526e+04, -4.01097347e+04, -1.94308256e+03],
+       [-2.33446731e+04, -3.45704999e+04, -1.47086219e+03],
+       [-1.53954486e+04, -3.27815176e+04,  1.56307241e+03],
+       [ 1.92114504e+04,  4.79004962e+04,  1.01093680e+03],
+       [ 2.84275600e+04,  1.60400066e+04, -2.68141552e+01],
+       [ 1.08197044e+04,  3.79409807e+04,  2.67005446e+02],
+       [-2.81169791e+04,  2.35063495e+04,  2.60907564e+03]]), array([[ 2.17433144e-09, -2.01446708e-10,  6.17598808e-15],
+       [-2.37543851e+04,  3.85009015e+04,  1.07352919e+03],
+       [-2.74633789e+04, -1.19364098e+04,  1.32907662e+02],
+       [ 2.65154664e+04, -4.01084035e+04, -1.94308251e+03],
+       [-2.33435396e+04, -3.45712654e+04, -1.47086218e+03],
+       [-1.53947452e+04, -3.27818480e+04,  1.56307240e+03],
+       [ 1.92084760e+04,  4.79016890e+04,  1.01093677e+03],
+       [ 2.84273080e+04,  1.60404531e+04, -2.68141551e+01],
+       [ 1.08186519e+04,  3.79412808e+04,  2.67005445e+02],
+       [-2.81175018e+04,  2.35057243e+04,  2.60907563e+03]]), array([[ 2.41595614e-09, -2.23758796e-10,  7.62467660e-15],
+       [-2.37559953e+04,  3.84999080e+04,  1.07352918e+03],
+       [-2.74632341e+04, -1.19367429e+04,  1.32907662e+02],
+       [ 2.65174801e+04, -4.01070721e+04, -1.94308247e+03],
+       [-2.33424060e+04, -3.45720307e+04, -1.47086216e+03],
+       [-1.53940418e+04, -3.27821783e+04,  1.56307239e+03],
+       [ 1.92055016e+04,  4.79028816e+04,  1.01093673e+03],
+       [ 2.84270561e+04,  1.60408997e+04, -2.68141551e+01],
+       [ 1.08175994e+04,  3.79415809e+04,  2.67005443e+02],
+       [-2.81180244e+04,  2.35050991e+04,  2.60907562e+03]]), array([[ 2.65758730e-09, -2.46056706e-10,  9.22585864e-15],
+       [-2.37576054e+04,  3.84989144e+04,  1.07352916e+03],
+       [-2.74630893e+04, -1.19370760e+04,  1.32907662e+02],
+       [ 2.65194938e+04, -4.01057407e+04, -1.94308242e+03],
+       [-2.33412724e+04, -3.45727961e+04, -1.47086214e+03],
+       [-1.53933384e+04, -3.27825086e+04,  1.56307238e+03],
+       [ 1.92025271e+04,  4.79040741e+04,  1.01093669e+03],
+       [ 2.84268041e+04,  1.60413462e+04, -2.68141550e+01],
+       [ 1.08165469e+04,  3.79418810e+04,  2.67005440e+02],
+       [-2.81185470e+04,  2.35044739e+04,  2.60907560e+03]]), array([[ 2.89922492e-09, -2.68340438e-10,  1.09795342e-14],
+       [-2.37592155e+04,  3.84979208e+04,  1.07352913e+03],
+       [-2.74629445e+04, -1.19374091e+04,  1.32907661e+02],
+       [ 2.65215074e+04, -4.01044092e+04, -1.94308236e+03],
+       [-2.33401389e+04, -3.45735614e+04, -1.47086213e+03],
+       [-1.53926349e+04, -3.27828389e+04,  1.56307238e+03],
+       [ 1.91995525e+04,  4.79052663e+04,  1.01093665e+03],
+       [ 2.84265521e+04,  1.60417927e+04, -2.68141549e+01],
+       [ 1.08154943e+04,  3.79421811e+04,  2.67005438e+02],
+       [-2.81190696e+04,  2.35038487e+04,  2.60907559e+03]]), array([[ 3.14086899e-09, -2.90609991e-10,  1.28857032e-14],
+       [-2.37608255e+04,  3.84969271e+04,  1.07352911e+03],
+       [-2.74627997e+04, -1.19377423e+04,  1.32907661e+02],
+       [ 2.65235209e+04, -4.01030775e+04, -1.94308230e+03],
+       [-2.33390052e+04, -3.45743266e+04, -1.47086211e+03],
+       [-1.53919315e+04, -3.27831692e+04,  1.56307237e+03],
+       [ 1.91965779e+04,  4.79064584e+04,  1.01093660e+03],
+       [ 2.84263001e+04,  1.60422393e+04, -2.68141548e+01],
+       [ 1.08144418e+04,  3.79424811e+04,  2.67005435e+02],
+       [-2.81195922e+04,  2.35032235e+04,  2.60907557e+03]]), array([[ 3.38251953e-09, -3.12865365e-10,  1.49443657e-14],
+       [-2.37624355e+04,  3.84959334e+04,  1.07352909e+03],
+       [-2.74626549e+04, -1.19380754e+04,  1.32907661e+02],
+       [ 2.65255343e+04, -4.01017458e+04, -1.94308223e+03],
+       [-2.33378716e+04, -3.45750919e+04, -1.47086209e+03],
+       [-1.53912280e+04, -3.27834995e+04,  1.56307236e+03],
+       [ 1.91936031e+04,  4.79076503e+04,  1.01093654e+03],
+       [ 2.84260481e+04,  1.60426858e+04, -2.68141547e+01],
+       [ 1.08133892e+04,  3.79427811e+04,  2.67005433e+02],
+       [-2.81201148e+04,  2.35025983e+04,  2.60907556e+03]]), array([[ 3.62417651e-09, -3.35106559e-10,  1.71555217e-14],
+       [-2.37640455e+04,  3.84949395e+04,  1.07352906e+03],
+       [-2.74625101e+04, -1.19384085e+04,  1.32907661e+02],
+       [ 2.65275477e+04, -4.01004139e+04, -1.94308216e+03],
+       [-2.33367379e+04, -3.45758570e+04, -1.47086206e+03],
+       [-1.53905245e+04, -3.27838297e+04,  1.56307235e+03],
+       [ 1.91906283e+04,  4.79088420e+04,  1.01093649e+03],
+       [ 2.84257961e+04,  1.60431323e+04, -2.68141546e+01],
+       [ 1.08123366e+04,  3.79430810e+04,  2.67005430e+02],
+       [-2.81206373e+04,  2.35019730e+04,  2.60907554e+03]]), array([[ 3.86583996e-09, -3.57333573e-10,  1.95191712e-14],
+       [-2.37656554e+04,  3.84939456e+04,  1.07352903e+03],
+       [-2.74623653e+04, -1.19387416e+04,  1.32907660e+02],
+       [ 2.65295611e+04, -4.00990820e+04, -1.94308208e+03],
+       [-2.33356042e+04, -3.45766222e+04, -1.47086204e+03],
+       [-1.53898211e+04, -3.27841600e+04,  1.56307234e+03],
+       [ 1.91876535e+04,  4.79100335e+04,  1.01093643e+03],
+       [ 2.84255441e+04,  1.60435789e+04, -2.68141545e+01],
+       [ 1.08112841e+04,  3.79433809e+04,  2.67005427e+02],
+       [-2.81211599e+04,  2.35013478e+04,  2.60907552e+03]]), array([[ 4.10750986e-09, -3.79546405e-10,  2.20353142e-14],
+       [-2.37672653e+04,  3.84929517e+04,  1.07352900e+03],
+       [-2.74622205e+04, -1.19390747e+04,  1.32907660e+02],
+       [ 2.65315743e+04, -4.00977500e+04, -1.94308200e+03],
+       [-2.33344705e+04, -3.45773873e+04, -1.47086201e+03],
+       [-1.53891176e+04, -3.27844902e+04,  1.56307232e+03],
+       [ 1.91846785e+04,  4.79112249e+04,  1.01093636e+03],
+       [ 2.84252921e+04,  1.60440254e+04, -2.68141544e+01],
+       [ 1.08102315e+04,  3.79436808e+04,  2.67005423e+02],
+       [-2.81216824e+04,  2.35007225e+04,  2.60907550e+03]]), array([[ 4.34918621e-09, -4.01745056e-10,  2.47039506e-14],
+       [-2.37688751e+04,  3.84919576e+04,  1.07352896e+03],
+       [-2.74620757e+04, -1.19394078e+04,  1.32907660e+02],
+       [ 2.65335875e+04, -4.00964178e+04, -1.94308192e+03],
+       [-2.33333368e+04, -3.45781524e+04, -1.47086198e+03],
+       [-1.53884141e+04, -3.27848204e+04,  1.56307231e+03],
+       [ 1.91817035e+04,  4.79124160e+04,  1.01093630e+03],
+       [ 2.84250400e+04,  1.60444719e+04, -2.68141543e+01],
+       [ 1.08091789e+04,  3.79439807e+04,  2.67005420e+02],
+       [-2.81222049e+04,  2.35000972e+04,  2.60907547e+03]]), array([[ 4.59086902e-09, -4.23929525e-10,  2.75250804e-14],
+       [-2.37704849e+04,  3.84909635e+04,  1.07352893e+03],
+       [-2.74619309e+04, -1.19397409e+04,  1.32907659e+02],
+       [ 2.65356006e+04, -4.00950856e+04, -1.94308183e+03],
+       [-2.33322030e+04, -3.45789174e+04, -1.47086195e+03],
+       [-1.53877106e+04, -3.27851506e+04,  1.56307230e+03],
+       [ 1.91787284e+04,  4.79136070e+04,  1.01093622e+03],
+       [ 2.84247880e+04,  1.60449184e+04, -2.68141542e+01],
+       [ 1.08081263e+04,  3.79442806e+04,  2.67005416e+02],
+       [-2.81227274e+04,  2.34994719e+04,  2.60907545e+03]]), array([[ 4.83255827e-09, -4.46099812e-10,  3.04987038e-14],
+       [-2.37720946e+04,  3.84899694e+04,  1.07352889e+03],
+       [-2.74617860e+04, -1.19400740e+04,  1.32907659e+02],
+       [ 2.65376137e+04, -4.00937532e+04, -1.94308173e+03],
+       [-2.33310692e+04, -3.45796824e+04, -1.47086192e+03],
+       [-1.53870071e+04, -3.27854808e+04,  1.56307228e+03],
+       [ 1.91757532e+04,  4.79147978e+04,  1.01093615e+03],
+       [ 2.84245359e+04,  1.60453649e+04, -2.68141541e+01],
+       [ 1.08070737e+04,  3.79445804e+04,  2.67005412e+02],
+       [-2.81232499e+04,  2.34988466e+04,  2.60907542e+03]]), array([[ 5.07425398e-09, -4.68255915e-10,  3.36248205e-14],
+       [-2.37737044e+04,  3.84889751e+04,  1.07352886e+03],
+       [-2.74616412e+04, -1.19404071e+04,  1.32907658e+02],
+       [ 2.65396267e+04, -4.00924208e+04, -1.94308163e+03],
+       [-2.33299354e+04, -3.45804474e+04, -1.47086189e+03],
+       [-1.53863036e+04, -3.27858109e+04,  1.56307227e+03],
+       [ 1.91727780e+04,  4.79159884e+04,  1.01093607e+03],
+       [ 2.84242839e+04,  1.60458114e+04, -2.68141539e+01],
+       [ 1.08060211e+04,  3.79448801e+04,  2.67005408e+02],
+       [-2.81237724e+04,  2.34982213e+04,  2.60907540e+03]]), array([[ 5.31595614e-09, -4.90397835e-10,  3.69034306e-14],
+       [-2.37753140e+04,  3.84879808e+04,  1.07352881e+03],
+       [-2.74614964e+04, -1.19407402e+04,  1.32907658e+02],
+       [ 2.65416396e+04, -4.00910882e+04, -1.94308153e+03],
+       [-2.33288015e+04, -3.45812123e+04, -1.47086186e+03],
+       [-1.53856001e+04, -3.27861411e+04,  1.56307225e+03],
+       [ 1.91698026e+04,  4.79171788e+04,  1.01093598e+03],
+       [ 2.84240318e+04,  1.60462579e+04, -2.68141538e+01],
+       [ 1.08049684e+04,  3.79451799e+04,  2.67005403e+02],
+       [-2.81242949e+04,  2.34975960e+04,  2.60907537e+03]]), array([[ 5.55766475e-09, -5.12525571e-10,  4.03345342e-14],
+       [-2.37769236e+04,  3.84869865e+04,  1.07352877e+03],
+       [-2.74613515e+04, -1.19410733e+04,  1.32907658e+02],
+       [ 2.65436524e+04, -4.00897556e+04, -1.94308142e+03],
+       [-2.33276677e+04, -3.45819772e+04, -1.47086182e+03],
+       [-1.53848966e+04, -3.27864712e+04,  1.56307224e+03],
+       [ 1.91668273e+04,  4.79183690e+04,  1.01093590e+03],
+       [ 2.84237798e+04,  1.60467044e+04, -2.68141536e+01],
+       [ 1.08039158e+04,  3.79454796e+04,  2.67005398e+02],
+       [-2.81248173e+04,  2.34969707e+04,  2.60907534e+03]]), array([[ 5.79937980e-09, -5.34639122e-10,  4.39181312e-14],
+       [-2.37785332e+04,  3.84859920e+04,  1.07352873e+03],
+       [-2.74612067e+04, -1.19414063e+04,  1.32907657e+02],
+       [ 2.65456652e+04, -4.00884228e+04, -1.94308130e+03],
+       [-2.33265338e+04, -3.45827421e+04, -1.47086178e+03],
+       [-1.53841930e+04, -3.27868013e+04,  1.56307222e+03],
+       [ 1.91638518e+04,  4.79195591e+04,  1.01093580e+03],
+       [ 2.84235277e+04,  1.60471509e+04, -2.68141535e+01],
+       [ 1.08028632e+04,  3.79457793e+04,  2.67005394e+02],
+       [-2.81253398e+04,  2.34963453e+04,  2.60907531e+03]]), array([[ 6.04110131e-09, -5.56738488e-10,  4.76542215e-14],
+       [-2.37801428e+04,  3.84849975e+04,  1.07352868e+03],
+       [-2.74610619e+04, -1.19417394e+04,  1.32907657e+02],
+       [ 2.65476779e+04, -4.00870900e+04, -1.94308118e+03],
+       [-2.33253998e+04, -3.45835069e+04, -1.47086175e+03],
+       [-1.53834895e+04, -3.27871314e+04,  1.56307220e+03],
+       [ 1.91608762e+04,  4.79207489e+04,  1.01093571e+03],
+       [ 2.84232756e+04,  1.60475974e+04, -2.68141533e+01],
+       [ 1.08018105e+04,  3.79460790e+04,  2.67005389e+02],
+       [-2.81258622e+04,  2.34957199e+04,  2.60907528e+03]]), array([[ 6.28282926e-09, -5.78823669e-10,  5.15428052e-14],
+       [-2.37817523e+04,  3.84840030e+04,  1.07352863e+03],
+       [-2.74609170e+04, -1.19420725e+04,  1.32907656e+02],
+       [ 2.65496906e+04, -4.00857570e+04, -1.94308106e+03],
+       [-2.33242659e+04, -3.45842717e+04, -1.47086171e+03],
+       [-1.53827859e+04, -3.27874615e+04,  1.56307219e+03],
+       [ 1.91579006e+04,  4.79219386e+04,  1.01093561e+03],
+       [ 2.84230235e+04,  1.60480439e+04, -2.68141532e+01],
+       [ 1.08007579e+04,  3.79463786e+04,  2.67005383e+02],
+       [-2.81263846e+04,  2.34950946e+04,  2.60907525e+03]]), array([[ 6.52456366e-09, -6.00894663e-10,  5.55838823e-14],
+       [-2.37833617e+04,  3.84830083e+04,  1.07352858e+03],
+       [-2.74607722e+04, -1.19424056e+04,  1.32907656e+02],
+       [ 2.65517032e+04, -4.00844240e+04, -1.94308093e+03],
+       [-2.33231319e+04, -3.45850364e+04, -1.47086166e+03],
+       [-1.53820824e+04, -3.27877916e+04,  1.56307217e+03],
+       [ 1.91549249e+04,  4.79231281e+04,  1.01093551e+03],
+       [ 2.84227714e+04,  1.60484903e+04, -2.68141530e+01],
+       [ 1.07997052e+04,  3.79466782e+04,  2.67005378e+02],
+       [-2.81269070e+04,  2.34944692e+04,  2.60907521e+03]]), array([[ 6.76630450e-09, -6.22951470e-10,  5.97774527e-14],
+       [-2.37849712e+04,  3.84820136e+04,  1.07352853e+03],
+       [-2.74606273e+04, -1.19427387e+04,  1.32907655e+02],
+       [ 2.65537157e+04, -4.00830908e+04, -1.94308079e+03],
+       [-2.33219979e+04, -3.45858011e+04, -1.47086162e+03],
+       [-1.53813788e+04, -3.27881216e+04,  1.56307215e+03],
+       [ 1.91519492e+04,  4.79243174e+04,  1.01093540e+03],
+       [ 2.84225193e+04,  1.60489368e+04, -2.68141528e+01],
+       [ 1.07986525e+04,  3.79469778e+04,  2.67005372e+02],
+       [-2.81274294e+04,  2.34938438e+04,  2.60907518e+03]]), array([[ 7.00805178e-09, -6.44994091e-10,  6.41235164e-14],
+       [-2.37865805e+04,  3.84810188e+04,  1.07352848e+03],
+       [-2.74604824e+04, -1.19430718e+04,  1.32907655e+02],
+       [ 2.65557282e+04, -4.00817575e+04, -1.94308065e+03],
+       [-2.33208639e+04, -3.45865658e+04, -1.47086158e+03],
+       [-1.53806753e+04, -3.27884517e+04,  1.56307213e+03],
+       [ 1.91489733e+04,  4.79255065e+04,  1.01093529e+03],
+       [ 2.84222672e+04,  1.60493833e+04, -2.68141526e+01],
+       [ 1.07975998e+04,  3.79472773e+04,  2.67005366e+02],
+       [-2.81279518e+04,  2.34932184e+04,  2.60907514e+03]]), array([[ 7.24980551e-09, -6.67022523e-10,  6.86220734e-14],
+       [-2.37881899e+04,  3.84800240e+04,  1.07352842e+03],
+       [-2.74603376e+04, -1.19434048e+04,  1.32907654e+02],
+       [ 2.65577405e+04, -4.00804242e+04, -1.94308051e+03],
+       [-2.33197299e+04, -3.45873304e+04, -1.47086153e+03],
+       [-1.53799717e+04, -3.27887817e+04,  1.56307210e+03],
+       [ 1.91459974e+04,  4.79266954e+04,  1.01093517e+03],
+       [ 2.84220151e+04,  1.60498298e+04, -2.68141524e+01],
+       [ 1.07965472e+04,  3.79475769e+04,  2.67005360e+02],
+       [-2.81284741e+04,  2.34925930e+04,  2.60907510e+03]]), array([[ 7.49156568e-09, -6.89036767e-10,  7.32731238e-14],
+       [-2.37897992e+04,  3.84790291e+04,  1.07352837e+03],
+       [-2.74601927e+04, -1.19437379e+04,  1.32907653e+02],
+       [ 2.65597529e+04, -4.00790907e+04, -1.94308036e+03],
+       [-2.33185958e+04, -3.45880950e+04, -1.47086148e+03],
+       [-1.53792681e+04, -3.27891117e+04,  1.56307208e+03],
+       [ 1.91430214e+04,  4.79278842e+04,  1.01093505e+03],
+       [ 2.84217630e+04,  1.60502762e+04, -2.68141522e+01],
+       [ 1.07954945e+04,  3.79478764e+04,  2.67005354e+02],
+       [-2.81289964e+04,  2.34919675e+04,  2.60907506e+03]]), array([[ 7.73333229e-09, -7.11036823e-10,  7.80766674e-14],
+       [-2.37914084e+04,  3.84780341e+04,  1.07352831e+03],
+       [-2.74600478e+04, -1.19440710e+04,  1.32907653e+02],
+       [ 2.65617651e+04, -4.00777572e+04, -1.94308020e+03],
+       [-2.33174617e+04, -3.45888596e+04, -1.47086143e+03],
+       [-1.53785645e+04, -3.27894417e+04,  1.56307206e+03],
+       [ 1.91400454e+04,  4.79290728e+04,  1.01093493e+03],
+       [ 2.84215109e+04,  1.60507227e+04, -2.68141520e+01],
+       [ 1.07944417e+04,  3.79481758e+04,  2.67005348e+02],
+       [-2.81295188e+04,  2.34913421e+04,  2.60907502e+03]]), array([[ 7.97510535e-09, -7.33022689e-10,  8.30327043e-14],
+       [-2.37930176e+04,  3.84770391e+04,  1.07352825e+03],
+       [-2.74599030e+04, -1.19444041e+04,  1.32907652e+02],
+       [ 2.65637773e+04, -4.00764235e+04, -1.94308004e+03],
+       [-2.33163276e+04, -3.45896241e+04, -1.47086138e+03],
+       [-1.53778609e+04, -3.27897717e+04,  1.56307204e+03],
+       [ 1.91370693e+04,  4.79302611e+04,  1.01093480e+03],
+       [ 2.84212587e+04,  1.60511691e+04, -2.68141518e+01],
+       [ 1.07933890e+04,  3.79484752e+04,  2.67005341e+02],
+       [-2.81300411e+04,  2.34907166e+04,  2.60907498e+03]]), array([[ 8.21688484e-09, -7.54994365e-10,  8.81412344e-14],
+       [-2.37946268e+04,  3.84760440e+04,  1.07352818e+03],
+       [-2.74597581e+04, -1.19447371e+04,  1.32907652e+02],
+       [ 2.65657894e+04, -4.00750897e+04, -1.94307988e+03],
+       [-2.33151934e+04, -3.45903886e+04, -1.47086133e+03],
+       [-1.53771573e+04, -3.27901017e+04,  1.56307201e+03],
+       [ 1.91340930e+04,  4.79314493e+04,  1.01093467e+03],
+       [ 2.84210066e+04,  1.60516156e+04, -2.68141516e+01],
+       [ 1.07923363e+04,  3.79487746e+04,  2.67005334e+02],
+       [-2.81305634e+04,  2.34900912e+04,  2.60907494e+03]]), array([[ 8.45867077e-09, -7.76951851e-10,  9.34022578e-14],
+       [-2.37962359e+04,  3.84750488e+04,  1.07352812e+03],
+       [-2.74596132e+04, -1.19450702e+04,  1.32907651e+02],
+       [ 2.65678015e+04, -4.00737559e+04, -1.94307971e+03],
+       [-2.33140593e+04, -3.45911530e+04, -1.47086127e+03],
+       [-1.53764537e+04, -3.27904316e+04,  1.56307199e+03],
+       [ 1.91311168e+04,  4.79326374e+04,  1.01093454e+03],
+       [ 2.84207544e+04,  1.60520620e+04, -2.68141513e+01],
+       [ 1.07912836e+04,  3.79490740e+04,  2.67005327e+02],
+       [-2.81310857e+04,  2.34894657e+04,  2.60907489e+03]]), array([[ 8.70046314e-09, -7.98895146e-10,  9.88157744e-14],
+       [-2.37978450e+04,  3.84740536e+04,  1.07352805e+03],
+       [-2.74594683e+04, -1.19454033e+04,  1.32907650e+02],
+       [ 2.65698135e+04, -4.00724219e+04, -1.94307954e+03],
+       [-2.33129251e+04, -3.45919174e+04, -1.47086122e+03],
+       [-1.53757501e+04, -3.27907616e+04,  1.56307196e+03],
+       [ 1.91281404e+04,  4.79338252e+04,  1.01093440e+03],
+       [ 2.84205023e+04,  1.60525085e+04, -2.68141511e+01],
+       [ 1.07902308e+04,  3.79493734e+04,  2.67005320e+02],
+       [-2.81316079e+04,  2.34888402e+04,  2.60907485e+03]]), array([[ 8.94226194e-09, -8.20824249e-10,  1.04381784e-13],
+       [-2.37994541e+04,  3.84730582e+04,  1.07352798e+03],
+       [-2.74593234e+04, -1.19457364e+04,  1.32907649e+02],
+       [ 2.65718254e+04, -4.00710878e+04, -1.94307936e+03],
+       [-2.33117908e+04, -3.45926818e+04, -1.47086116e+03],
+       [-1.53750465e+04, -3.27910915e+04,  1.56307194e+03],
+       [ 1.91251640e+04,  4.79350128e+04,  1.01093426e+03],
+       [ 2.84202501e+04,  1.60529549e+04, -2.68141509e+01],
+       [ 1.07891781e+04,  3.79496727e+04,  2.67005312e+02],
+       [-2.81321302e+04,  2.34882147e+04,  2.60907480e+03]]), array([[ 9.18406719e-09, -8.42739161e-10,  1.10100287e-13],
+       [-2.38010631e+04,  3.84720629e+04,  1.07352791e+03],
+       [-2.74591785e+04, -1.19460694e+04,  1.32907649e+02],
+       [ 2.65738372e+04, -4.00697537e+04, -1.94307917e+03],
+       [-2.33106566e+04, -3.45934461e+04, -1.47086110e+03],
+       [-1.53743429e+04, -3.27914214e+04,  1.56307191e+03],
+       [ 1.91221875e+04,  4.79362003e+04,  1.01093411e+03],
+       [ 2.84199979e+04,  1.60534014e+04, -2.68141506e+01],
+       [ 1.07881253e+04,  3.79499720e+04,  2.67005304e+02],
+       [-2.81326524e+04,  2.34875892e+04,  2.60907475e+03]]), array([[ 9.42587886e-09, -8.64639880e-10,  1.15971283e-13],
+       [-2.38026720e+04,  3.84710674e+04,  1.07352784e+03],
+       [-2.74590336e+04, -1.19464025e+04,  1.32907648e+02],
+       [ 2.65758490e+04, -4.00684194e+04, -1.94307898e+03],
+       [-2.33095223e+04, -3.45942104e+04, -1.47086104e+03],
+       [-1.53736392e+04, -3.27917513e+04,  1.56307188e+03],
+       [ 1.91192109e+04,  4.79373875e+04,  1.01093396e+03],
+       [ 2.84197458e+04,  1.60538478e+04, -2.68141504e+01],
+       [ 1.07870726e+04,  3.79502712e+04,  2.67005296e+02],
+       [-2.81331747e+04,  2.34869637e+04,  2.60907470e+03]]), array([[ 9.66769698e-09, -8.86526406e-10,  1.21994772e-13],
+       [-2.38042809e+04,  3.84700719e+04,  1.07352777e+03],
+       [-2.74588887e+04, -1.19467355e+04,  1.32907647e+02],
+       [ 2.65778607e+04, -4.00670850e+04, -1.94307879e+03],
+       [-2.33083880e+04, -3.45949747e+04, -1.47086097e+03],
+       [-1.53729356e+04, -3.27920812e+04,  1.56307185e+03],
+       [ 1.91162343e+04,  4.79385746e+04,  1.01093381e+03],
+       [ 2.84194936e+04,  1.60542942e+04, -2.68141501e+01],
+       [ 1.07860198e+04,  3.79505704e+04,  2.67005288e+02],
+       [-2.81336969e+04,  2.34863381e+04,  2.60907465e+03]]), array([[ 9.90952152e-09, -9.08398739e-10,  1.28170755e-13],
+       [-2.38058898e+04,  3.84690763e+04,  1.07352769e+03],
+       [-2.74587438e+04, -1.19470686e+04,  1.32907646e+02],
+       [ 2.65798724e+04, -4.00657506e+04, -1.94307859e+03],
+       [-2.33072537e+04, -3.45957389e+04, -1.47086091e+03],
+       [-1.53722319e+04, -3.27924110e+04,  1.56307182e+03],
+       [ 1.91132575e+04,  4.79397615e+04,  1.01093365e+03],
+       [ 2.84192414e+04,  1.60547406e+04, -2.68141498e+01],
+       [ 1.07849670e+04,  3.79508696e+04,  2.67005280e+02],
+       [-2.81342191e+04,  2.34857126e+04,  2.60907460e+03]]), array([[ 1.01513525e-08, -9.30256877e-10,  1.34499230e-13],
+       [-2.38074986e+04,  3.84680807e+04,  1.07352761e+03],
+       [-2.74585989e+04, -1.19474017e+04,  1.32907646e+02],
+       [ 2.65818839e+04, -4.00644160e+04, -1.94307839e+03],
+       [-2.33061194e+04, -3.45965031e+04, -1.47086084e+03],
+       [-1.53715283e+04, -3.27927409e+04,  1.56307179e+03],
+       [ 1.91102807e+04,  4.79409482e+04,  1.01093349e+03],
+       [ 2.84189892e+04,  1.60551871e+04, -2.68141496e+01],
+       [ 1.07839142e+04,  3.79511688e+04,  2.67005272e+02],
+       [-2.81347413e+04,  2.34850870e+04,  2.60907454e+03]]), array([[ 1.03931899e-08, -9.52100821e-10,  1.40980199e-13],
+       [-2.38091074e+04,  3.84670850e+04,  1.07352753e+03],
+       [-2.74584540e+04, -1.19477347e+04,  1.32907645e+02],
+       [ 2.65838955e+04, -4.00630813e+04, -1.94307818e+03],
+       [-2.33049850e+04, -3.45972672e+04, -1.47086078e+03],
+       [-1.53708246e+04, -3.27930707e+04,  1.56307176e+03],
+       [ 1.91073039e+04,  4.79421348e+04,  1.01093332e+03],
+       [ 2.84187370e+04,  1.60556335e+04, -2.68141493e+01],
+       [ 1.07828614e+04,  3.79514679e+04,  2.67005263e+02],
+       [-2.81352634e+04,  2.34844615e+04,  2.60907449e+03]]), array([[ 1.06350337e-08, -9.73930570e-10,  1.47613660e-13],
+       [-2.38107162e+04,  3.84660892e+04,  1.07352745e+03],
+       [-2.74583090e+04, -1.19480678e+04,  1.32907644e+02],
+       [ 2.65859069e+04, -4.00617465e+04, -1.94307797e+03],
+       [-2.33038506e+04, -3.45980313e+04, -1.47086071e+03],
+       [-1.53701210e+04, -3.27934005e+04,  1.56307173e+03],
+       [ 1.91043269e+04,  4.79433211e+04,  1.01093315e+03],
+       [ 2.84184848e+04,  1.60560799e+04, -2.68141490e+01],
+       [ 1.07818086e+04,  3.79517671e+04,  2.67005254e+02],
+       [-2.81357856e+04,  2.34838359e+04,  2.60907443e+03]]), array([[ 1.08768840e-08, -9.95746123e-10,  1.54399615e-13],
+       [-2.38123249e+04,  3.84650933e+04,  1.07352737e+03],
+       [-2.74581641e+04, -1.19484008e+04,  1.32907643e+02],
+       [ 2.65879183e+04, -4.00604117e+04, -1.94307775e+03],
+       [-2.33027162e+04, -3.45987954e+04, -1.47086064e+03],
+       [-1.53694173e+04, -3.27937303e+04,  1.56307170e+03],
+       [ 1.91013499e+04,  4.79445073e+04,  1.01093298e+03],
+       [ 2.84182325e+04,  1.60565263e+04, -2.68141487e+01],
+       [ 1.07807558e+04,  3.79520661e+04,  2.67005245e+02],
+       [-2.81363077e+04,  2.34832103e+04,  2.60907438e+03]]), array([[ 1.11187407e-08, -1.01754748e-09,  1.61338062e-13],
+       [-2.38139336e+04,  3.84640974e+04,  1.07352728e+03],
+       [-2.74580192e+04, -1.19487339e+04,  1.32907642e+02],
+       [ 2.65899296e+04, -4.00590767e+04, -1.94307753e+03],
+       [-2.33015817e+04, -3.45995595e+04, -1.47086057e+03],
+       [-1.53687136e+04, -3.27940601e+04,  1.56307167e+03],
+       [ 1.90983728e+04,  4.79456933e+04,  1.01093280e+03],
+       [ 2.84179803e+04,  1.60569727e+04, -2.68141484e+01],
+       [ 1.07797030e+04,  3.79523652e+04,  2.67005235e+02],
+       [-2.81368299e+04,  2.34825847e+04,  2.60907432e+03]]), array([[ 1.13606038e-08, -1.03933464e-09,  1.68429003e-13],
+       [-2.38155422e+04,  3.84631014e+04,  1.07352719e+03],
+       [-2.74578743e+04, -1.19490669e+04,  1.32907641e+02],
+       [ 2.65919408e+04, -4.00577416e+04, -1.94307730e+03],
+       [-2.33004472e+04, -3.46003235e+04, -1.47086049e+03],
+       [-1.53680099e+04, -3.27943899e+04,  1.56307163e+03],
+       [ 1.90953956e+04,  4.79468791e+04,  1.01093262e+03],
+       [ 2.84177281e+04,  1.60574191e+04, -2.68141481e+01],
+       [ 1.07786501e+04,  3.79526642e+04,  2.67005226e+02],
+       [-2.81373520e+04,  2.34819591e+04,  2.60907426e+03]]), array([[ 1.16024734e-08, -1.06110760e-09,  1.75672436e-13],
+       [-2.38171508e+04,  3.84621054e+04,  1.07352710e+03],
+       [-2.74577293e+04, -1.19494000e+04,  1.32907640e+02],
+       [ 2.65939520e+04, -4.00564064e+04, -1.94307707e+03],
+       [-2.32993127e+04, -3.46010874e+04, -1.47086042e+03],
+       [-1.53673062e+04, -3.27947196e+04,  1.56307160e+03],
+       [ 1.90924184e+04,  4.79480647e+04,  1.01093243e+03],
+       [ 2.84174758e+04,  1.60578655e+04, -2.68141478e+01],
+       [ 1.07775973e+04,  3.79529632e+04,  2.67005216e+02],
+       [-2.81378741e+04,  2.34813335e+04,  2.60907420e+03]]), array([[ 1.18443494e-08, -1.08286637e-09,  1.83068363e-13],
+       [-2.38187593e+04,  3.84611093e+04,  1.07352701e+03],
+       [-2.74575844e+04, -1.19497330e+04,  1.32907639e+02],
+       [ 2.65959631e+04, -4.00550711e+04, -1.94307683e+03],
+       [-2.32981782e+04, -3.46018513e+04, -1.47086034e+03],
+       [-1.53666025e+04, -3.27950494e+04,  1.56307156e+03],
+       [ 1.90894411e+04,  4.79492501e+04,  1.01093224e+03],
+       [ 2.84172236e+04,  1.60583119e+04, -2.68141474e+01],
+       [ 1.07765445e+04,  3.79532622e+04,  2.67005206e+02],
+       [-2.81383962e+04,  2.34807078e+04,  2.60907413e+03]]), array([[ 1.20862318e-08, -1.10461094e-09,  1.90616782e-13],
+       [-2.38203678e+04,  3.84601131e+04,  1.07352692e+03],
+       [-2.74574394e+04, -1.19500661e+04,  1.32907638e+02],
+       [ 2.65979742e+04, -4.00537358e+04, -1.94307659e+03],
+       [-2.32970437e+04, -3.46026152e+04, -1.47086026e+03],
+       [-1.53658988e+04, -3.27953791e+04,  1.56307153e+03],
+       [ 1.90864637e+04,  4.79504353e+04,  1.01093205e+03],
+       [ 2.84169713e+04,  1.60587583e+04, -2.68141471e+01],
+       [ 1.07754916e+04,  3.79535611e+04,  2.67005196e+02],
+       [-2.81389183e+04,  2.34800822e+04,  2.60907407e+03]]), array([[ 1.23281206e-08, -1.12634131e-09,  1.98317694e-13],
+       [-2.38219763e+04,  3.84591168e+04,  1.07352683e+03],
+       [-2.74572945e+04, -1.19503991e+04,  1.32907637e+02],
+       [ 2.65999852e+04, -4.00524003e+04, -1.94307634e+03],
+       [-2.32959091e+04, -3.46033791e+04, -1.47086018e+03],
+       [-1.53651951e+04, -3.27957088e+04,  1.56307149e+03],
+       [ 1.90834862e+04,  4.79516204e+04,  1.01093185e+03],
+       [ 2.84167191e+04,  1.60592047e+04, -2.68141468e+01],
+       [ 1.07744387e+04,  3.79538600e+04,  2.67005185e+02],
+       [-2.81394403e+04,  2.34794565e+04,  2.60907400e+03]]), array([[ 1.25700159e-08, -1.14805748e-09,  2.06171099e-13],
+       [-2.38235847e+04,  3.84581205e+04,  1.07352673e+03],
+       [-2.74571495e+04, -1.19507322e+04,  1.32907636e+02],
+       [ 2.66019961e+04, -4.00510647e+04, -1.94307609e+03],
+       [-2.32947745e+04, -3.46041429e+04, -1.47086010e+03],
+       [-1.53644913e+04, -3.27960385e+04,  1.56307145e+03],
+       [ 1.90805087e+04,  4.79528052e+04,  1.01093165e+03],
+       [ 2.84164668e+04,  1.60596510e+04, -2.68141464e+01],
+       [ 1.07733859e+04,  3.79541589e+04,  2.67005175e+02],
+       [-2.81399624e+04,  2.34788308e+04,  2.60907394e+03]]), array([[ 1.28119176e-08, -1.16975944e-09,  2.14176997e-13],
+       [-2.38251931e+04,  3.84571241e+04,  1.07352663e+03],
+       [-2.74570046e+04, -1.19510652e+04,  1.32907635e+02],
+       [ 2.66040069e+04, -4.00497290e+04, -1.94307583e+03],
+       [-2.32936399e+04, -3.46049067e+04, -1.47086002e+03],
+       [-1.53637876e+04, -3.27963682e+04,  1.56307142e+03],
+       [ 1.90775311e+04,  4.79539899e+04,  1.01093145e+03],
+       [ 2.84162145e+04,  1.60600974e+04, -2.68141461e+01],
+       [ 1.07723330e+04,  3.79544577e+04,  2.67005164e+02],
+       [-2.81404844e+04,  2.34782051e+04,  2.60907387e+03]]), array([[ 1.30538257e-08, -1.19144721e-09,  2.22335387e-13],
+       [-2.38268014e+04,  3.84561277e+04,  1.07352653e+03],
+       [-2.74568596e+04, -1.19513982e+04,  1.32907634e+02],
+       [ 2.66060177e+04, -4.00483932e+04, -1.94307557e+03],
+       [-2.32925052e+04, -3.46056704e+04, -1.47085993e+03],
+       [-1.53630839e+04, -3.27966978e+04,  1.56307138e+03],
+       [ 1.90745534e+04,  4.79551744e+04,  1.01093124e+03],
+       [ 2.84159623e+04,  1.60605438e+04, -2.68141457e+01],
+       [ 1.07712801e+04,  3.79547565e+04,  2.67005153e+02],
+       [-2.81410064e+04,  2.34775794e+04,  2.60907380e+03]]), array([[ 1.32957402e-08, -1.21312078e-09,  2.30646271e-13],
+       [-2.38284097e+04,  3.84551311e+04,  1.07352643e+03],
+       [-2.74567146e+04, -1.19517313e+04,  1.32907633e+02],
+       [ 2.66080284e+04, -4.00470573e+04, -1.94307530e+03],
+       [-2.32913706e+04, -3.46064341e+04, -1.47085985e+03],
+       [-1.53623801e+04, -3.27970275e+04,  1.56307134e+03],
+       [ 1.90715757e+04,  4.79563587e+04,  1.01093103e+03],
+       [ 2.84157100e+04,  1.60609902e+04, -2.68141454e+01],
+       [ 1.07702272e+04,  3.79550553e+04,  2.67005142e+02],
+       [-2.81415284e+04,  2.34769537e+04,  2.60907373e+03]]), array([[ 1.35376611e-08, -1.23478015e-09,  2.39109647e-13],
+       [-2.38300180e+04,  3.84541345e+04,  1.07352632e+03],
+       [-2.74565697e+04, -1.19520643e+04,  1.32907632e+02],
+       [ 2.66100390e+04, -4.00457214e+04, -1.94307503e+03],
+       [-2.32902359e+04, -3.46071978e+04, -1.47085976e+03],
+       [-1.53616763e+04, -3.27973571e+04,  1.56307130e+03],
+       [ 1.90685978e+04,  4.79575429e+04,  1.01093081e+03],
+       [ 2.84154577e+04,  1.60614365e+04, -2.68141450e+01],
+       [ 1.07691743e+04,  3.79553541e+04,  2.67005130e+02],
+       [-2.81420504e+04,  2.34763280e+04,  2.60907366e+03]]), array([[ 1.37795885e-08, -1.25642531e-09,  2.47725516e-13],
+       [-2.38316262e+04,  3.84531379e+04,  1.07352622e+03],
+       [-2.74564247e+04, -1.19523973e+04,  1.32907631e+02],
+       [ 2.66120496e+04, -4.00443853e+04, -1.94307475e+03],
+       [-2.32891011e+04, -3.46079614e+04, -1.47085967e+03],
+       [-1.53609726e+04, -3.27976868e+04,  1.56307126e+03],
+       [ 1.90656199e+04,  4.79587268e+04,  1.01093059e+03],
+       [ 2.84152054e+04,  1.60618829e+04, -2.68141446e+01],
+       [ 1.07681214e+04,  3.79556528e+04,  2.67005119e+02],
+       [-2.81425724e+04,  2.34757023e+04,  2.60907359e+03]]), array([[ 1.40215223e-08, -1.27805628e-09,  2.56493877e-13],
+       [-2.38332344e+04,  3.84521412e+04,  1.07352611e+03],
+       [-2.74562797e+04, -1.19527304e+04,  1.32907630e+02],
+       [ 2.66140601e+04, -4.00430491e+04, -1.94307447e+03],
+       [-2.32879664e+04, -3.46087250e+04, -1.47085958e+03],
+       [-1.53602688e+04, -3.27980164e+04,  1.56307122e+03],
+       [ 1.90626420e+04,  4.79599105e+04,  1.01093037e+03],
+       [ 2.84149531e+04,  1.60623292e+04, -2.68141443e+01],
+       [ 1.07670684e+04,  3.79559515e+04,  2.67005107e+02],
+       [-2.81430944e+04,  2.34750765e+04,  2.60907351e+03]]), array([[ 1.42634625e-08, -1.29967304e-09,  2.65414731e-13],
+       [-2.38348425e+04,  3.84511444e+04,  1.07352600e+03],
+       [-2.74561347e+04, -1.19530634e+04,  1.32907629e+02],
+       [ 2.66160706e+04, -4.00417128e+04, -1.94307418e+03],
+       [-2.32868316e+04, -3.46094885e+04, -1.47085949e+03],
+       [-1.53595650e+04, -3.27983459e+04,  1.56307118e+03],
+       [ 1.90596639e+04,  4.79610941e+04,  1.01093014e+03],
+       [ 2.84147007e+04,  1.60627756e+04, -2.68141439e+01],
+       [ 1.07660155e+04,  3.79562502e+04,  2.67005095e+02],
+       [-2.81436163e+04,  2.34744508e+04,  2.60907344e+03]]), array([[ 1.45054091e-08, -1.32127559e-09,  2.74488078e-13],
+       [-2.38364506e+04,  3.84501475e+04,  1.07352589e+03],
+       [-2.74559897e+04, -1.19533964e+04,  1.32907628e+02],
+       [ 2.66180809e+04, -4.00403764e+04, -1.94307389e+03],
+       [-2.32856968e+04, -3.46102520e+04, -1.47085939e+03],
+       [-1.53588613e+04, -3.27986755e+04,  1.56307113e+03],
+       [ 1.90566858e+04,  4.79622775e+04,  1.01092991e+03],
+       [ 2.84144484e+04,  1.60632220e+04, -2.68141435e+01],
+       [ 1.07649626e+04,  3.79565488e+04,  2.67005083e+02],
+       [-2.81441383e+04,  2.34738250e+04,  2.60907336e+03]]), array([[ 1.47473621e-08, -1.34286395e-09,  2.83713917e-13],
+       [-2.38380586e+04,  3.84491506e+04,  1.07352577e+03],
+       [-2.74558448e+04, -1.19537294e+04,  1.32907626e+02],
+       [ 2.66200912e+04, -4.00390399e+04, -1.94307359e+03],
+       [-2.32845620e+04, -3.46110155e+04, -1.47085930e+03],
+       [-1.53581575e+04, -3.27990051e+04,  1.56307109e+03],
+       [ 1.90537076e+04,  4.79634607e+04,  1.01092967e+03],
+       [ 2.84141961e+04,  1.60636683e+04, -2.68141431e+01],
+       [ 1.07639096e+04,  3.79568474e+04,  2.67005070e+02],
+       [-2.81446602e+04,  2.34731992e+04,  2.60907328e+03]])]
+ position = <class 'numpy.ndarray'> with length, 62 with elements, [[[ 0.00000000e+00  0.00000000e+00  0.00000000e+00]
+  [ 3.69079537e-01  2.27523881e-01 -0.00000000e+00]
+  [-3.94346079e-01  9.07585344e-01  0.00000000e+00]
+  ...
+  [ 4.09193270e-01 -7.25422557e-01  0.00000000e+00]
+  [ 5.48171941e-01 -1.56454831e-01  0.00000000e+00]
+  [ 4.23841378e-01  5.06792106e-01  0.00000000e+00]]
+
+ [[ 4.84418354e-20 -4.50135384e-21  0.00000000e+00]
+  [ 3.69070015e-01  2.27539326e-01  4.30559867e-07]
+  [-3.94357094e-01  9.07580558e-01  5.33052124e-08]
+  ...
+  [ 4.09204672e-01 -7.25416125e-01 -1.07543404e-08]
+  [ 5.48176283e-01 -1.56439614e-01  1.07087748e-07]
+  [ 4.23830103e-01  5.06801536e-01  1.04642073e-06]]
+
+ [[ 1.93769936e-19 -1.79997311e-20  6.11605093e-26]
+  [ 3.69060493e-01  2.27554771e-01  8.61119734e-07]
+  [-3.94368109e-01  9.07575771e-01  1.06610425e-07]
+  ...
+  [ 4.09216074e-01 -7.25409693e-01 -2.15086808e-08]
+  [ 5.48180626e-01 -1.56424398e-01  2.14175497e-07]
+  [ 4.23818828e-01  5.06810965e-01  2.09284146e-06]]
+
+ ...
+
+ [[ 1.68714631e-16 -1.54745939e-17  2.09291136e-21]
+  [ 3.68516654e-01  2.28434449e-01  2.54030064e-05]
+  [-3.94995877e-01  9.07302730e-01  3.14500726e-06]
+  ...
+  [ 4.09865826e-01 -7.25042773e-01 -6.34505993e-07]
+  [ 5.48427433e-01 -1.55556877e-01  6.31817434e-06]
+  [ 4.23175778e-01  5.07348021e-01  6.17388053e-05]]
+
+ [[ 1.74483789e-16 -1.60001867e-17  2.20116535e-21]
+  [ 3.68507094e-01  2.28449871e-01  2.58335649e-05]
+  [-3.95006889e-01  9.07297936e-01  3.19831246e-06]
+  ...
+  [ 4.09877222e-01 -7.25036331e-01 -6.45260328e-07]
+  [ 5.48431751e-01 -1.55541654e-01  6.42526194e-06]
+  [ 4.23164490e-01  5.07357436e-01  6.27852251e-05]]
+
+ [[ 1.80349986e-16 -1.65344407e-17  2.31308896e-21]
+  [ 3.68497533e-01  2.28465292e-01  2.62641234e-05]
+  [-3.95017901e-01  9.07293141e-01  3.25161766e-06]
+  ...
+  [ 4.09888618e-01 -7.25029888e-01 -6.56014664e-07]
+  [ 5.48436068e-01 -1.55526430e-01  6.53234954e-06]
+  [ 4.23153202e-01  5.07366850e-01  6.38316448e-05]]]
+ time = <class 'list'> with length, 62 with elements, [0, 60, 120, 180, 240, 300, 360, 420, 480, 540, 600, 660, 720, 780, 840, 900, 960, 1020, 1080, 1140, 1200, 1260, 1320, 1380, 1440, 1500, 1560, 1620, 1680, 1740, 1800, 1860, 1920, 1980, 2040, 2100, 2160, 2220, 2280, 2340, 2400, 2460, 2520, 2580, 2640, 2700, 2760, 2820, 2880, 2940, 3000, 3060, 3120, 3180, 3240, 3300, 3360, 3420, 3480, 3540, 3600, 3660]
+print(position[11][1][0])
+print(position)
+0.36897476283981656
+[[[ 0.00000000e+00  0.00000000e+00  0.00000000e+00]
+  [ 3.69079537e-01  2.27523881e-01 -0.00000000e+00]
+  [-3.94346079e-01  9.07585344e-01  0.00000000e+00]
+  ...
+  [ 4.09193270e-01 -7.25422557e-01  0.00000000e+00]
+  [ 5.48171941e-01 -1.56454831e-01  0.00000000e+00]
+  [ 4.23841378e-01  5.06792106e-01  0.00000000e+00]]
+
+ [[ 4.84418354e-20 -4.50135384e-21  0.00000000e+00]
+  [ 3.69070015e-01  2.27539326e-01  4.30559867e-07]
+  [-3.94357094e-01  9.07580558e-01  5.33052124e-08]
+  ...
+  [ 4.09204672e-01 -7.25416125e-01 -1.07543404e-08]
+  [ 5.48176283e-01 -1.56439614e-01  1.07087748e-07]
+  [ 4.23830103e-01  5.06801536e-01  1.04642073e-06]]
+
+ [[ 1.93769936e-19 -1.79997311e-20  6.11605093e-26]
+  [ 3.69060493e-01  2.27554771e-01  8.61119734e-07]
+  [-3.94368109e-01  9.07575771e-01  1.06610425e-07]
+  ...
+  [ 4.09216074e-01 -7.25409693e-01 -2.15086808e-08]
+  [ 5.48180626e-01 -1.56424398e-01  2.14175497e-07]
+  [ 4.23818828e-01  5.06810965e-01  2.09284146e-06]]
+
+ ...
+
+ [[ 1.68714631e-16 -1.54745939e-17  2.09291136e-21]
+  [ 3.68516654e-01  2.28434449e-01  2.54030064e-05]
+  [-3.94995877e-01  9.07302730e-01  3.14500726e-06]
+  ...
+  [ 4.09865826e-01 -7.25042773e-01 -6.34505993e-07]
+  [ 5.48427433e-01 -1.55556877e-01  6.31817434e-06]
+  [ 4.23175778e-01  5.07348021e-01  6.17388053e-05]]
+
+ [[ 1.74483789e-16 -1.60001867e-17  2.20116535e-21]
+  [ 3.68507094e-01  2.28449871e-01  2.58335649e-05]
+  [-3.95006889e-01  9.07297936e-01  3.19831246e-06]
+  ...
+  [ 4.09877222e-01 -7.25036331e-01 -6.45260328e-07]
+  [ 5.48431751e-01 -1.55541654e-01  6.42526194e-06]
+  [ 4.23164490e-01  5.07357436e-01  6.27852251e-05]]
+
+ [[ 1.80349986e-16 -1.65344407e-17  2.31308896e-21]
+  [ 3.68497533e-01  2.28465292e-01  2.62641234e-05]
+  [-3.95017901e-01  9.07293141e-01  3.25161766e-06]
+  ...
+  [ 4.09888618e-01 -7.25029888e-01 -6.56014664e-07]
+  [ 5.48436068e-01 -1.55526430e-01  6.53234954e-06]
+  [ 4.23153202e-01  5.07366850e-01  6.38316448e-05]]]
+#demo code from lecture 23 for 3d animation
+import matplotlib.animation as ani
+FFMpegWriter = ani.writers['ffmpeg']
+writer = FFMpegWriter(fps=10)
+
+fig = plt.figure(figsize=(7, 7))
+fig.patch.set_alpha(1.0) # Python bug fix... still
+
+from mpl_toolkits import mplot3d
+
+
+
+
+
+
+ax = plt.axes(projection='3d')
+
+ax.view_init(45)
+#setting the labels
+ax.set_xlabel('x-distance in AU')
+ax.set_ylabel('y-distance in AU')
+ax.set_zlabel('Z-distance in AU')
+ax.zaxis.labelpad=-2 # sets the z-axis label position
+
+ax.set_xlim([-5e-19, 5e-10])  # Set x-axis limits
+ax.set_ylim([-5e-19, 5e-10])  # Set y-axis limits
+ax.set_zlim([-5e-19, 5e-10])  # Set z-axis limits
+
+earth_ratio = float(m_Earth/m_sun*1000)
+
+print(len(time_array))
+print(time_array[0])
+print(time_array[1])
+
+
+
+
+xpos = []
+ypos = []
+zpos = []
+
+
+
+
+with writer.saving(fig, "planetesimaldisk.mp4", 500):
+    
+    for i in range(0,len(time_array)):
+
+       
+
+
+        
+        ax.set_xlabel('x-distance from sun in AU')
+        ax.set_ylabel('y-distance from sun in AU')
+        ax.set_zlabel('Z-distance from sun in AU')
+        ax.zaxis.labelpad=-2 # sets the z-axis label position
+        
+        ax.set_xlim([-5e-10, 5e-10])  # Set x-axis limits
+        ax.set_ylim([-5e-10, 5e-10])  # Set y-axis limits
+        ax.set_zlim([-5e-10, 5e-10])  # Set z-axis limits
+
+        #trying to get the x, y, z postions out of the position list with slicing
+        #xpos.append(position[i][:][0]) 
+        #ypos.append(position[i][:][1])
+        #zpos.append(position[i][:][2])
+        index = int(time_array[i])
+        ax.scatter(position[i][0][0], position[i][0][1], position[i][0][1])
+       
+        
+        writer.grab_frame()
+        
+        plt.cla()
+        #if (i+1) % 60 == 0: #progress checker
+        print(f" i = {index}") #checking to make sure it works
+61
+0.0
+60.0
+ i = 0
+ i = 60
+ i = 120
+ i = 180
+ i = 240
+ i = 300
+ i = 360
+ i = 420
+ i = 480
+ i = 540
+ i = 600
+ i = 660
+ i = 720
+ i = 780
+ i = 840
+ i = 900
+ i = 960
+ i = 1020
+ i = 1080
+ i = 1140
+ i = 1200
+ i = 1260
+ i = 1320
+ i = 1380
+ i = 1440
+ i = 1500
+ i = 1560
+ i = 1620
+ i = 1680
+ i = 1740
+ i = 1800
+ i = 1860
+ i = 1920
+ i = 1980
+ i = 2040
+ i = 2100
+ i = 2160
+ i = 2220
+ i = 2280
+ i = 2340
+ i = 2400
+ i = 2460
+ i = 2520
+ i = 2580
+ i = 2640
+ i = 2700
+ i = 2760
+ i = 2820
+ i = 2880
+ i = 2940
+ i = 3000
+ i = 3060
+ i = 3120
+ i = 3180
+ i = 3240
+ i = 3300
+ i = 3360
+ i = 3420
+ i = 3480
+ i = 3540
+ i = 3600
+No description has been provided for this image
+from IPython.display import Video
+Video("planetesimaldisk.mp4", embed=True)
+I was not able to finish my planetesimal disk simulation
+
+print("testing")
+testing
+ 
