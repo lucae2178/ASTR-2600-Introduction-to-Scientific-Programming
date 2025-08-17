@@ -1,0 +1,195 @@
+2 think+type: import a built-in module
+#import math #importing the math package
+math.sin(3.14/2) #should be around 1
+0.9999996829318346
+math.exp(3) # e^3
+20.085536923187668
+math.pi # should give me the ratio of the circumfrence of a circle to it's diamter
+
+print(math.pi)
+3.141592653589793
+print(f"{math.pi:.4f}") just realized the reason this is not working is becaise this is a raw cell
+ 
+print(f"{math.pi:.4f}")
+3.1416
+print(math.sin(math.pi/2))
+1.0
+3 think+code: exploring the math module
+print(math.factorial(13)) #this was just me typing fac into tab of math and I found the 
+#factorial operator
+6227020800
+4 think+type: from math import ...
+from math import sin # testing out the import statement to import the sin 
+#function from the math module}
+print(sin(3.14/2)) #making sure I actually imported sin correctly
+0.9999996829318346
+#from math import cos #importing cos from math
+#oops my bad I accidentally imported cos without realizig I 
+#I was supposed to get an error message
+cos(0)
+1.0
+print(cos(0))
+1.0
+I am not able to get the error message from cos even though I tried commenting out the previous math imports.
+from math import sin, cos, pi
+print(cos(pi/2))
+6.123233995736766e-17
+cos(pi/2) should be zero, so the above answer is pretty close
+print(f"{cos(pi/2):.3f}") #using rounding to get cos of pi/2 =0
+0.000
+ 
+5 think+pair+code: while loops
+I was not able to complete this before class ended on friday so, everything in this section is just my work without a partner.for this while loop to solve 13! I will need to repeatedly multiply an increasing value. I will do this with 3 variables First, I will assign an upper bound variable for the number I am trying to calculate the factorial of Second, I will assign a variable to 1, the first integer Third, I will set up a variable to store the current result Then I will use a while loop to repeatedly multiply the integer and then also increase its value by 1
+f=1 #setting up the starting value
+print(f) 
+1
+x=6 #setting up the ending value as I know that 6! =720 so I am using 6 as the test for my code
+print(x)
+6
+result = 1# setting up my third variable to store the current value
+print(result)
+1
+result = 1# setting up my third variable to store the current value
+print(result)
+f=1
+print(f)
+print(x)
+
+while f <= x: #making sure that all value up to and including the final value are used
+    result = result * f
+    f += 1
+    print(result)
+1
+1
+6
+1
+2
+6
+24
+120
+720
+the code from line [42] seems to work to calculate the value of 6! I will do a few more tests to make sure it works completely before calculating 13!
+result = 1# setting up my third variable to store the current value
+
+f=1
+x=7
+
+
+while f <= x:
+    result = result * f
+    f += 1
+print(result)
+5040
+In line [44], I tested to see if I removed my print statements for f and x as well as moved the print statement for result out of the while loop, if it would still work. It still seems to work, and I am getting to correct result that 7! = 5040
+result = 1# setting up my third variable to store the current value
+
+f=1 # the starting integer for factorial
+x=7 # the ending integer for the factorial calculation
+
+
+while f <= x:
+    result = result * f
+    f += 1
+print(f-1,"! = ", result) #fixing the print statment to produce a more understandable result
+7 ! =  5040
+Now that my code for factorial is looking all good I will run it for 13! to calculate the value of 13!
+result = 1# setting up my third variable to store the current value
+
+f=1 # the starting integer for factorial
+x=13 # the ending integer for the factorial calculation
+
+
+while f <= x:
+    result = result * f
+    f += 1
+print(f-1,"! = ", result) #fixing the print statment to produce a more understandable result
+13 ! =  6227020800
+from math import factorial
+math.factorial(13) # using the math ibrary's factorial function to check my own factorial function 
+6227020800
+print(result)
+6227020800
+print(result == math.factorial(13))
+True
+Since the variable "result", which is what I am using the store the value I calculated for 13!, is equal to math. factorial(13) as shown in line[155, the code I have written for factorial seems to be correct.
+ 
+6 think+write: while loop counting
+count = 0
+while count < 80:
+    count += 1
+print(count)
+After this code has been run, the output will be 80. The code begins with a declaration of the variable count = 0. The code then runs a while loop that says, as long as count is less than 80, increase count by 1. This means it will run at the very beginning until count = 79. At count = 79, it will run through the while loop one more time, raising the value of count to 80. Then it will check to see if 80 is less than 80. This will return false and end the while loop. After ending the while loop, the code will then print the current value of count so the code will print 80.
+7 think+type: Boolean expressions
+someNumber = 5 # defining the variable someNumber =5 
+someNumber > 6 #testing if someNumber is greater than 6.
+#this will return false
+False
+ 4 <= 5 #testing if 4 is less than or equal to 5
+# this will return True
+True
+3 == 3 #testing if 3\the input 3 is equivalent to 3
+#this will return True
+True
+3 != 4  #testing if 3 is not equal to 4
+#this will return True
+True
+(5 == 5) and (4 == 7) # 5 == 5 willreturn True but 4 == 7 will return False since these two responses are not the 
+#same this will return False
+False
+(5 == 5) or (4 == 7) # since one of these statements is True this statement wil return True
+True
+not False  # since not false means true this should print True
+True
+(5 == 5) and not (4 == 7) # 5 == 5 is True and not 4 == 7 is True so this will return True
+True
+"c" in "abcde" # since "c" is an element in the strin abcde this will return True
+True
+"i" in "team" #since the string "i" is not in the string, "beau" this will return False
+False
+8 think+type+code: the secret word
+word = "magnetar" #a type of neutron star/ pulsar that I would like to learn more about int eh future
+keepasking = True
+while keepasking:
+    word = "magnetar"
+    answer = input("Please type the astronmical word and hit return: ")
+    print("   You like typed,    ", answer)
+
+    keepasking = answer != word #this will return true unless answer = word. If this returns false it will end 
+    #the while loop
+print("congratultions! You did it!")
+   You like typed,     blackhole
+   You like typed,     neutron star
+   You like typed,     nebula
+   You like typed,     magnetar
+congratultions! You did it!
+9 think+type: string formatting
+ from math import pi #importing pi from the math library
+print(f"pi = {pi}") #printing pi
+pi = 3.141592653589793
+flavor = "scrumptios"
+print(f"pi = {pi} and is also extremely {flavor} for both the stomach and the mind")
+pi = 3.141592653589793 and is also extremely scrumptios for both the stomach and the mind
+print(f"pi = {pi:e}") # will this print the number pi and then add the letter e or will this print both numbers 
+# pii and e?
+pi = 3.141593e+00
+The code on line {90} does not print the number e. Rather the code uses exponential notation
+print(f"{2178:e}") 
+2.178000e+03
+The code on line [91] is to test to make sure exponential notation is base 10
+print(f"pi = {pi:f}") # the f in pi:f mmeans ficed notation aka not exponetial 
+pi = 3.141593
+print(f"{2178:f}") # testing fixed notation
+2178.000000
+print(f"pi = {pi:.2f}") #{pi:.2f} means two places after the decmil point
+pi = 3.14
+print(f"pi={pi:10.2f}") # 10.2 means to only go 2 places after the decmil point and to fill up 10 charcetrs in total
+pi=      3.14
+print("pi=1234567890")
+pi=1234567890
+10 (bonus) think+type: string formatting... it can get complicated!
+print(f"pi = {pi:#^+20.2e}")
+pi = #####+3.14e+00######
+So, our code "#^+20.2e" means: • fill = “#” (pad empty spaces with #) • align = “^” (align the number in the center of its space) • sign = “+” (indicate the number’s sign, even if positive) • width = “20” (the number should take up 20 characters) • .precision = “.2” (put 2 digits after the decimal place) • typecode = “e” (use exponential/scientific notation
+I included code line [97] so I can come back and refrence it in the future if I need it
+ 
+ 
