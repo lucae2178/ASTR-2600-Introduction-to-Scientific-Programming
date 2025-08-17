@@ -1,0 +1,216 @@
+2 think+type: function basics
+def x2x(x):
+    return x**x + x #testing the first function given
+
+print(x2x(3)) #this should orunt the value of 3^3 +3 = 30
+30
+print(x2x(2) + x2x(3) + x2x(4)) #this should retunr 6 + 30 + 260 = 296
+296
+def other_x2x(x):   # the x2x function with a built in print statment
+    print(x**x + x) 
+other_x2x(4)
+260
+y = other_x2x(3)
+print(y) #idk if this will do anything because other_x2x has no return statement built in
+30
+None
+print(other_x2x(3) + other_x2x(5))
+30
+3130
+---------------------------------------------------------------------------
+TypeError                                 Traceback (most recent call last)
+Cell In[21], line 1
+----> 1 print(other_x2x(3) + other_x2x(5))
+
+TypeError: unsupported operand type(s) for +: 'NoneType' and 'NoneType'
+3 think+predict: function basics
+given code:
+
+def firstfunction(y): return y**2 + 4*y + 8
+
+def secondfunction(z): print(3*z)
+
+a = firstfunction(1) b = secondfunction(10.0)
+
+Since firstfunction has a return statement, a will have the value of 1**2 + 4*1 +8 a will have the value of 13 a= 13
+
+since secondfunction does not have any return statements, b will have a value of none b - none
+
+if we run a + b, we will be adding 13 _ none and not get a reasonable answer
+
+def firstfunction(y):
+    return y**2 + 4*y + 8
+    
+def secondfunction(z):
+    print(3*z) 
+    
+a = firstfunction(1)
+b = secondfunction(10.0) #this will output 30.0 on the first line of the output
+
+print("a = ", a) #printing the value of a
+
+print("b = ", b) #printing the value of b
+
+print("a + b = ", a+b) #testing is a+b gives a reasonable answer
+30.0
+a =  13
+b =  None
+---------------------------------------------------------------------------
+TypeError                                 Traceback (most recent call last)
+Cell In[24], line 14
+     10 print("a = ", a) #printing the value of a
+     12 print("b = ", b) #printing the value of b
+---> 14 print("a + b = ", a+b)
+
+TypeError: unsupported operand type(s) for +: 'int' and 'NoneType'
+The code behaved in the way it did on the output line of [24] because, first, it ran b = secondfunction(10.0) which outputed 30.0 Then it ran print("a = ", a) and a was assigned to the return of firstfunction which was 13 After that, it ran print("b = ", b) which correvtly printed b = none as secondfunction has no return finally, it tried to run print("a + b = ", a+b) which ran into an error as it tried to multiply an integer by None
+
+4 think+type: more functions
+import math
+def pythagoras( x, y):
+    return math.sqrt(x**2 + y**2)
+
+'''
+The code above in the function pythagoras will take two inputs, either integers of floats. 
+the function will then return the square root of the sum of your first input squared added 
+#with your second input squared
+for exampple, pythagoras( 3, 4) should return a value of 5.0
+'''
+'\nThe code above in the function pythagoras will take two inputs, either integers of floats. \nthe function will then return the square root of the sum of your first input squared added \n#with your second input squared\nfor exampple, pythagoras( 3, 4) should return a value of 5.0\n'
+pythagoras( 3, 4) #testing to make sure I coded the funtion correctly
+5.0
+pythagoras( .3, .4) #testing to make sure it still worls with floats
+0.5
+def polar2cartesian(r, theta):
+    x_converted = r*math.cos(theta)
+    y_converted = r*math.sin(theta)
+    return x_converted, y_converted
+    
+    ''' 
+    the function, polar2cartesian, takes two inputs, either as integers or floats.
+    The function takes a first input r, which is the radius of a polar coordinate pair
+    The function takes a second input theta, which is the angle of the polar coordinate pair
+    the function then returns the x cordinate and the y cooridante
+    '''
+print("x =", polar2cartesian(5,0)[0], "y =", polar2cartesian(5,0)[1]) #testing to make sure the function works
+x = 5.0 y = 0.0
+print("x =", polar2cartesian(5,90)[0], "y =", polar2cartesian(5,90)[1]) #testing to see if the cooridantes are in degrees of radians
+x = -2.2403680806458506 y = 4.4699833180027895
+print("x =", polar2cartesian(5,math.pi/2)[0], "y =", polar2cartesian(5,math.pi/2)[1]) #it is in radians 
+#these inputs should produce x = - and y = 5
+x = 3.061616997868383e-16 y = 5.0
+x, y = polar2cartesian(1, math.pi/3) # x = 0.5 and y - sqrt(3)/2
+print( "x= ", x, " y= ", y)
+x=  0.5000000000000001  y=  0.8660254037844386
+def fraction_of_c(v): 
+        '''
+        calculates the ratio of a given speed (v) to the speed of light (c) aka v/c
+    
+        ---input----
+        v, either an integer or float defining a speed in m/s
+    
+        ---return---
+        That speed v divided by the speed of light and what percent of the speed of light that speed is
+    
+        '''
+        c = 2.998e8 #the speed of light
+
+        frac = v/c
+        v_frac = round(frac, 6) #defining the v_frac operation
+        v_percent = (round(frac*100, 3), "%") # convertig the fraction to a percentage
+        return( v, "m/s is, ", v_frac, " times the speed of light  \n",  v, "m/s is", *v_percent, "of the speed of light")
+
+        
+    
+print(*fraction_of_c(1000000)) #testing raction_of_c
+1000000 m/s is,  0.003336  times the speed of light  
+ 1000000 m/s is 0.334 % of the speed of light
+help(fraction_of_c)
+Help on function fraction_of_c in module __main__:
+
+fraction_of_c(v)
+    calculates the ratio of a given speed (v) to the speed of light (c) aka v/c
+    
+    ---input----
+    v, either an integer or float defining a speed in m/s
+    
+    ---return---
+    That speed v divided by the speed of light and what percent of the speed of light that speed is
+
+print(*fraction_of_c(4e6)) # learning what fraction and percent of c, 4e6 is
+4000000.0 m/s is,  0.013342  times the speed of light  
+ 4000000.0 m/s is 1.334 % of the speed of light
+voyager_1 = 17080 # Voyager 1's velocity in meters/second
+parker_solar_probe = 192000 # Parker Solar Probe, the fastest man-made object's velocity in m.d
+print("The speed of the Voyager 1 spacecraft is, ", voyager_1, "m/s.", *fraction_of_c(voyager_1)) #printing the fraction of the speed of light that voyager 1 is traveling at
+print("\n The speed of the fastest man-made object, the Parker Solar Probe is, ", parker_solar_probe, "m/s. ", *fraction_of_c(parker_solar_probe)) #pritning the speed of the parker solar probe compaed to the speed of light
+The speed of the Voyager 1 spacecraft is,  17080 m/s. 17080 m/s is,  5.7e-05  times the speed of light  
+ 17080 m/s is 0.006 % of the speed of light
+
+ The speed of the fastest man-made object, the Parker Solar Probe is,  192000 m/s.  192000 m/s is,  0.00064  times the speed of light  
+ 192000 m/s is 0.064 % of the speed of light
+5 think+pair+code: writing a function
+did this with Allie
+we are making a function for the sum of three numbers
+def sum_three( num1, num2, num3):
+    '''
+    our function will find the sum of three numbers
+    added together
+
+    ----------parameters-----
+    num1 = integer or float
+    num2 = integer or float
+    num3 = integer or float
+
+    ------returns-------
+
+    sun_three returns a float with 2 decmil points 
+
+    '''
+    sum = num1+num2+num3
+    sum4real = (f"{sum:.2f}")
+    return(sum4real)
+print(sum_three(1, 2, 3))
+6.00
+help(sum_three) #printing the docstring for sum_three
+Help on function sum_three in module __main__:
+
+sum_three(num1, num2, num3)
+    our function will find the sum of three numbers
+    added together
+    
+    ----------parameters-----
+    num1 = integer or float
+    num2 = integer or float
+    num3 = integer or float
+    
+    ------returns-------
+    
+    sun_three returns a float with 2 decmil points
+
+# the sum_three function seems to be working! Time to test it
+sum_three(2, 4, 3) #test 1 seeing if the order of the numbers matters (lowest to highest)
+'9.00'
+sum_three(1.00, 34.23, 54.1267) #checking to see how it handles adding diferent powers of ten as well as how it handles rounging
+'89.36'
+sum_three(17.089, 72.911, 10.003)  #this should print 100.00
+'100.00'
+sum_three(26, -34, 8) #testing how it hangles negative numbers
+'0.00'
+print(sum_three(71.546, -18.9234, 2.718)) #checking to make sure the print statement works with our function
+55.34
+print(sum_three(12.3546, 3451.234, -543678293)) #testing how it handles large numbers
+-543674829.41
+print(sum_three(1234456789, 1234345667890, 1234567889098877665)) #trying to break it
+1234569124679002368.00
+Me and Allie's function, sum_three seems to be able to add most three numbers. The only drawback is the two decmil places it gives. However this can be easily changed to alloow for adding of 3 floats with more decmil places.
+6 (bonus)+think+type: recursive functions
+def factorial(n):
+    while n > 1:
+        return n*factorial(n-1)
+    return 1
+factorial(5)
+The code factorial will first check if the input is greater than 1 Since 5 > 1 is true, it will move on to the next line and multiply our input(5) by factorial(5-1) This will then repeat the code for factorial(4), factorial(3), factorial(2) and factorial(1) At factorial 1, the while n >1 loop will return False. This will cause factorial(1) to return 1 This will lead to factorial(2) returning 2, factorial(3) returning 6, factorial(4) returning 24 and finally factorial(5) should return 120.
+factorial(5) #this code should hopefully return 120
+120
+ 
