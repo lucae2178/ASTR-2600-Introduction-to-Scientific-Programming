@@ -1,0 +1,367 @@
+Tutorial16-multidimensionalArrays
+#importing the libraries
+import numpy as np
+import matplotlib.pyplot as plt
+2 think+type: making 2D arrays
+def describe(a):
+
+    '''
+    --------input-------
+    a = np.array
+
+    -------output----------
+
+    The describe function [prints descriptions of the array a
+    
+    '''
+    
+    
+    print(f"length is {len(a)}")
+    print(f"size is {a.size}")
+    print(f"shape is {a.shape}")
+    print(f"number of dimensions is {a.ndim}")
+    print(f"contents are...\n{a}")
+    print(f"maximum value is {a.max()}")
+    print(f"minimum value is {a.min()}")
+oneDim = np.arange(0,24,4) #creating a 1 dimensional array to0 test the describe function
+describe(oneDim) #testing the describe function with a one-dimensional array
+length is 6
+size is 6
+shape is (6,)
+number of dimensions is 1
+contents are...
+[ 0  4  8 12 16 20]
+maximum value is 20
+minimum value is 0
+twoDim = oneDim.reshape(3,2) #this should create a two-dimensional array with 3 rows and 2 columns
+
+describe(twoDim)
+length is 3
+size is 6
+shape is (3, 2)
+number of dimensions is 2
+contents are...
+[[ 0  4]
+ [ 8 12]
+ [16 20]]
+maximum value is 20
+minimum value is 0
+random = np.array([[1,2,4,8],[1,3,9,27]]) # creating another 2 dimensional numpy array to test 
+describe(random)
+length is 2
+size is 8
+shape is (2, 4)
+number of dimensions is 2
+contents are...
+[[ 1  2  4  8]
+ [ 1  3  9 27]]
+maximum value is 27
+minimum value is 1
+zeros = np.zeros([5,7]) #creating a 2-dimensional numpy array with 5 rows and 7 columns hopefully
+print(zeros) #checking to make sure I did it correctly
+[[0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 0. 0. 0. 0. 0.]]
+describe(zeros)
+length is 5
+size is 35
+shape is (5, 7)
+number of dimensions is 2
+contents are...
+[[0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 0. 0. 0. 0. 0.]]
+maximum value is 0.0
+minimum value is 0.0
+ones = np.ones([16,9])
+describe(ones)
+length is 16
+size is 144
+shape is (16, 9)
+number of dimensions is 2
+contents are...
+[[1. 1. 1. 1. 1. 1. 1. 1. 1.]
+ [1. 1. 1. 1. 1. 1. 1. 1. 1.]
+ [1. 1. 1. 1. 1. 1. 1. 1. 1.]
+ [1. 1. 1. 1. 1. 1. 1. 1. 1.]
+ [1. 1. 1. 1. 1. 1. 1. 1. 1.]
+ [1. 1. 1. 1. 1. 1. 1. 1. 1.]
+ [1. 1. 1. 1. 1. 1. 1. 1. 1.]
+ [1. 1. 1. 1. 1. 1. 1. 1. 1.]
+ [1. 1. 1. 1. 1. 1. 1. 1. 1.]
+ [1. 1. 1. 1. 1. 1. 1. 1. 1.]
+ [1. 1. 1. 1. 1. 1. 1. 1. 1.]
+ [1. 1. 1. 1. 1. 1. 1. 1. 1.]
+ [1. 1. 1. 1. 1. 1. 1. 1. 1.]
+ [1. 1. 1. 1. 1. 1. 1. 1. 1.]
+ [1. 1. 1. 1. 1. 1. 1. 1. 1.]
+ [1. 1. 1. 1. 1. 1. 1. 1. 1.]]
+maximum value is 1.0
+minimum value is 1.0
+answer for how are .size and .shape different from len()?
+
+len() is just the number of elements in the first dimension of the numpy array
+
+Size is the total number of elements in the numpy array. In a 1-dimensional numpy array, this will be equal to len(), but in higher N dimensions, this will be the product of the lengths of each dimension
+
+shape () is a tuple with the number of dimensions listed in (1st dimension length, 2nd dimension length, 3rd dimension length, Nth dimension length)
+
+3 think+code: make-your-own-array
+I'm going to use the np.array function to create a 2-dimensional array with the shape I would like. Then I simply replace all occurrences of zero with the number 42
+
+myarray = np.zeros([4,10]) #this should create a numpy array with four rows by ten columns of zeros
+print(myarray)
+[[0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]]
+# now to replace all the zeros with 42
+myarray[myarray == 0] = 42 #repplacing all indexes where myarray == 0 is True with 42
+print(myarray)
+
+# I googled how to replace elements in an array as I forgot how to and the code above is what I found editted to work with my code 
+[[42. 42. 42. 42. 42. 42. 42. 42. 42. 42.]
+ [42. 42. 42. 42. 42. 42. 42. 42. 42. 42.]
+ [42. 42. 42. 42. 42. 42. 42. 42. 42. 42.]
+ [42. 42. 42. 42. 42. 42. 42. 42. 42. 42.]]
+# yass that worked!!! Time to describe my 2 dimensional array
+describe(myarray)
+length is 4
+size is 40
+shape is (4, 10)
+number of dimensions is 2
+contents are...
+[[42. 42. 42. 42. 42. 42. 42. 42. 42. 42.]
+ [42. 42. 42. 42. 42. 42. 42. 42. 42. 42.]
+ [42. 42. 42. 42. 42. 42. 42. 42. 42. 42.]
+ [42. 42. 42. 42. 42. 42. 42. 42. 42. 42.]]
+maximum value is 42.0
+minimum value is 42.0
+Since I am doing this after class at home, I was not able to compare with anyone else, and I cannot think of another way to do this without using a for loop
+
+4 think+type: accessing and slicing 2D arrays
+print(twoDim) #printing my orginal two dimensaional array 
+[[ 0  4]
+ [ 8 12]
+ [16 20]]
+print(twoDim[1,1]) # this should print 12
+12
+print(random)
+[[ 1  2  4  8]
+ [ 1  3  9 27]]
+print(random[1,3]) #this should print 27
+27
+print(twoDim[:,0]) #this should print 0, 8, 16
+[ 0  8 16]
+print(twoDim[1,:]) # this should print 8, 12
+[ 8 12]
+print(random[0:2,3]) # this should print [8 27]
+[ 8 27]
+print(random[0:2,1:4]) # this should print random without the first column of 1s
+[[ 2  4  8]
+ [ 3  9 27]]
+5 think+code: modify-your-own-array
+print(myarray)
+[[42. 42. 42. 42. 42. 42. 42. 42. 42. 42.]
+ [42. 42. 42. 42. 42. 42. 42. 42. 42. 42.]
+ [42. 42. 42. 42. 42. 42. 42. 42. 42. 42.]
+ [42. 42. 42. 42. 42. 42. 42. 42. 42. 42.]]
+#putting this code from section 3 here so I can fix myarray after I inevitably break iot
+myarray[myarray == 0] = 42 #repplacing all indexes where myarray == 0 is True with 42
+print(myarray)
+#haha I can use for loops for this as the tutorial doesn ot explicitly say not to use loops
+for i in range(len(myarray)): #running through the first dimension of my array
+    if i == 1:
+        for j in range(len(myarray[i])): #running through the second dimension of my array
+            myarray[i][j] = -1 # replacing the value in myarray[row][coloumn] with -1
+
+print(myarray)
+[[42. 42. 42. 42. 42. 42. 42. 42. 42. 42.]
+ [-1. -1. -1. -1. -1. -1. -1. -1. -1. -1.]
+ [42. 42. 42. 42. 42. 42. 42. 42. 42. 42.]
+ [42. 42. 42. 42. 42. 42. 42. 42. 42. 42.]]
+# well, I just saw the bottom part of this section that saw no for loops so I guess I will have to use something else
+print(f" orginal myaray:, \n {myarray}")
+myarray[1] = -1 # replacing every element in the first row with -1
+
+print(f"\n my new myarray:, \n {myarray}")
+ orginal myaray:, 
+ [[42. 42. 42. 42. 42. 42. 42. 42. 42. 42.]
+ [42. 42. 42. 42. 42. 42. 42. 42. 42. 42.]
+ [42. 42. 42. 42. 42. 42. 42. 42. 42. 42.]
+ [42. 42. 42. 42. 42. 42. 42. 42. 42. 42.]]
+
+ my new myarray:, 
+ [[42. 42. 42. 42. 42. 42. 42. 42. 42. 42.]
+ [-1. -1. -1. -1. -1. -1. -1. -1. -1. -1.]
+ [42. 42. 42. 42. 42. 42. 42. 42. 42. 42.]
+ [42. 42. 42. 42. 42. 42. 42. 42. 42. 42.]]
+6 think+type: visualizing 2D arrays
+Graphing 2 dimensional arrays
+print(twoDim)
+import matplotlib.pyplot as plt
+
+# Plotting the first row
+plt.plot(twoDim[0, :], '-o', label='row 0', color="lightblue")
+
+# plotting the second row
+plt.plot(twoDim[1, :], '-o', label='row 1', color="mediumblue")
+
+# plotting the third row
+plt.plot(twoDim[2, :], '-o', label='row 2', color="darkblue")
+
+# Setting the label for the x-axis
+plt.xlabel('column')
+
+# adding a legend describing each line
+plt.legend();
+[[ 0  4]
+ [ 8 12]
+ [16 20]]
+No description has been provided for this image
+While the plot above is intriguing, as it shows how I can begin to plot two-dimensional arrays, I would like to see how it looks when the arrays aren't all loinear with the same slope
+
+exponential = np.array([[1,2,4,8,16,32],[1,3,9,27,81,243],[1,4,16,64,256,1024]])
+print(exponential)
+[[   1    2    4    8   16   32]
+ [   1    3    9   27   81  243]
+ [   1    4   16   64  256 1024]]
+plt.plot(exponential[0, :], '-o', label='2**x', color="lightblue")
+
+# plotting the second row
+plt.plot(exponential[1, :], '-o', label='3**x', color="green")
+
+# plotting the third row
+plt.plot(exponential[2, :], '-o', label='4**x', color="yellow")
+
+# Setting the label for the x-axis
+plt.xlabel('x')
+
+#setting the label for the y axis
+plt.ylabel('f(x)')
+
+# adding a legend describing each line
+plt.legend();
+
+plt.title("exponetial growth of 2, 3, and 4 raised to the x")
+Text(0.5, 1.0, 'exponetial growth of 2, 3, and 4 raised to the x')
+No description has been provided for this image
+ok, so that's what it would look like. That is kind of what I expected. Also, I know my graphs aren't smooth, but if I just added more points between x values, then they would become smoother and less linear
+
+making a picture with a 2 dimensioanl array
+# imshow shows a 2D image as an image
+plt.imshow(twoDim, cmap='gray')
+# set some labels
+plt.title(f'an array with shape {twoDim.shape}')
+plt.xlabel('column')
+plt.ylabel('row')
+# a colorbar shows us how color maps to number
+plt.colorbar();
+No description has been provided for this image
+That's cool and all, but not really helpful for my twoDIm array. However, I could totally see the use for this for something such as analyzing telescope data from a gas cloud to see where the photon flux is the highest.
+
+7 think+code: imshow-your-own-arra
+print(myarray)
+[[42. 42. 42. 42. 42. 42. 42. 42. 42. 42.]
+ [-1. -1. -1. -1. -1. -1. -1. -1. -1. -1.]
+ [42. 42. 42. 42. 42. 42. 42. 42. 42. 42.]
+ [42. 42. 42. 42. 42. 42. 42. 42. 42. 42.]]
+since myarray is mostly the same except for the one row of -1, the image generated should just have one dark streak across the middle representing the row of -1, and the rest should be white, representing all of the 42s
+
+# imshow shows a 2D image as an image
+plt.imshow(myarray, cmap='gray')
+# set some labels
+plt.title(f'an array with shape {myarray.shape}')
+plt.xlabel('column')
+plt.ylabel('row')
+# a colorbar shows us how color maps to number
+plt.colorbar();
+No description has been provided for this image
+8 think+type: a bigger 2D array
+planet = np.load('planet.npy') #defining plaent as the numpy arrau from planets
+describe(planet) #describing the 2-dimensional numpy array, planet using the describe() function
+length is 2233
+size is 10300829
+shape is (2233, 4613)
+number of dimensions is 2
+contents are...
+[[0 0 0 ... 0 0 0]
+ [0 0 0 ... 0 0 0]
+ [0 0 0 ... 0 0 0]
+ ...
+ [0 0 0 ... 0 0 0]
+ [0 0 0 ... 0 0 0]
+ [0 0 0 ... 0 0 0]]
+maximum value is 238
+minimum value is 0
+# Visualizing planet using imshow
+
+# display the 2D array as an image
+plt.imshow(planet, cmap='gray')
+
+# draw a colorbar along the bottom
+plt.colorbar(orientation='horizontal');
+No description has been provided for this image
+OMG, the image of planet.npy is so beautiful! I love knowing how to visualize images using a multi-dimensional numpy array.
+
+9 think+pair+code: colorful planet
+I did this by myself at home
+plt.imshow(planet, cmap='gray') After googling, matplotlib colormaps and then going to matplotlib.org I was able to learn that the way you change the color on an image is with the cmap = part of the plt.imshow() function. I will try changing the color map from cmap='gray' to cmap='plasma'
+
+plt.imshow(planet, cmap='plasma')
+
+plt.colorbar(orientation='vertical'); #i'm also moving the colorbar to the side and vertical because I think that may look better
+No description has been provided for this image
+ok, first thought is that this does not look better. I mean, it helps me understand that I need to be black. Do to that, I will be switching to using the colormap, magma.
+
+I also have changed my mind on the vertical color bar and will revert to horizontal
+
+plt.imshow(planet, cmap='magma')
+
+plt.colorbar(orientation='horizontal');
+No description has been provided for this image
+The magma color map defintly looks better
+
+plt.imshow(planet, cmap='magma')
+
+plt.axhline(y=1000, xmin=0, xmax=250, color='blue') # rawing a line through saturn and its; rings
+
+plt.colorbar(orientation='horizontal');
+No description has been provided for this image
+when I plot the values in the array along the row where I drew the blue line through Saturn, I would expect that on the left and right edges near x=0 and x=4000, the plot will be near zero, as at those areas the image looks black, which is low on the colormap. Then, as it nears the center, it will steply climb and then plateau to a constant of between 100 and 200 as the majority of it is relatively uniform in color
+
+type(planet) #checking the type of planet so I know how to get the data to plot it
+numpy.ndarray
+describe(planet) # learning a little more about the numpy array planet to help me plot it
+length is 2233
+size is 10300829
+shape is (2233, 4613)
+number of dimensions is 2
+contents are...
+[[0 0 0 ... 0 0 0]
+ [0 0 0 ... 0 0 0]
+ [0 0 0 ... 0 0 0]
+ ...
+ [0 0 0 ... 0 0 0]
+ [0 0 0 ... 0 0 0]
+ [0 0 0 ... 0 0 0]]
+maximum value is 238
+minimum value is 0
+List = planet[1000] # getting the list of elements from the row y =1000
+listArray = np.array(List) #converting that list into an array
+plt.plot(listArray) # plottinh the array for y = 1000
+
+plt.title("birghtness as a function of x at y =1000")
+
+plt.xlabel("x coordinate in planet.npy at y = 1000")
+
+plt.ylabel("brightness in planet.npy at y = 1000")
+Text(0, 0.5, 'brightness in planet.npy at y = 1000')
+No description has been provided for this image
+The plot is pretty similar to what I predicted, except for the two gaps at x = 1000 and x = 3500. This is between Saturn and the rings so the image would be more black here. The other major difference is that it does not reach as high as I predicted. I predicted it would plateau between y =100 and y = 200. The actual graph shows that the plateau is more like between y = 60 and y = 140
+
+ 
