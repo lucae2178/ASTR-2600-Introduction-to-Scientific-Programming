@@ -1,0 +1,565 @@
+Tutorial 15 Handling Errors
+#making sure I have these two libraries
+import numpy as np
+import matplotlib.pyplot as plt
+2 think+type: try and except
+jovian_moons = ['Io', 'Europa', 'Ganymede', 'Callisto'] #a list of 4 of the 95 known jovian moons
+print(jovian_moons[11]) #this should retrun an error. Something like [11] is out of range of jovain_moons
+---------------------------------------------------------------------------
+IndexError                                Traceback (most recent call last)
+Cell In[7], line 2
+      1 jovian_moons = ['Io', 'Europa', 'Ganymede', 'Callisto'] #a list of 4 of the 95 known jovian moons
+----> 2 print(jovian_moons[11]) #this should retrun an error. Something like [11] is out of range of jovain_moons
+
+IndexError: list index out of range
+def attempt_index (array, i): #trying to see if an index i is in array
+
+    try:
+        
+        success = array[i] #getting the element from array at index, i
+        print(f"woohoo!! Index, {i} exists in array, {array} and is: ")
+        return array[i]
+    except IndexError: #testing if the error was an index error
+        print(f" sorry but array, {array} has no index, {i} as array, {array} only has indices from 0 to {len(array)-1}.")
+        return ":("
+    
+len(jovian_moons) #figruing out how long jovian_moons is so I can use that to test some stuff out
+4
+attempt_index (jovian_moons, 2) #this should hppefully work and print whatever is at index 2 in jovian_moons
+woohoo!! Index, 2 exists in array, ['Io', 'Europa', 'Ganymede', 'Callisto'] and is: 
+'Ganymede'
+attempt_index (jovian_moons, 42) #this should priont the except condition rather than an error statement
+ sorry but array, ['Io', 'Europa', 'Ganymede', 'Callisto'] has no index, 42 as array, ['Io', 'Europa', 'Ganymede', 'Callisto'] only has indices from 0 to 3.
+':('
+print(attempt_index (jovian_moons, 3)) #this should print,woohoo!! Index, 3 exists in array, ['Io', 'Europa', 'Ganymede', 'Callisto'] and is:  Callisto
+print(attempt_index (jovian_moons, 4)) #this should print,  sorry but array, ['Io', 'Europa', 'Ganymede', 'Callisto'] has no index, 4 as array, ['Io', 'Europa', 'Ganymede', 'Callisto'] only has indices from 0 to 3. :(
+woohoo!! Index, 3 exists in array, ['Io', 'Europa', 'Ganymede', 'Callisto'] and is: 
+Callisto
+ sorry but array, ['Io', 'Europa', 'Ganymede', 'Callisto'] has no index, 4 as array, ['Io', 'Europa', 'Ganymede', 'Callisto'] only has indices from 0 to 3.
+:(
+# using except with no following statements
+try:
+    glasses = "the SUN"/"sunglasses"
+    b = 2.187*"np.pi"
+    c = oops[27]
+except:
+    print("well I guess all of the above code has errors")
+well I guess all of the above code has errors
+3 think+pair+code: unit conversions
+did this by myself
+import conversions_meters as c_m #i have my tutorial15.py named as conversions_meters.py
+c_m.convertToMeters(121.6, 'nm') # this should print something like 1.216 *10^-6
+1.216e-07
+c_m.convertToMeters(0.5, 'AU') #this shouldn't work as the list, conversions in the module conversions_meters does not have a key 'AU'  
+---------------------------------------------------------------------------
+KeyError                                  Traceback (most recent call last)
+Cell In[55], line 1
+----> 1 c_m.convertToMeters(0.5, 'AU') #this shouldnt work as the list, conversions in the module conversions_meters does not have a key 'AU'  
+
+File ~/ASTR 2600/Tutorial/conversions_meters.py:20, in convertToMeters(x, unit)
+     18 '''Convert x into meters, starting from some other unit.'''
+     19 # multiply x by the appropriate conversion factor
+---> 20 return x*getConversion(unit)
+
+File ~/ASTR 2600/Tutorial/conversions_meters.py:15, in getConversion(unit)
+     13 '''Extract the conversion factor.'''
+     14 # access the unit key from conversions
+---> 15 return conversions[unit]
+
+KeyError: 'AU'
+As I stated in my comment on line [55] the code would not work as the list conversion that the function convertToMeters uses has no key, 'AU'.
+
+making the code work with try and expect statements
+conversions = {'nm':1.0e-9,
+               'mm':1.0e-3,
+               'km':1.0e3,
+               'ly':9.461e15}
+
+def getConversion(unit):
+    '''Extract the conversion factor.'''
+    # access the unit key from conversions
+    return conversions[unit]
+
+
+def convertToMeters(x, unit):
+    '''Convert x into meters, starting from some other unit.'''
+    # multiply x by the appropriate conversion factor
+    try: 
+        return x*getConversion(unit)
+    except KeyError :
+        print(f" the unit you enterd, {unit} is not a key in this list of keys {conversions.keys()}", "\n", "please enter a valid key and try again", "\n", "or add a new unit key and value to the dictionary conversions" )
+time to test my try and except statements
+convertToMeters(2178, 'mm') # this should return something like 2.178 meters
+2.178
+convertToMeters(12.345, "ly")
+1.16796045e+17
+convertToMeters(8712, 'micrometers')
+ the unit you enterd, micrometers is not a key in this list of keys dict_keys(['nm', 'mm', 'km', 'ly']) 
+ please enter a valid key and try again 
+ or add a new unit key and value to the dictionary conversions
+convertToMeters(144, 'sheppey')
+ the unit you enterd, sheppey is not a key in this list of keys dict_keys(['nm', 'mm', 'km', 'ly']) 
+ please enter a valid key and try again 
+ or add a new unit key and value to the dictionary conversions
+I'm dying inside from the definition of a sheppey
+"A sheppey is a whimsical unit of distance, defined as approximately 7/8 of a mile (1.4 kilometers), coined by Douglas Adams and John Lloyd. It represents the closest distance at which sheep can be considered picturesque." wikipedia
+
+# adding Sheppey to conversions
+conversions["sheppey"] = 1400 #meters
+convertToMeters(144, 'sheppey') #trying the same code now with sheppey in the dictionary conversiosn
+201600
+4 think+type: assert()
+def kinetic(T):
+
+    '''
+    Return the average per-particle
+    kinetic energy in Joules, for a gas
+    at temperature T in kelvin.
+    '''
+    
+    k = 1.3806503e-23 # Boltzmann's constant, m**2 kg / s**2 / Kelvin 
+    # Make sure that the temperature is positive.
+    assert(T > 0), "Temperatures cannot be negative!"
+    # calculate the kinetic energy
+    return 3.0/2.0*k*T
+print(f"a particle at a tempureture of 273 kelvin has a kinetic energy of {kinetic(273)} joules") #calculating the kinetic energy of a particle at 273 kelvin
+a particle at a tempureture of 273 kelvin has a kinetic energy of 5.6537629785000004e-21 joules
+print(kinetic(-1)) #this should get an error message, " Temperatures cannot be negative!""
+---------------------------------------------------------------------------
+AssertionError                            Traceback (most recent call last)
+Cell In[99], line 1
+----> 1 print(kinetic(-1)) #this should get an error message, " Temperatures cannot be negative!""
+
+Cell In[97], line 11, in kinetic(T)
+      9 k = 1.3806503e-23 # Boltzmann's constant, m**2 kg / s**2 / Kelvin 
+     10 # Make sure that the temperature is positive.
+---> 11 assert(T > 0), "Temperatures cannot be negative!"
+     12 # calculate the kinetic energy
+     13 return 3.0/2.0*k*T
+
+AssertionError: Temperatures cannot be negative!
+5 think+type+modify: reading web pages
+# I renamed tutorial15.py to conversions_meters.py and I imported it as c_m
+c_m?
+Type:        module
+String form: <module 'conversions_meters' from '/home/luel8892/ASTR 2600/Tutorial/conversions_meters.py'>
+File:        ~/ASTR 2600/Tutorial/conversions_meters.py
+Docstring:   These are a couple of blocks of code needed for Tutorial 15.
+d = c_m.readFromWeb("https://en.wikipedia.org/wiki/List_of_humorous_units_of_measurement") #on the note of the sheppey
+print(d[:3000].decode("utf-8")) # truncated for brevity
+Trying to load data from https://en.wikipedia.org/wiki/List_of_humorous_units_of_measurement
+ ...success!
+<!DOCTYPE html>
+<html class="client-nojs vector-feature-language-in-header-enabled vector-feature-language-in-main-page-header-disabled vector-feature-page-tools-pinned-disabled vector-feature-toc-pinned-clientpref-1 vector-feature-main-menu-pinned-disabled vector-feature-limited-width-clientpref-1 vector-feature-limited-width-content-enabled vector-feature-custom-font-size-clientpref-1 vector-feature-appearance-pinned-clientpref-1 vector-feature-night-mode-enabled skin-theme-clientpref-day vector-sticky-header-enabled vector-toc-available" lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<title>List of humorous units of measurement - Wikipedia</title>
+<script>(function(){var className="client-js vector-feature-language-in-header-enabled vector-feature-language-in-main-page-header-disabled vector-feature-page-tools-pinned-disabled vector-feature-toc-pinned-clientpref-1 vector-feature-main-menu-pinned-disabled vector-feature-limited-width-clientpref-1 vector-feature-limited-width-content-enabled vector-feature-custom-font-size-clientpref-1 vector-feature-appearance-pinned-clientpref-1 vector-feature-night-mode-enabled skin-theme-clientpref-day vector-sticky-header-enabled vector-toc-available";var cookie=document.cookie.match(/(?:^|; )enwikimwclientpreferences=([^;]+)/);if(cookie){cookie[1].split('%2C').forEach(function(pref){className=className.replace(new RegExp('(^| )'+pref.replace(/-clientpref-\w+$|[^\w-]+/g,'')+'-clientpref-\\w+( |$)'),'$1'+pref+'$2');});}document.documentElement.className=className;}());RLCONF={"wgBreakFrames":false,"wgSeparatorTransformTable":["",""],"wgDigitTransformTable":["",""],"wgDefaultDateFormat":"dmy","wgMonthNames":["","January","February","March","April","May","June","July","August","September","October","November","December"],"wgRequestId":"e995908f-1c4e-4122-994c-9da736f2781d","wgCanonicalNamespace":"","wgCanonicalSpecialPageName":false,"wgNamespaceNumber":0,"wgPageName":"List_of_humorous_units_of_measurement","wgTitle":"List of humorous units of measurement","wgCurRevisionId":1296439339,"wgRevisionId":1296439339,"wgArticleId":7830588,"wgIsArticle":true,"wgIsRedirect":false,"wgAction":"view","wgUserName":null,"wgUserGroups":["*"],"wgCategories":["CS1 German-language sources (de)","All articles with dead external links","Articles with dead external links from August 2023","Articles with permanently dead external links","Articles with dead external links from April 2024","Articles with short description","Short description is different from Wikidata","Wikipedia indefinitely semi-protected pages","Use American English from January 2020","All Wikipedia articles written in American English","Use mdy dates from January 2020","All articles with failed verification","Articles with failed verification from November 2021","All pages needing factual verification","Wikipedia articles needing factual verification from January 2020","All articles with unsourced statements","Articles with unsourced statements from June 2024"
+e = c_m.readFromWeb('https://psl.noaa.gov/boulder/data/boulderdaily.complete.txt')
+print(e[:2997].decode("utf-8"))
+#this should look better than my last c_m.readFromWeb
+Trying to load data from https://psl.noaa.gov/boulder/data/boulderdaily.complete.txt
+ ...success!
+ Please read information at bottom of file before using
+ 1897  1  1   -998   -998 -998.00  -998.0   -998
+ 1897  1  2   -998   -998 -998.00  -998.0   -998
+ 1897  1  3   -998   -998 -998.00  -998.0   -998
+ 1897  1  4   -998   -998 -998.00  -998.0   -998
+ 1897  1  5   -998   -998 -998.00  -998.0   -998
+ 1897  1  6   -998   -998 -998.00  -998.0   -998
+ 1897  1  7   -998   -998 -998.00  -998.0   -998
+ 1897  1  8   -998   -998 -998.00  -998.0   -998
+ 1897  1  9   -998   -998 -998.00  -998.0   -998
+ 1897  1 10   -998   -998 -998.00  -998.0   -998
+ 1897  1 11   -998   -998 -998.00  -998.0   -998
+ 1897  1 12   -998   -998 -998.00  -998.0   -998
+ 1897  1 13   -998   -998 -998.00  -998.0   -998
+ 1897  1 14   -998   -998 -998.00  -998.0   -998
+ 1897  1 15   -998   -998 -998.00  -998.0   -998
+ 1897  1 16   -998   -998 -998.00  -998.0   -998
+ 1897  1 17   -998   -998 -998.00  -998.0   -998
+ 1897  1 18   -998   -998 -998.00  -998.0   -998
+ 1897  1 19   -998   -998 -998.00  -998.0   -998
+ 1897  1 20   -998   -998 -998.00  -998.0   -998
+ 1897  1 21   -998   -998 -998.00  -998.0   -998
+ 1897  1 22   -998   -998 -998.00  -998.0   -998
+ 1897  1 23   -998   -998 -998.00  -998.0   -998
+ 1897  1 24   -998   -998 -998.00  -998.0   -998
+ 1897  1 25   -998   -998 -998.00  -998.0   -998
+ 1897  1 26   -998   -998 -998.00  -998.0   -998
+ 1897  1 27   -998   -998 -998.00  -998.0   -998
+ 1897  1 28   -998   -998 -998.00  -998.0   -998
+ 1897  1 29   -998   -998 -998.00  -998.0   -998
+ 1897  1 30   -998   -998 -998.00  -998.0   -998
+ 1897  1 31   -998   -998 -998.00  -998.0   -998
+ 1897  2  1   -998   -998 -998.00  -998.0   -998
+ 1897  2  2   -998   -998 -998.00  -998.0   -998
+ 1897  2  3   -998   -998 -998.00  -998.0   -998
+ 1897  2  4   -998   -998 -998.00  -998.0   -998
+ 1897  2  5   -998   -998 -998.00  -998.0   -998
+ 1897  2  6   -998   -998 -998.00  -998.0   -998
+ 1897  2  7   -998   -998 -998.00  -998.0   -998
+ 1897  2  8   -998   -998 -998.00  -998.0   -998
+ 1897  2  9   -998   -998 -998.00  -998.0   -998
+ 1897  2 10   -998   -998 -998.00  -998.0   -998
+ 1897  2 11   -998   -998 -998.00  -998.0   -998
+ 1897  2 12   -998   -998 -998.00  -998.0   -998
+ 1897  2 13   -998   -998 -998.00  -998.0   -998
+ 1897  2 14   -998   -998 -998.00  -998.0   -998
+ 1897  2 15   -998   -998 -998.00  -998.0   -998
+ 1897  2 16   -998   -998 -998.00  -998.0   -998
+ 1897  2 17   -998   -998 -998.00  -998.0   -998
+ 1897  2 18   -998   -998 -998.00  -998.0   -998
+ 1897  2 19   -998   -998 -998.00  -998.0   -998
+ 1897  2 20   -998   -998 -998.00  -998.0   -998
+ 1897  2 21   -998   -998 -998.00  -998.0   -998
+ 1897  2 22   -998   -998 -998.00  -998.0   -998
+ 1897  2 23   -998   -998 -998.00  -998.0   -998
+ 1897  2 24   -998   -998 -998.00  -998.0   -998
+ 1897  2 25   -998   -998 -998.00  -998.0   -998
+ 1897  2 26   -998   -998 -998.00  -998.0   -998
+ 1897  2 27   -998   -998 -998.00  -998.0   -998
+ 1897  2 28   -998   -998 -998.00  -998.0   -998
+ 1897  2 29   -998   -998 -998.00  -998.0   -998
+ 
+f = c_m.readFromWeb('http://my.supercool.webpage/') #using a fake webadress to see what the error essage says
+print(f)
+Trying to load data from http://my.supercool.webpage/
+---------------------------------------------------------------------------
+gaierror                                  Traceback (most recent call last)
+File /opt/anaconda3/envs/current/lib/python3.11/urllib/request.py:1348, in AbstractHTTPHandler.do_open(self, http_class, req, **http_conn_args)
+   1347 try:
+-> 1348     h.request(req.get_method(), req.selector, req.data, headers,
+   1349               encode_chunked=req.has_header('Transfer-encoding'))
+   1350 except OSError as err: # timeout error
+
+File /opt/anaconda3/envs/current/lib/python3.11/http/client.py:1303, in HTTPConnection.request(self, method, url, body, headers, encode_chunked)
+   1302 """Send a complete request to the server."""
+-> 1303 self._send_request(method, url, body, headers, encode_chunked)
+
+File /opt/anaconda3/envs/current/lib/python3.11/http/client.py:1349, in HTTPConnection._send_request(self, method, url, body, headers, encode_chunked)
+   1348     body = _encode(body, 'body')
+-> 1349 self.endheaders(body, encode_chunked=encode_chunked)
+
+File /opt/anaconda3/envs/current/lib/python3.11/http/client.py:1298, in HTTPConnection.endheaders(self, message_body, encode_chunked)
+   1297     raise CannotSendHeader()
+-> 1298 self._send_output(message_body, encode_chunked=encode_chunked)
+
+File /opt/anaconda3/envs/current/lib/python3.11/http/client.py:1058, in HTTPConnection._send_output(self, message_body, encode_chunked)
+   1057 del self._buffer[:]
+-> 1058 self.send(msg)
+   1060 if message_body is not None:
+   1061 
+   1062     # create a consistent interface to message_body
+
+File /opt/anaconda3/envs/current/lib/python3.11/http/client.py:996, in HTTPConnection.send(self, data)
+    995 if self.auto_open:
+--> 996     self.connect()
+    997 else:
+
+File /opt/anaconda3/envs/current/lib/python3.11/http/client.py:962, in HTTPConnection.connect(self)
+    961 sys.audit("http.client.connect", self, self.host, self.port)
+--> 962 self.sock = self._create_connection(
+    963     (self.host,self.port), self.timeout, self.source_address)
+    964 # Might fail in OSs that don't implement TCP_NODELAY
+
+File /opt/anaconda3/envs/current/lib/python3.11/socket.py:839, in create_connection(address, timeout, source_address, all_errors)
+    838 exceptions = []
+--> 839 for res in getaddrinfo(host, port, 0, SOCK_STREAM):
+    840     af, socktype, proto, canonname, sa = res
+
+File /opt/anaconda3/envs/current/lib/python3.11/socket.py:974, in getaddrinfo(host, port, family, type, proto, flags)
+    973 addrlist = []
+--> 974 for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+    975     af, socktype, proto, canonname, sa = res
+
+gaierror: [Errno -2] Name or service not known
+
+During handling of the above exception, another exception occurred:
+
+URLError                                  Traceback (most recent call last)
+Cell In[114], line 1
+----> 1 f = c_m.readFromWeb('http://my.supercool.webpage/') #using a fake webadress to see what the error essage says
+      2 print(f)
+
+File ~/ASTR 2600/Tutorial/conversions_meters.py:42, in readFromWeb(url)
+     39 from urllib.request import urlopen, URLError
+     41 # "response" is kind of like a file object, from when we did file I/O
+---> 42 response = urlopen(url)
+     43 print(" ...success!")
+     44 # read the data in that web address into a string
+
+File /opt/anaconda3/envs/current/lib/python3.11/urllib/request.py:216, in urlopen(url, data, timeout, cafile, capath, cadefault, context)
+    214 else:
+    215     opener = _opener
+--> 216 return opener.open(url, data, timeout)
+
+File /opt/anaconda3/envs/current/lib/python3.11/urllib/request.py:519, in OpenerDirector.open(self, fullurl, data, timeout)
+    516     req = meth(req)
+    518 sys.audit('urllib.Request', req.full_url, req.data, req.headers, req.get_method())
+--> 519 response = self._open(req, data)
+    521 # post-process response
+    522 meth_name = protocol+"_response"
+
+File /opt/anaconda3/envs/current/lib/python3.11/urllib/request.py:536, in OpenerDirector._open(self, req, data)
+    533     return result
+    535 protocol = req.type
+--> 536 result = self._call_chain(self.handle_open, protocol, protocol +
+    537                           '_open', req)
+    538 if result:
+    539     return result
+
+File /opt/anaconda3/envs/current/lib/python3.11/urllib/request.py:496, in OpenerDirector._call_chain(self, chain, kind, meth_name, *args)
+    494 for handler in handlers:
+    495     func = getattr(handler, meth_name)
+--> 496     result = func(*args)
+    497     if result is not None:
+    498         return result
+
+File /opt/anaconda3/envs/current/lib/python3.11/urllib/request.py:1377, in HTTPHandler.http_open(self, req)
+   1376 def http_open(self, req):
+-> 1377     return self.do_open(http.client.HTTPConnection, req)
+
+File /opt/anaconda3/envs/current/lib/python3.11/urllib/request.py:1351, in AbstractHTTPHandler.do_open(self, http_class, req, **http_conn_args)
+   1348         h.request(req.get_method(), req.selector, req.data, headers,
+   1349                   encode_chunked=req.has_header('Transfer-encoding'))
+   1350     except OSError as err: # timeout error
+-> 1351         raise URLError(err)
+   1352     r = h.getresponse()
+   1353 except:
+
+URLError: <urlopen error [Errno -2] Name or service not known>
+If an incorrect or inaccessible web address is used for the c_m.readFromWeb function, the error will be an OSError.
+
+I will use the OSError type in my except statement
+
+# readFromWeb function code:
+def readFromWeb(url='http://www.gutenberg.org/cache/epub/25267/pg25267.txt'):
+    '''
+    This function loads a web address, and returns its contents as a string.
+    '''
+
+    print("Trying to load data from {}".format(url))
+
+    # import tools for playing with web pages
+    from urllib.request import urlopen, URLError
+
+    # "response" is kind of like a file object, from when we did file I/O
+    response = urlopen(url)
+    print(" ...success!")
+    # read the data in that web address into a string
+    data = response.read()
+
+    # return that string
+    return data
+def betterReadFromWeb(a, url='http://www.gutenberg.org/cache/epub/25267/pg25267.txt'): #using the same input as  readFromWeb for simplicity's sake
+    try:
+        if len(a)>1: #any real URL should be loner than 1 charcter
+            e = c_m.readFromWeb(a)
+            print(e[:2997].decode("utf-8"))
+        else:
+            f =  c_m.readFromWeb(url='http://www.gutenberg.org/cache/epub/25267/pg25267.txt')
+            print(f[:2997].decode("utf-8"))
+    except OSError:
+        print(f" \n failure to open web address, {a} \nthe error type was, OSError")
+betterReadFromWeb('f') #first testing if I wrote my if-else statement correctly. If I did, then this should print out whatever gutenberg.org is
+Trying to load data from http://www.gutenberg.org/cache/epub/25267/pg25267.txt
+ ...success!
+﻿The Project Gutenberg eBook of Astronomy for Amateurs
+    
+This ebook is for the use of anyone anywhere in the United States and
+most other parts of the world at no cost and with almost no restrictions
+whatsoever. You may copy it, give it away or re-use it under the terms
+of the Project Gutenberg License included with this ebook or online
+at www.gutenberg.org. If you are not located in the United States,
+you will have to check the laws of the country where you are located
+before using this eBook.
+
+Title: Astronomy for Amateurs
+
+Author: Camille Flammarion
+
+Translator: Frances A. Welby
+
+Release date: April 30, 2008 [eBook #25267]
+                Most recently updated: January 3, 2021
+
+Language: English
+
+Credits: Produced by Jason Isbell, Greg Bergquist and the Online
+        Distributed Proofreading Team at https://www.pgdp.net
+
+
+*** START OF THE PROJECT GUTENBERG EBOOK ASTRONOMY FOR AMATEURS ***
+
+
+
+
+Produced by Jason Isbell, Greg Bergquist and the Online
+Distributed Proofreading Team at https://www.pgdp.net
+
+
+
+
+
+
+
+[Illustration: Paul Renaud.
+
+CONTEMPLATION]
+
+
+
+
+  ASTRONOMY FOR
+  AMATEURS
+
+
+  BY
+  CAMILLE FLAMMARION
+  AUTHOR OF POPULAR ASTRONOMY
+
+
+  _AUTHORIZED TRANSLATION BY_
+  FRANCES A. WELBY
+
+
+  _ILLUSTRATED_
+
+  [Illustration]
+
+
+  NEW YORK AND LONDON
+  D. APPLETON AND COMPANY
+  1910
+
+
+
+
+COPYRIGHT, 1904, BY
+
+D. APPLETON AND COMPANY
+
+
+_Published October, 1904_
+
+
+
+
+TO
+
+MADAME C.R. CAVARÉ
+
+  ORIGINAL MEMBER OF THE ASTRONOMICAL SOCIETY OF FRANCE
+  CHÂTEAU DE MAUPERTHUIS
+
+
+MADAME: I have dedicated none of my works, save Stella--offered to the
+liberal-minded, the free and generous friend of progress, and patron of
+the sciences, James Gordon Bennett, editor of the New York Herald. In
+this volume, Madame, I make another exception, and ask your permission
+to offer it to the first woman who consented to be enrolled in the list
+of members of the Astronomical Society of France, as foundress of this
+splendid work, from the very beginning of our vast association (1887);
+and who also desired to take part in the permanent organization of the
+Observatory at Juvisy, a task of private enterprise, emancipated from
+administrative routine. An Astronomy for Women[1] can not be better
+placed than upon the table of a lady whose erudition is equal to her
+virtues, and who has consecrated her long career to the pursuit and
+service of the Beautiful, the Good, and the True.
+
+                         CAMILLE FLAMMARION.
+
+  OBSERVATORY OF JUVISY, _November, 1903_.
+
+
+
+
+  CONTENTS
+
+
+  CHAPTER                                            PAGE
+
+        INTRODUCTION                                    1
+
+     I. THE CONTEMPLATION OF THE HEAVENS               10
+
+    II. THE CONSTELLATIONS                             28
+
+   III. THE STARS, SUNS OF THE INFINITE. A JOURNEY
+            THROUGH SPACE                              56
+
+    IV. OUR STAR THE SUN   
+betterReadFromWeb('https://psl.noaa.gov/boulder/data/boulderdaily.complete.txt') #testing a URL that I already know works with the readFromWeb function
+Trying to load data from https://psl.noaa.gov/boulder/data/boulderdaily.complete.txt
+ ...success!
+ Please read information at bottom of file before using
+ 1897  1  1   -998   -998 -998.00  -998.0   -998
+ 1897  1  2   -998   -998 -998.00  -998.0   -998
+ 1897  1  3   -998   -998 -998.00  -998.0   -998
+ 1897  1  4   -998   -998 -998.00  -998.0   -998
+ 1897  1  5   -998   -998 -998.00  -998.0   -998
+ 1897  1  6   -998   -998 -998.00  -998.0   -998
+ 1897  1  7   -998   -998 -998.00  -998.0   -998
+ 1897  1  8   -998   -998 -998.00  -998.0   -998
+ 1897  1  9   -998   -998 -998.00  -998.0   -998
+ 1897  1 10   -998   -998 -998.00  -998.0   -998
+ 1897  1 11   -998   -998 -998.00  -998.0   -998
+ 1897  1 12   -998   -998 -998.00  -998.0   -998
+ 1897  1 13   -998   -998 -998.00  -998.0   -998
+ 1897  1 14   -998   -998 -998.00  -998.0   -998
+ 1897  1 15   -998   -998 -998.00  -998.0   -998
+ 1897  1 16   -998   -998 -998.00  -998.0   -998
+ 1897  1 17   -998   -998 -998.00  -998.0   -998
+ 1897  1 18   -998   -998 -998.00  -998.0   -998
+ 1897  1 19   -998   -998 -998.00  -998.0   -998
+ 1897  1 20   -998   -998 -998.00  -998.0   -998
+ 1897  1 21   -998   -998 -998.00  -998.0   -998
+ 1897  1 22   -998   -998 -998.00  -998.0   -998
+ 1897  1 23   -998   -998 -998.00  -998.0   -998
+ 1897  1 24   -998   -998 -998.00  -998.0   -998
+ 1897  1 25   -998   -998 -998.00  -998.0   -998
+ 1897  1 26   -998   -998 -998.00  -998.0   -998
+ 1897  1 27   -998   -998 -998.00  -998.0   -998
+ 1897  1 28   -998   -998 -998.00  -998.0   -998
+ 1897  1 29   -998   -998 -998.00  -998.0   -998
+ 1897  1 30   -998   -998 -998.00  -998.0   -998
+ 1897  1 31   -998   -998 -998.00  -998.0   -998
+ 1897  2  1   -998   -998 -998.00  -998.0   -998
+ 1897  2  2   -998   -998 -998.00  -998.0   -998
+ 1897  2  3   -998   -998 -998.00  -998.0   -998
+ 1897  2  4   -998   -998 -998.00  -998.0   -998
+ 1897  2  5   -998   -998 -998.00  -998.0   -998
+ 1897  2  6   -998   -998 -998.00  -998.0   -998
+ 1897  2  7   -998   -998 -998.00  -998.0   -998
+ 1897  2  8   -998   -998 -998.00  -998.0   -998
+ 1897  2  9   -998   -998 -998.00  -998.0   -998
+ 1897  2 10   -998   -998 -998.00  -998.0   -998
+ 1897  2 11   -998   -998 -998.00  -998.0   -998
+ 1897  2 12   -998   -998 -998.00  -998.0   -998
+ 1897  2 13   -998   -998 -998.00  -998.0   -998
+ 1897  2 14   -998   -998 -998.00  -998.0   -998
+ 1897  2 15   -998   -998 -998.00  -998.0   -998
+ 1897  2 16   -998   -998 -998.00  -998.0   -998
+ 1897  2 17   -998   -998 -998.00  -998.0   -998
+ 1897  2 18   -998   -998 -998.00  -998.0   -998
+ 1897  2 19   -998   -998 -998.00  -998.0   -998
+ 1897  2 20   -998   -998 -998.00  -998.0   -998
+ 1897  2 21   -998   -998 -998.00  -998.0   -998
+ 1897  2 22   -998   -998 -998.00  -998.0   -998
+ 1897  2 23   -998   -998 -998.00  -998.0   -998
+ 1897  2 24   -998   -998 -998.00  -998.0   -998
+ 1897  2 25   -998   -998 -998.00  -998.0   -998
+ 1897  2 26   -998   -998 -998.00  -998.0   -998
+ 1897  2 27   -998   -998 -998.00  -998.0   -998
+ 1897  2 28   -998   -998 -998.00  -998.0   -998
+ 1897  2 29   -998   -998 -998.00  -998.0   -998
+ 
+h = betterReadFromWeb('http://made.up')
+print(h)
+Trying to load data from http://made.up
+ 
+ failure to open web address, http://made.up 
+the error type was, OSError
+None
+ 
