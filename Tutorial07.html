@@ -1,0 +1,139 @@
+2 think+type: if-else
+def guess(value):
+    if value == 39:
+        print(";-)")
+    else:
+        print(":-(")
+the code in [9] defines a function titled, guess. This function takes one input wehich it assigns to value. The guess function then checks if value is equal to 39 if this returns True then it prints a winking smiley face. Otherisw it prints a frowning face
+guess(39) #checking if the guess function's first if statement works
+;-)
+guess(24) #checking if the else statement works for a different int type input
+:-(
+guess("hello") #checking if strings are valid inputs into the guess function (this should retun :-(
+:-(
+guess("39") #this should return :-( as it is not int data type
+:-(
+3 think+pair+code: if-else
+with Allie
+def age(star):
+    if star  < 13.8: #cchecks if star age is less tahn 13.8
+        print(":)")
+    elif star == 13.8: #checks if the stars age is equal to  13.8
+        print('BIG BANG!!!')
+    else:
+        print(":(")
+age(5)
+:)
+age(10)
+:)
+age(13.79999)
+:)
+age(13.8000000000001)
+:(
+age(13.8) #should return frown because it is not less than 13.8
+:(
+#after adding the elfi statement to the function
+age(13.8) # should print BIG BANG
+BIG BANG!!!
+4 think+type: scatter plots
+import numpy as np #importing the numpy library and assigning it to np
+import matplotlib.pyplot as plt # importing the matplotlib.pyplot library and assigning it to plt
+t = np.linspace(0, 2*np.pi, 200) # defining t as an array of 200 equally spaced values between 0 and 2π
+x = np.cos(t) # defining x as cos of the t values array
+y = np.sin(t) # defining y as sin of the t array
+plt.scatter(x, y) #creating a scatter plot of all of the values of x and y
+
+plt.show()
+No description has been provided for this image
+plt.scatter(x,y)
+#again maming another scater plot with the x cooridante equal to  the x array and the y cooridinate equal to the y array
+
+plt.axis("scaled")
+# this should make the x axis and the y axis the same size, resulting in the plotting of a circle
+
+plt.show() 
+# plotting the code above
+No description has been provided for this image
+plt.scatter(x,y)
+#ploting the same data from the x array and the y array
+
+plt.axis("scaled")
+#making sure both axes are equal size
+
+plt.xlim(-1.5, 1.5)
+#intorducing limits for the x values
+plt.ylim(-2.0,2.0)
+#introducing limits for the y values
+
+plt.xlabel('x (light seconds)')
+#labeling the x axis
+plt.ylabel('y (light seconds)')
+#labeling the y axis
+
+plt.title('circle with radius of 1 light second')
+
+plt.show
+<function matplotlib.pyplot.show(close=None, block=None)>
+No description has been provided for this image
+5 think+code: plotting a curve
+copying and fixing code from tutorial 3 question 8
+#code from tutorial03 question 8
+
+Intial_radius = 2 #parsecs
+Testing_radius = 10 #parsecs 
+Final_radius = 50 #parsecs
+
+#my intial code
+radius = Intial_radius #making sure the radius is set initially to 2 parsec
+while radius <= Testing_radius: #
+    stars = (radius**3)*0.077 #stars/parsec^3
+    print("there should be, ", stars, " stars in a sphere of radius, ", radius, " parsecs away from earth")
+
+    radius += 2
+
+radius = 2
+there should be,  0.616  stars in a sphere of radius,  2  parsecs away from earth
+there should be,  4.928  stars in a sphere of radius,  4  parsecs away from earth
+there should be,  16.632  stars in a sphere of radius,  6  parsecs away from earth
+there should be,  39.424  stars in a sphere of radius,  8  parsecs away from earth
+there should be,  77.0  stars in a sphere of radius,  10  parsecs away from earth
+#my fixed code 
+from math import pi
+pi = pi
+#the first time I ran this code I forgot to multiplu by 4/3pi 
+
+radius = 2
+stars = 0
+while radius <= Final_radius: 
+    stars = ((4/3)*pi*(radius**3)*0.077) #stars/parsec^3
+    stars_rounded = round(stars) #rounding the output of 
+    #print(stars_rounded)
+    radius += 2
+Now that I have my function N(x) from tutorial 03 question 8 working it is time to create a plot of the functrion
+radius = 2
+stars = 0
+distance = []
+star_dist = []
+while radius <= Final_radius: 
+    stars = ((4/3)*pi*(radius**3)*0.077) #stars/parsec^3
+    stars_rounded = round(stars) #rounding the output of 
+    distance.append(radius) #adding that radius distance to the list of distances
+    star_dist.append(stars_rounded) #adding the rounded number of stars at this distance to the list of stars per distance
+    
+    radius += 2
+    
+x = np.array(distance) # creating an array for the x values of distances in parsecs
+y = np.array(star_dist) # creating an array for the y values of stars at a certain distance
+
+plt.plot(x,y)
+
+plt.xlabel('x (parsecs from the sun)')
+
+plt.ylabel('y (stars)')
+
+plt.title('number of stars at a radius(parsecs) centered on the Sun')
+
+plt.show
+<function matplotlib.pyplot.show(close=None, block=None)>
+No description has been provided for this image
+ 
