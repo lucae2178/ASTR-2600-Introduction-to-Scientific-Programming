@@ -1,0 +1,711 @@
+Tutorial17-more2DArrays
+import numpy as np
+import matplotlib.pyplot as plt
+# I cannot figure out how to import my modules so I am just pasting the functions I need here
+def describe(a):
+
+    '''
+    --------input-------
+    a = np.array
+
+    -------output----------
+
+    The describe function [prints descriptions of the array a
+    
+    '''
+    
+    
+    print(f"length is {len(a)}")
+    print(f"size is {a.size}")
+    print(f"shape is {a.shape}")
+    print(f"number of dimensions is {a.ndim}")
+    print(f"contents are...\n{a}")
+    print(f"maximum value is {a.max()}")
+    print(f"minimum value is {a.min()}")
+2 think+type: astronomical images
+# importing the FITS files
+
+# import a tool for reading FITS files
+from astropy.io import fits
+
+# open the FITS files, extract the data from their 0th extension
+img1 = fits.open('stars1.fits')[0].data
+img2 = fits.open('stars2.fits')[0].data
+#IDK why but the for loop wasn;t working for me so i just printed each image sepertly
+plt.title("image 1 on a log scale")
+plt.imshow(np.log(img1), cmap='gray')
+
+plt.colorbar()
+
+plt.show();
+
+plt.title("image 2 on a log scale")
+plt.imshow(np.log(img1), cmap='gray')
+
+plt.colorbar()
+
+plt.show();
+No description has been provided for this image
+No description has been provided for this image
+Please note that I am unable to spot the asteroid. This is most likely because of my visual impairment. I need to allow each photo to take up my whole screen to even see the stars so it is impossible for me to compare the two images with my eyes. I am positive I could write code to compare the two arrays and find the asteroid that way. But, that seems a bit extra for this step.
+
+print(f"{img1} \n \n \n end \n \n \n {img2}") #just making sure I imported everything correctly
+[[ 92.80010028  86.92497827  96.5970828  ... 118.91384617 127.9049154
+  108.52401223]
+ [ 99.97014755 100.55742075 102.92538471 ... 105.23478364 128.91699386
+  130.16929308]
+ [113.5048081   99.59117208  80.96966186 ... 127.08309    169.45721837
+  190.65547322]
+ ...
+ [130.95789671 114.97508541 105.72512209 ... 105.2156641   99.74157451
+  109.79459047]
+ [ 93.55924494 116.57385958  92.94528134 ...  93.61784743 101.30747382
+  108.2808154 ]
+ [100.59736257 101.19144643 103.95673312 ...  82.58303806  86.04708902
+  117.8447799 ]] 
+ 
+ 
+ end 
+ 
+ 
+ [[ 97.08963272 106.12643699  92.07332465 ...  91.1836787  102.33751316
+  122.95788182]
+ [ 97.40000973  90.45188486  96.89703065 ... 130.37703496 121.75941991
+  132.91878035]
+ [103.13386245  85.90949826 128.27572196 ... 134.39695356 153.58513261
+  203.74669952]
+ ...
+ [ 99.55804114 127.72701794  99.94775968 ...  94.90387917 100.65738244
+   79.71894421]
+ [103.67122327  96.68904499  87.3756863  ...  99.06146014  94.53837275
+  104.51372   ]
+ [ 96.29222026  98.90509913  90.55651921 ... 100.59974577 107.75266731
+   98.37114386]]
+count = 1
+for image in [img1, img2]:
+ 
+    # imshow each image
+    plt.imshow(np.log(image), cmap='gray')
+    # add a colorbar for each image
+    plt.colorbar()
+    # adds a title for each image, I'm using a counter variable to know which image I am pritning to add the appriopriuate title 
+    if count == 1:
+        plt.title("img 1")
+    elif count == 2:
+        plt.title("img 2")
+    # actually draw the imshow for each image
+    plt.show();
+    
+    print(count)
+    count += 1 # counter variable for the title of the images
+3 think+pair+code: find the asteroid
+I did this part by myself at home
+To find the asteroid, I am planning on looping through every element in each array and testing if they are the same
+
+#checking to make sure each array is the same length
+print(f" the two arrays have the same number of rows, {len(img1) == len(img2)}") # testing if the two arrays have the same number of rows
+
+print(f"\n \n  the two arrays have the same number of columns, {len(img1[0]) == len(img2[0])}") # testing if the two arrays have the same number of columns
+
+# ok, I know I could have checked that easier by comparing both arrays' shapes
+print(np.shape(img1) == np.shape(img2))
+for i in range(len(np.shape(img1)[0])): #running through all the rows
+    for j in range(np.shape(img1)[1])): #running through all of the columns
+        if img1[i][j] == img2[i][j]:
+            pass
+        else:
+            print(f" row = {i}, column = {j}")
+img1[0][0] == img2[0][0] # testing to see if I can even compare them pixel by pixel
+img1[127][127] == img2[127][127] #testing again to see if I did something incoorect or got a falsde positve
+describe(img1)
+img1[0][0]
+img2[0][0]
+img1[0][255]
+img2[0][255]
+Even though the images have different values at each pixel, they seem to have the same leading digit when they are the same. So I will just search for one the leading digits are different
+
+int(str(img1[0][0])[0]) #conveerting img1[0][0] to a string to accsses only the firsdt digit then back to an integer
+
+int(str(img1[0][0])[0]) == int(str(img2[0][0])[0]) #if I did everything correvtly this should return, True
+for i in range(10): #testing if this will work because when I ran, for j in range(np.shape(img1)[0]) my jupyter notebook crashed
+    for j in range(10): #running through all of the columns
+        if int(str(img1[i][j])[0]) == int(str(img2[i][j])[0]):
+            pass
+        else:
+            print(f" row = {i}, column = {j}")
+            print(f" img1 = {int(str(img1[i][j])[0])} img2 = {int(str(img2[i][j])[0])}")
+ row = 0, column = 1
+ img1 = 8 img2 = 1
+ row = 0, column = 6
+ img1 = 8 img2 = 1
+ row = 0, column = 8
+ img1 = 8 img2 = 9
+ row = 0, column = 9
+ img1 = 1 img2 = 9
+ row = 1, column = 1
+ img1 = 1 img2 = 9
+ row = 1, column = 2
+ img1 = 1 img2 = 9
+ row = 1, column = 3
+ img1 = 1 img2 = 9
+ row = 1, column = 6
+ img1 = 9 img2 = 1
+ row = 1, column = 8
+ img1 = 1 img2 = 9
+ row = 1, column = 9
+ img1 = 9 img2 = 8
+ row = 2, column = 1
+ img1 = 9 img2 = 8
+ row = 2, column = 2
+ img1 = 8 img2 = 1
+ row = 2, column = 3
+ img1 = 1 img2 = 8
+ row = 2, column = 4
+ img1 = 8 img2 = 1
+ row = 2, column = 5
+ img1 = 9 img2 = 1
+ row = 2, column = 6
+ img1 = 9 img2 = 8
+ row = 2, column = 8
+ img1 = 1 img2 = 9
+ row = 3, column = 0
+ img1 = 1 img2 = 9
+ row = 3, column = 2
+ img1 = 9 img2 = 1
+ row = 3, column = 3
+ img1 = 1 img2 = 9
+ row = 3, column = 4
+ img1 = 1 img2 = 8
+ row = 3, column = 5
+ img1 = 1 img2 = 9
+ row = 3, column = 6
+ img1 = 1 img2 = 8
+ row = 3, column = 7
+ img1 = 9 img2 = 1
+ row = 3, column = 8
+ img1 = 8 img2 = 9
+ row = 3, column = 9
+ img1 = 9 img2 = 1
+ row = 4, column = 2
+ img1 = 9 img2 = 1
+ row = 4, column = 5
+ img1 = 1 img2 = 9
+ row = 4, column = 6
+ img1 = 9 img2 = 8
+ row = 4, column = 8
+ img1 = 9 img2 = 1
+ row = 5, column = 6
+ img1 = 1 img2 = 9
+ row = 5, column = 7
+ img1 = 1 img2 = 8
+ row = 5, column = 9
+ img1 = 1 img2 = 8
+ row = 6, column = 5
+ img1 = 1 img2 = 9
+ row = 6, column = 6
+ img1 = 9 img2 = 1
+ row = 6, column = 8
+ img1 = 8 img2 = 9
+ row = 6, column = 9
+ img1 = 1 img2 = 9
+ row = 7, column = 8
+ img1 = 1 img2 = 9
+ row = 7, column = 9
+ img1 = 9 img2 = 1
+The code in [119] didn't work as way too frequently, the first digit of img1[row][column] was different than the first digit of img2[row][column]
+
+What I will do instead is see if the differences between img1[row][column] and img2[row][column] os greater than 50
+
+for i in range(10): #testing if this will work because when I ran, for j in range(np.shape(img1)[0]), my Jupyter notebook crashed
+    for j in range(10): #running through all of the columns
+        difference = int(np.abs(img1[i][j] - img2[i][j])) # calculating the absolute value of the difference between the pixels of the two images
+        if difference < 30:
+            pass
+        else:
+            print(f" row = {i}, column = {j}")
+            print(f" the difference between img1 and img2 is, {difference}")
+ row = 2, column = 2
+ the difference between img1 and img2 is, 47
+ row = 3, column = 6
+ the difference between img1 and img2 is, 30
+ row = 7, column = 1
+ the difference between img1 and img2 is, 32
+ row = 7, column = 2
+ the difference between img1 and img2 is, 35
+ row = 9, column = 5
+ the difference between img1 and img2 is, 33
+ok, so the code in [121] has definitely produced a short output that the code in [119]. So the question now is, what difference should I test the whole array with?
+
+I am thinking for efficiency's sake, to start off with, difference < 100 in my first run through of the whole array. This will point out major points of interest. If none are found using difference < 100, then I will decrease what differnece needs to be larger than.
+
+for i in range(np.shape(img1)[0]): #running through all the rows
+    for j in range(np.shape(img1)[1]): #running through all of the columns
+        difference = int(np.abs(img1[i][j] - img2[i][j])) # calculating teh absolute value of the difference between the pixels of the two images
+        if difference < 100:
+            pass
+        else:
+            print(f" row = {i}, column = {j}")
+            print(f" the difference between img1 and img2 is, {difference}")
+ row = 33, column = 215
+ the difference between img1 and img2 is, 145
+ row = 35, column = 26
+ the difference between img1 and img2 is, 135
+ row = 35, column = 178
+ the difference between img1 and img2 is, 103
+ row = 36, column = 176
+ the difference between img1 and img2 is, 115
+ row = 36, column = 180
+ the difference between img1 and img2 is, 155
+ row = 37, column = 179
+ the difference between img1 and img2 is, 116
+ row = 37, column = 181
+ the difference between img1 and img2 is, 105
+ row = 51, column = 212
+ the difference between img1 and img2 is, 139
+ row = 52, column = 211
+ the difference between img1 and img2 is, 152
+ row = 53, column = 209
+ the difference between img1 and img2 is, 155
+ row = 63, column = 206
+ the difference between img1 and img2 is, 350
+ row = 64, column = 207
+ the difference between img1 and img2 is, 103
+ row = 73, column = 197
+ the difference between img1 and img2 is, 172
+ row = 74, column = 195
+ the difference between img1 and img2 is, 150
+ row = 76, column = 195
+ the difference between img1 and img2 is, 111
+ row = 103, column = 231
+ the difference between img1 and img2 is, 112
+ row = 130, column = 200
+ the difference between img1 and img2 is, 124
+ row = 130, column = 201
+ the difference between img1 and img2 is, 139
+ row = 130, column = 202
+ the difference between img1 and img2 is, 116
+ row = 131, column = 199
+ the difference between img1 and img2 is, 111
+ row = 131, column = 200
+ the difference between img1 and img2 is, 198
+ row = 131, column = 201
+ the difference between img1 and img2 is, 253
+ row = 131, column = 202
+ the difference between img1 and img2 is, 234
+ row = 131, column = 203
+ the difference between img1 and img2 is, 177
+ row = 131, column = 204
+ the difference between img1 and img2 is, 103
+ row = 132, column = 199
+ the difference between img1 and img2 is, 207
+ row = 132, column = 200
+ the difference between img1 and img2 is, 310
+ row = 132, column = 201
+ the difference between img1 and img2 is, 398
+ row = 132, column = 202
+ the difference between img1 and img2 is, 377
+ row = 132, column = 203
+ the difference between img1 and img2 is, 253
+ row = 132, column = 204
+ the difference between img1 and img2 is, 206
+ row = 133, column = 199
+ the difference between img1 and img2 is, 249
+ row = 133, column = 200
+ the difference between img1 and img2 is, 400
+ row = 133, column = 201
+ the difference between img1 and img2 is, 465
+ row = 133, column = 202
+ the difference between img1 and img2 is, 489
+ row = 133, column = 203
+ the difference between img1 and img2 is, 376
+ row = 133, column = 204
+ the difference between img1 and img2 is, 183
+ row = 134, column = 168
+ the difference between img1 and img2 is, 104
+ row = 134, column = 198
+ the difference between img1 and img2 is, 105
+ row = 134, column = 199
+ the difference between img1 and img2 is, 229
+ row = 134, column = 200
+ the difference between img1 and img2 is, 348
+ row = 134, column = 201
+ the difference between img1 and img2 is, 456
+ row = 134, column = 202
+ the difference between img1 and img2 is, 452
+ row = 134, column = 203
+ the difference between img1 and img2 is, 339
+ row = 134, column = 204
+ the difference between img1 and img2 is, 205
+ row = 135, column = 199
+ the difference between img1 and img2 is, 167
+ row = 135, column = 200
+ the difference between img1 and img2 is, 293
+ row = 135, column = 201
+ the difference between img1 and img2 is, 362
+ row = 135, column = 202
+ the difference between img1 and img2 is, 315
+ row = 135, column = 203
+ the difference between img1 and img2 is, 221
+ row = 135, column = 204
+ the difference between img1 and img2 is, 155
+ row = 136, column = 200
+ the difference between img1 and img2 is, 146
+ row = 136, column = 201
+ the difference between img1 and img2 is, 200
+ row = 136, column = 202
+ the difference between img1 and img2 is, 189
+ row = 136, column = 203
+ the difference between img1 and img2 is, 153
+ row = 160, column = 210
+ the difference between img1 and img2 is, 128
+ row = 161, column = 209
+ the difference between img1 and img2 is, 114
+ row = 161, column = 210
+ the difference between img1 and img2 is, 101
+ row = 166, column = 107
+ the difference between img1 and img2 is, 107
+ row = 167, column = 106
+ the difference between img1 and img2 is, 102
+ row = 167, column = 107
+ the difference between img1 and img2 is, 183
+ row = 167, column = 108
+ the difference between img1 and img2 is, 243
+ row = 167, column = 109
+ the difference between img1 and img2 is, 202
+ row = 167, column = 110
+ the difference between img1 and img2 is, 126
+ row = 168, column = 105
+ the difference between img1 and img2 is, 120
+ row = 168, column = 106
+ the difference between img1 and img2 is, 194
+ row = 168, column = 107
+ the difference between img1 and img2 is, 271
+ row = 168, column = 108
+ the difference between img1 and img2 is, 327
+ row = 168, column = 109
+ the difference between img1 and img2 is, 338
+ row = 168, column = 110
+ the difference between img1 and img2 is, 263
+ row = 168, column = 111
+ the difference between img1 and img2 is, 136
+ row = 169, column = 105
+ the difference between img1 and img2 is, 117
+ row = 169, column = 106
+ the difference between img1 and img2 is, 248
+ row = 169, column = 107
+ the difference between img1 and img2 is, 422
+ row = 169, column = 108
+ the difference between img1 and img2 is, 453
+ row = 169, column = 109
+ the difference between img1 and img2 is, 440
+ row = 169, column = 110
+ the difference between img1 and img2 is, 341
+ row = 169, column = 111
+ the difference between img1 and img2 is, 197
+ row = 170, column = 105
+ the difference between img1 and img2 is, 117
+ row = 170, column = 106
+ the difference between img1 and img2 is, 252
+ row = 170, column = 107
+ the difference between img1 and img2 is, 407
+ row = 170, column = 108
+ the difference between img1 and img2 is, 482
+ row = 170, column = 109
+ the difference between img1 and img2 is, 440
+ row = 170, column = 110
+ the difference between img1 and img2 is, 296
+ row = 170, column = 111
+ the difference between img1 and img2 is, 188
+ row = 171, column = 106
+ the difference between img1 and img2 is, 204
+ row = 171, column = 107
+ the difference between img1 and img2 is, 320
+ row = 171, column = 108
+ the difference between img1 and img2 is, 393
+ row = 171, column = 109
+ the difference between img1 and img2 is, 340
+ row = 171, column = 110
+ the difference between img1 and img2 is, 259
+ row = 171, column = 111
+ the difference between img1 and img2 is, 152
+ row = 172, column = 106
+ the difference between img1 and img2 is, 113
+ row = 172, column = 107
+ the difference between img1 and img2 is, 204
+ row = 172, column = 108
+ the difference between img1 and img2 is, 231
+ row = 172, column = 109
+ the difference between img1 and img2 is, 231
+ row = 172, column = 110
+ the difference between img1 and img2 is, 134
+ row = 173, column = 108
+ the difference between img1 and img2 is, 115
+ row = 173, column = 109
+ the difference between img1 and img2 is, 107
+ row = 182, column = 123
+ the difference between img1 and img2 is, 108
+ row = 184, column = 119
+ the difference between img1 and img2 is, 116
+ row = 184, column = 121
+ the difference between img1 and img2 is, 230
+ row = 185, column = 123
+ the difference between img1 and img2 is, 130
+ row = 185, column = 124
+ the difference between img1 and img2 is, 142
+ row = 206, column = 61
+ the difference between img1 and img2 is, 109
+ row = 206, column = 63
+ the difference between img1 and img2 is, 139
+ row = 207, column = 63
+ the difference between img1 and img2 is, 153
+ row = 207, column = 64
+ the difference between img1 and img2 is, 102
+ row = 214, column = 243
+ the difference between img1 and img2 is, 223
+ row = 214, column = 244
+ the difference between img1 and img2 is, 118
+ row = 215, column = 241
+ the difference between img1 and img2 is, 130
+ row = 215, column = 243
+ the difference between img1 and img2 is, 127
+ row = 215, column = 246
+ the difference between img1 and img2 is, 116
+ row = 216, column = 241
+ the difference between img1 and img2 is, 208
+ row = 216, column = 243
+ the difference between img1 and img2 is, 103
+ row = 216, column = 245
+ the difference between img1 and img2 is, 194
+ row = 218, column = 241
+ the difference between img1 and img2 is, 144
+ row = 224, column = 224
+ the difference between img1 and img2 is, 141
+ row = 224, column = 225
+ the difference between img1 and img2 is, 101
+ row = 225, column = 229
+ the difference between img1 and img2 is, 111
+ row = 226, column = 227
+ the difference between img1 and img2 is, 163
+ row = 227, column = 222
+ the difference between img1 and img2 is, 105
+ row = 228, column = 223
+ the difference between img1 and img2 is, 136
+ row = 228, column = 224
+ the difference between img1 and img2 is, 108
+ row = 229, column = 229
+ the difference between img1 and img2 is, 104
+This is still too much data, but it is significantly better than the original way I did this. I will be changing to differeence < 200
+
+for i in range(np.shape(img1)[0]): #running through all the rows
+    for j in range(np.shape(img1)[1]): #running through all of the columns
+        difference = int(np.abs(img1[i][j] - img2[i][j])) # calculating teh absolute value of the difference between the pixels of the two images
+        if difference < 200:
+            pass
+        else:
+            print(f" row = {i}, column = {j}")
+            print(f" the difference between img1 and img2 is, {difference}")
+ row = 63, column = 206
+ the difference between img1 and img2 is, 350
+ row = 131, column = 201
+ the difference between img1 and img2 is, 253
+ row = 131, column = 202
+ the difference between img1 and img2 is, 234
+ row = 132, column = 199
+ the difference between img1 and img2 is, 207
+ row = 132, column = 200
+ the difference between img1 and img2 is, 310
+ row = 132, column = 201
+ the difference between img1 and img2 is, 398
+ row = 132, column = 202
+ the difference between img1 and img2 is, 377
+ row = 132, column = 203
+ the difference between img1 and img2 is, 253
+ row = 132, column = 204
+ the difference between img1 and img2 is, 206
+ row = 133, column = 199
+ the difference between img1 and img2 is, 249
+ row = 133, column = 200
+ the difference between img1 and img2 is, 400
+ row = 133, column = 201
+ the difference between img1 and img2 is, 465
+ row = 133, column = 202
+ the difference between img1 and img2 is, 489
+ row = 133, column = 203
+ the difference between img1 and img2 is, 376
+ row = 134, column = 199
+ the difference between img1 and img2 is, 229
+ row = 134, column = 200
+ the difference between img1 and img2 is, 348
+ row = 134, column = 201
+ the difference between img1 and img2 is, 456
+ row = 134, column = 202
+ the difference between img1 and img2 is, 452
+ row = 134, column = 203
+ the difference between img1 and img2 is, 339
+ row = 134, column = 204
+ the difference between img1 and img2 is, 205
+ row = 135, column = 200
+ the difference between img1 and img2 is, 293
+ row = 135, column = 201
+ the difference between img1 and img2 is, 362
+ row = 135, column = 202
+ the difference between img1 and img2 is, 315
+ row = 135, column = 203
+ the difference between img1 and img2 is, 221
+ row = 136, column = 201
+ the difference between img1 and img2 is, 200
+ row = 167, column = 108
+ the difference between img1 and img2 is, 243
+ row = 167, column = 109
+ the difference between img1 and img2 is, 202
+ row = 168, column = 107
+ the difference between img1 and img2 is, 271
+ row = 168, column = 108
+ the difference between img1 and img2 is, 327
+ row = 168, column = 109
+ the difference between img1 and img2 is, 338
+ row = 168, column = 110
+ the difference between img1 and img2 is, 263
+ row = 169, column = 106
+ the difference between img1 and img2 is, 248
+ row = 169, column = 107
+ the difference between img1 and img2 is, 422
+ row = 169, column = 108
+ the difference between img1 and img2 is, 453
+ row = 169, column = 109
+ the difference between img1 and img2 is, 440
+ row = 169, column = 110
+ the difference between img1 and img2 is, 341
+ row = 170, column = 106
+ the difference between img1 and img2 is, 252
+ row = 170, column = 107
+ the difference between img1 and img2 is, 407
+ row = 170, column = 108
+ the difference between img1 and img2 is, 482
+ row = 170, column = 109
+ the difference between img1 and img2 is, 440
+ row = 170, column = 110
+ the difference between img1 and img2 is, 296
+ row = 171, column = 106
+ the difference between img1 and img2 is, 204
+ row = 171, column = 107
+ the difference between img1 and img2 is, 320
+ row = 171, column = 108
+ the difference between img1 and img2 is, 393
+ row = 171, column = 109
+ the difference between img1 and img2 is, 340
+ row = 171, column = 110
+ the difference between img1 and img2 is, 259
+ row = 172, column = 107
+ the difference between img1 and img2 is, 204
+ row = 172, column = 108
+ the difference between img1 and img2 is, 231
+ row = 172, column = 109
+ the difference between img1 and img2 is, 231
+ row = 184, column = 121
+ the difference between img1 and img2 is, 230
+ row = 214, column = 243
+ the difference between img1 and img2 is, 223
+ row = 216, column = 241
+ the difference between img1 and img2 is, 208
+Ok again improvement, but still not refined enough. I will now be switching to difference is less than 400
+
+for i in range(np.shape(img1)[0]): #running through all the rows
+    for j in range(np.shape(img1)[1]): #running through all of the columns
+        difference = int(np.abs(img1[i][j] - img2[i][j])) # calculating teh absolute value of the difference between the pixels of the two images
+        if difference < 400:
+            pass
+        else:
+            print(f" row = {i}, column = {j}")
+            print(f" the difference between img1 and img2 is, {difference}")
+ row = 133, column = 200
+ the difference between img1 and img2 is, 400
+ row = 133, column = 201
+ the difference between img1 and img2 is, 465
+ row = 133, column = 202
+ the difference between img1 and img2 is, 489
+ row = 134, column = 201
+ the difference between img1 and img2 is, 456
+ row = 134, column = 202
+ the difference between img1 and img2 is, 452
+ row = 169, column = 107
+ the difference between img1 and img2 is, 422
+ row = 169, column = 108
+ the difference between img1 and img2 is, 453
+ row = 169, column = 109
+ the difference between img1 and img2 is, 440
+ row = 170, column = 107
+ the difference between img1 and img2 is, 407
+ row = 170, column = 108
+ the difference between img1 and img2 is, 482
+ row = 170, column = 109
+ the difference between img1 and img2 is, 440
+Ok, well, this is good! I now have essentially two points on the image. The first point is around row 133, column 201, and the second point is around row 170 and column 108.
+
+#the two orginal plots of the images
+plt.title("image 1 on a log scale")
+plt.imshow(np.log(img1), cmap='gray')
+
+plt.colorbar()
+
+plt.show();
+
+plt.title("image 2 on a log scale")
+plt.imshow(np.log(img1), cmap='gray')
+
+plt.colorbar()
+
+plt.show();
+
+
+# This is all from Google, the Google search, "how to draw a circle on an image in matplotlib.pyplot" as I did not know how to draw circles on images
+import matplotlib.patches as patches
+#creating a figure and axes
+
+#creating a for loop to plot both images
+for i in range(2):
+    if i == 0: # plotting image 1 with the two circles
+        fig, ax = plt.subplots(1)
+        ax.imshow(img1) 
+        plt.title("image 1 with the two asteriod circles")
+        
+        asteriod_one = (133, 201) # defines roughly where the asteroid is at position 1
+        asteriod_radius_one = 10       # this looks to be about the size of the asteroid
+        asteriod_1 = patches.Circle(asteriod_one, asteriod_radius_one, edgecolor='red', facecolor='none', linewidth=2)
+        ax.add_patch(asteriod_1)
+        
+        
+        asteriod_two = (170, 108) # defines roughly where the asteroid is at position 1
+        asteriod_radius_two = 10       # this looks to be about the size of the asteroid
+        asteriod_2 = patches.Circle(asteriod_two, asteriod_radius_two, edgecolor='green', facecolor='none', linewidth=2)
+        
+        
+        ax.add_patch(asteriod_2)
+
+        
+    elif i ==1: # plotting the 2nd image img 2 with the asteriod circles
+        fig, ax = plt.subplots(1)
+        ax.imshow(img2)
+        plt.title("image 2 with the two asteriod circles")
+        
+        asteriod_one = (133, 201) # defines roughly where the asteroid is at position 1
+        asteriod_radius_one = 10       # this looks to be about the size of the asteroid
+        asteriod_1 = patches.Circle(asteriod_one, asteriod_radius_one, edgecolor='red', facecolor='none', linewidth=2)
+        ax.add_patch(asteriod_1)
+        
+        
+        asteriod_two = (170, 108) # defines roughly where the asteroid is at position 1
+        asteriod_radius_two = 10       # this looks to be about the size of the asteroid
+        asteriod_2 = patches.Circle(asteriod_two, asteriod_radius_two, edgecolor='green', facecolor='none', linewidth=2)
+        
+        
+        ax.add_patch(asteriod_2)
+
+        # I do not know why there is a purple filter on both images with the circles
+No description has been provided for this image
+No description has been provided for this image
+No description has been provided for this image
+No description has been provided for this image
+Well, I added two circles showing the position of the asteroid in Image 1 and Image 2. If I coded everything correctly(which I believe I did), I should see the asteroid in one of the two circles. However, both circles look empty to me. This may be because of the weird purple filter my code put over the image. Another reason may be because of my poor vision. Or the most likely reason would be that I screwed up my code and did not in fact find the location of the asteroid. Either way, I am done with this section because, again, I cannot see the asteroid even when my eyes know where to look, so it is challenging for me to figure out if I even found the asteroid.
+
+I probably should have stayed longer in class yesterday to work with someone who is not visually impaired and could use their eyes to check if their code found the asteroid.
