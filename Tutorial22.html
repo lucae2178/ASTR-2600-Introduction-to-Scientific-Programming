@@ -1,0 +1,301 @@
+Tutorial22-DescribingData
+#importing the usual libraries and modules
+import matplotlib.pyplot as plt
+import numpy as np
+2 think+type: load a simulated dataset
+data = np.load('noisy_sunearth.npy', allow_pickle=True) # Loading the data into am array
+
+
+
+times, masses, positions, velocities = data # Unpack the data
+
+#making sure the data is a numpy array
+for i in range(30):
+    print(f"\n index = {i} time = {times[i]} \t deltatime = {np.diff(times)[i]}")
+print(f" \n \n the length of times is, {len(times)}")
+ index = 0 time = 0.0 	 deltatime = 8640.0
+
+ index = 1 time = 8640.0 	 deltatime = 8640.0
+
+ index = 2 time = 17280.0 	 deltatime = 8640.0
+
+ index = 3 time = 25920.0 	 deltatime = 8640.0
+
+ index = 4 time = 34560.0 	 deltatime = 8640.0
+
+ index = 5 time = 43200.0 	 deltatime = 8640.0
+
+ index = 6 time = 51840.0 	 deltatime = 8640.0
+
+ index = 7 time = 60480.0 	 deltatime = 8640.0
+
+ index = 8 time = 69120.0 	 deltatime = 8640.0
+
+ index = 9 time = 77760.0 	 deltatime = 8640.0
+
+ index = 10 time = 86400.0 	 deltatime = 8640.0
+
+ index = 11 time = 95040.0 	 deltatime = 8640.0
+
+ index = 12 time = 103680.0 	 deltatime = 8640.0
+
+ index = 13 time = 112320.0 	 deltatime = 8640.0
+
+ index = 14 time = 120960.0 	 deltatime = 8640.0
+
+ index = 15 time = 129600.0 	 deltatime = 8640.0
+
+ index = 16 time = 138240.0 	 deltatime = 8640.0
+
+ index = 17 time = 146880.0 	 deltatime = 8640.0
+
+ index = 18 time = 155520.0 	 deltatime = 8640.0
+
+ index = 19 time = 164160.0 	 deltatime = 8640.0
+
+ index = 20 time = 172800.0 	 deltatime = 8640.0
+
+ index = 21 time = 181440.0 	 deltatime = 8640.0
+
+ index = 22 time = 190080.0 	 deltatime = 8640.0
+
+ index = 23 time = 198720.0 	 deltatime = 8640.0
+
+ index = 24 time = 207360.0 	 deltatime = 8640.0
+
+ index = 25 time = 216000.0 	 deltatime = 8640.0
+
+ index = 26 time = 224640.0 	 deltatime = 8640.0
+
+ index = 27 time = 233280.0 	 deltatime = 8640.0
+
+ index = 28 time = 241920.0 	 deltatime = 8640.0
+
+ index = 29 time = 250560.0 	 deltatime = 8640.0
+ 
+ 
+ the length of times is, 10000
+Ok, so the times array looks to be a numpy array with 10000 data elements that start at zero and increase by 8640
+
+positions.shape
+(2, 3, 10000)
+I am a little confused by the shape of the positions array, so I will run I few lines of code to test out exactly what the shape of the positions array is
+
+print(positions[0]) #printing the first position of the positions array by indexing the most external list
+print(len(positions))
+print(len(positions[0]))
+print(len(positions[0][0]))
+[[-2.06429356e+09  6.88121671e+09  1.04649029e+10 ... -7.81924917e+09
+  -7.19207306e+09  3.65289897e+10]
+ [ 5.02731723e+09 -2.12069849e+10 -4.55806408e+10 ...  8.95651260e+09
+   2.83084515e+10 -1.59514509e+10]
+ [ 6.34281253e+09 -1.26195893e+10  3.92442919e+09 ...  6.78568100e+09
+  -4.69095428e+10 -8.20254161e+09]]
+2
+3
+10000
+Ok, so positions seems to be a numpy array containing two numpy arrays inside it. Each internal numpy array in postions contains three more numpy arrays each of which has a length of 10000. I believe that this means positions holds the positions of two particles. Each particle is given an x, y, z position for every time step from 0 to 9999
+
+The position array has 3 dimensions, I believe. The first dimension stores all of the different particles. The second dimension stores each particle's spatial axis (x,y,z). The third dimension stores time starting at 0 seconds, going until 9999 seconds.
+
+t = times/(24*60*60) # conmverting the times dimension from seconds to days
+x_Earth = positions[1, 0, :] # I guess this mean Earth is the second particle in the position list so this will store all of the Earth's x positions the 0th element in the2nd dimension for all of time from 0 to 100000 seconds
+print(len(t) == len(times)) #making sure every time is still in t
+True
+#plotting Earth's x-position as a function of time 
+plt.scatter(t, x_Earth, marker=".")
+plt.ylabel('x (meters)')
+plt.xlabel('Time (days)')
+plt.grid()
+plt.title("Earth's x-position vs. time")
+Text(0.5, 1.0, "Earth's x-position vs. time")
+No description has been provided for this image
+HAHA YES!!! The graph actually looks correct! Since Earth's orbit around the sun is pretty close to circular, with an eccentricity of 0.0167( Earth Fact Sheet), Earth's x position should oscillate sinusoidally with a period of about 365 days.
+
+3 think+write: organizing data
+What does positions[1, 0, :] mean?
+positions[1, 0, :] gives me an array containing all of the x-positions of Earth because it indexes the outer array to index position 1, which is the second element, which I am guessing is Earth. It then indexes the inner array as 0, which would refer tpp the x-position as this dimension has a length of 3 which corresponds to x,y,z, so the first element (index positions 0) would correspond to x. Then, then, : means all of the elements in the array, which refers to the innermost array, which is the time array. This means that positions[1, 0, :] would produce an array of the 2nd indexed element in the outermost array (Earth), and the first element in the inner list(x-position) and all of the elements of the innermost list (time)
+
+Sun’s full (x,y,z) coordinates at the 0th time point
+assuming the sun is the zeroth element in the outer list, positions[0, :, 0] would give the sun's full (x,y,z) position at the zeroth time
+
+Sun and Earth's y-coordinate at all times
+Since we know that the first dimension of the array, positions, has a length of 2 elements and we know that both the sun and Earth are in positions, we can simply take all of the elements from the first index position for both the sun and earth and then take the second element of the second index positon for the y value and then take all of the elements from the third index position for all time. Such code would look like:
+
+positions[:, 1, :]
+
+4 think+pair+code: What is one year?
+I did this by myself at home
+
+Also, please know I do not fully understand how to calculate chi sqaured pr how to compare my answer to it. I am currently under the impression that smaller values of N are better
+
+from fittingorbits import generateModel, calculateBadness
+def generateModel(t, period):
+    '''
+    
+    Generate a model for the x-position of the Earth,
+    given some orbital period (in days).
+    Parameters
+    
+    ----------
+    
+    t : array of time points
+    period : float
+    The orbital period of Earth, expressed in days.
+    Returns
+    
+    -------
+    
+    model : np.array
+    Modeled x positions for the Earth,
+    evaluated at every time point.
+    '''
+    # convert the times into orbital phase
+    phase = 2*np.pi*t/period
+    # define the semimajor axis (1 AU, in meters)
+    a = 1.496e+11
+    # return a model for the x-position, given that period
+    return a*np.cos(phase)
+def calculateBadness(x_data, t, period, plot=False):
+    '''
+    
+    Calculate the "badness-of-fit" for some period,
+    as the sum of the squares of the residuals. This is
+    basically the chi-squared, but just not scaled by
+    any estimate of the intrinsic uncertainties.
+
+
+
+    ------input-----------
+    
+    x_data : numpy array of x positions (meters)
+    t : numpy array of times corresponding to x_data (days)
+    
+    period : float
+    The orbital period of Earth, expressed in days.
+    plot : bool
+    If this keyword argument is set as `plot=True`,
+    create a plot that compares the data with the model.
+    If this keyword argument is set as `plot=False`,
+    do not create any plots.
+    
+    
+    ------Output------------
+    
+
+    badness : float
+    A quantitative estimate of how bad the fit is,
+    calculated as the sum of squares of the differences
+    between the model and the data.
+    '''
+    # calculate the differences between our data and our model
+    d = x_data
+    
+    m = generateModel(t, period)
+    # calculate the badness of the fit
+
+    
+    b = np.sum((d-m)**2)
+    # (this b is like chi-squared, but ignoring the errors)
+    # this will generate a plot, if the plot keyword is set to True
+    
+    if plot:
+        
+        # plot the data
+        plt.scatter(t, d, marker=".")
+        # plot the model curve
+        plt.plot(t, m, color='orange', linewidth=5, alpha=0.7)
+        plt.ylabel('x (meters)')
+        plt.xlabel('Time (days)')
+        plt.title(f'P={period:.1f} days, $\sum(data - model)^2$ = {b:.3}')
+        plt.show()
+        
+    # return the badness of fit, given the input period
+    return b
+#first orbital period
+t = np.linspace(0, 1000, 10000)# numpy arrau of days 
+
+period = 50 #setting the period of Earth's orbit to 50 days
+calculateBadness(x_Earth, t, period, plot=True)
+No description has been provided for this image
+2.3067383768716605e+26
+I'm dying of laughter right now as the graph looks so funny! Also, the N-squared term is extremely high so this model clearly doesn't fit.
+
+#second orbital period
+#setting the period closer to try and make the model fit a little better
+period = 200 #setting the period of Earth's orbit to 50 days
+calculateBadness(x_Earth, t, period, plot=True)
+No description has been provided for this image
+2.1949845133700215e+26
+Since this value is slightly less than the value calculated on [58] I believe that means the model is improving in accuracy
+
+#third orbital period
+#testing what happens if I set my period close to the correct value
+period = 365 #setting the period of Earth's orbit to 365 days
+calculateBadness(x_Earth, t, period, plot=True)
+No description has been provided for this image
+5.046099482804243e+24
+Well, that has certainly improved the model's fit as the value of N calculated here is 2 orders of magnitude less than that of [60]
+
+# fourth orbital period
+period = 500 #increasing the period so it's over the correct answer
+calculateBadness(x_Earth, t, period, plot=True)
+No description has been provided for this image
+2.864425918628119e+26
+Ok, so now again the N value is back to being a 26th order of magnitude number rather than a 24th order of magnitude number, such as in [67]. This makes sense as I am moving away from the correct value of period.
+
+# fifth orbital period
+period = 1000 #increasing the period so it's far larger than the correct value
+calculateBadness(x_Earth, t, period, plot=True)
+No description has been provided for this image
+2.602412711199621e+26
+Well, this is the highest value of N I have calculated, which makes sense as a period of 1000 days is nowhere near the correct value for the period of Earth.
+
+badness = [calculateBadness(x_Earth, t, 1, plot=False)] #creating a list to store the badness
+
+
+for i in range(1, 10000): #making the for loop run 9999 times to make the total length of the list, badness 10,000
+    period = 1000-i/10
+    badness.append(calculateBadness(x_Earth, t, period, plot=False))
+    
+print(len(badness))#this should return 10,000
+print(type(badness))
+10000
+<class 'list'>
+x_axis = np.linspace(0,10000,10000)
+badness = np.array(badness)
+plt.plot(x_axis,badness)
+plt.xlabel("trials in 1/10 days")
+plt.ylabel("badness of fit")
+plt.title("Badness of fit over 10000 trials in 1000 days")
+Text(0.5, 1.0, 'Badness of fit over 10000 trials in 1000 days')
+No description has been provided for this image
+print(np.min(badness)) #finding the min
+4.988890237848007e+24
+print(np.where(badness == 4.988890237848007e+24)) #fidning the index where badness == the min
+(array([6342]),)
+print(badness[6342]) # making sure that this is where the min occours
+4.988890237848007e+24
+i = -5
+for i in range(-6, 7):
+    print(f" at trial, {6342 + i} badness = {badness[6342 + i]}")
+    i += 1
+ at trial, 6336 badness = 5.014720825890658e+24
+ at trial, 6337 badness = 5.006375020472712e+24
+ at trial, 6338 badness = 4.999639209925793e+24
+ at trial, 6339 badness = 4.99451811626152e+24
+ at trial, 6340 badness = 4.991016453688585e+24
+ at trial, 6341 badness = 4.989138928314925e+24
+ at trial, 6342 badness = 4.988890237848007e+24
+ at trial, 6343 badness = 4.990275071293152e+24
+ at trial, 6344 badness = 4.993298108649953e+24
+ at trial, 6345 badness = 4.997964020606757e+24
+ at trial, 6346 badness = 5.004277468233257e+24
+ at trial, 6347 badness = 5.012243102671204e+24
+ at trial, 6348 badness = 5.021865564823209e+24
+The badness of fit is smallest between trial 6338 and trial 6345; as that is where the minimum occurs in the curve.
+
+5 think+write: explaining your results data
+Since the minimum of badness of fit occurred at 6342 tenths of days, that means the period of best fit would be 634.2 days. I have absolutely no idea why this number of days for a period would make sense for the best model. I was thinking when testing my guess periods that the period should be close to the number of days in a year, as I was thinking that Earth's x-position relative to the center of its orbit would oscillate every year, not every 634.2 days.
+
+I have a hunch that this result is because of an error I made while writing all of my code, but I cannot easily find the error. I really think the answer should be closer to 365.24 days, but I cannot figure out why it is not.
