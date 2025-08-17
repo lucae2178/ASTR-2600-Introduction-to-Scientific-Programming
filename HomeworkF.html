@@ -1,0 +1,306 @@
+
+import numpy as np
+import matplotlib.pyplot as plt
+# importing the usual libraries and modules
+1 Physics Background: The Spectrum of the Sun
+The Planck Function
+from homework B
+
+y is what I will be using to represent lambda
+
+
+y - wavelength of light in meters
+
+T = surface temperature of blackbody in Kelvin
+
+h = 6.62610^-34 Js Planck's constant
+
+c = 2.998*10^8 m/s speed of light
+
+k = 1.381 * 10^-23 J/K Boltzmann's constant
+
+B(y,t) gives the intensity of light
+
+2 Coding Assignment: Finding local maxima
+My Planck function from homework B
+#defining variables I will use
+
+y= 7e-7 #wavelength of light in meters
+#t= 6e3 #surface temperature of blackbody in Kelvin
+t = 5800 #(kelvin) the tempureture given in homework F
+h = 6.626e-34 #J*s Planck's constant
+c = 2.998e8 #m/s speed of light 
+k = 1.381e-23 #J/K Boltzmann's constant
+
+
+
+
+#B(y,t) gives the intensity of light\
+
+# Creating the code for Planck function
+def planck(y,t):
+    '''
+    ------input-----
+    
+    planck function takes two inputs(y,t)
+    y is the wavelength in meters and can be either a float or an integer
+    t is the surface temperature in Kelvin and can be either a float or an integer
+
+    -----output------
+
+    the planck functio returns a float value of B(y,t) which is the intensity and has units of 
+    Joules/ second / steradian / (meter^3)
+
+    '''
+    from math import e #importing the number e from the math module
+    e = e
+
+    
+    B = (2*h*c**2)/((y**5)*(e**((h*c)/(y*k*t))-1)) #the planck function for intensity 
+
+    B_sci_notation = f"{B:.2e}"
+    #return(B_sci_notation) 
+    #I will be using B for plotting in homework F
+    return(B)
+    '''
+    '''
+
+
+
+planck(1,1)
+8.221064260217563e-15
+2.1 Plotting the Planck function for a temperature of 𝑇 = 5800 K
+x = np.linspace( 0, 100, 10) # creating a numpy array for x
+print(x) # putting the numpy array for x into the Planck function
+[  0.          11.11111111  22.22222222  33.33333333  44.44444444
+  55.55555556  66.66666667  77.77777778  88.88888889 100.        ]
+I will be using Wein's displacement law to calculate the peak wavelength for a temperature in Kelvin
+
+Wein's displacement law:
+
+λ
+peak =
+B
+T
+
+Wein's constant (B): B = 2.898 × 10⁻³ m⋅K
+
+def Wein_law(T): # the homework doesn;t say I can't use Wein's Law
+    '''
+
+    -----input------
+    
+    T = int or float
+    The temperature of the blackbody in Kelvin
+
+    ----function-------
+
+    the function calculates the peak wavelength using weins displacement law
+
+    ----return------
+
+    the function returns the peak wavelength in meters
+
+    '''
+ 
+    B = 2.898*10**(-3) #m*K 
+    peak = B/T
+    return(peak)
+
+    
+print(Wein_law(1000)) #this should return 2.898 * 10^-6 meters
+2.8980000000000005e-06
+So my Wein's Law function for calculating the peak wavelength seems to be working! Now I will use it to calculate the peak wavelength of the temperature of 5800 kelvin. I will do this by creating an umpy array around 5800 kelvin and then inserting that into my Planck function
+
+# calculating the peak wavelength for a blackbody at 5800 kelvin
+middle = Wein_law(5800)
+print(middle)
+4.996551724137931e-07
+xaxis1 = np.linspace(0.0000001, middle, 50) # making sure wavelength cannot be zero
+two_middle = 2*middle
+xaxis2 = np.linspace(middle, two_middle, 50)
+
+xaxis = np.hstack((xaxis1, xaxis2)) #combining both halves of the x_axis to create the full x-axis
+
+yaxis = []
+for i in range(len(xaxis)):
+    x = float(xaxis[i])
+    if x != 0: #just double checking that x does not equal zero because if x == 0 then there will be a dividing be zero problem in the Planck function
+        yaxis.append(planck(x,5800)) # adding the intensity of a wavelength a 5800 to the y axis list
+    
+print(len(yaxis) == len(xaxis)) #checking to make sue my two list are the same length
+print(f"{max(yaxis):e}")
+
+middle = middle *1e+6 # converting the middle alue to nanometers
+xaxis = xaxis * 1e+6 # converting the x axis from meters to nanometers
+True
+2.691553e+13
+#plotting the wavelength vs intensity curve for 5800 Kelvin blackbody
+plt.plot(xaxis,yaxis)
+plt.xlabel(" wavelength in nanometers")
+plt.ylabel(" intensity from the Planck function")
+plt.title("wavelength vs intensity curve for 5800 Kelvin blackbody")
+plt.grid()
+
+
+# I googled, "how to plot a point on a pyplot.plt in python" and this is roughly what I found
+# plotting the max to make sure it lines u[ with my graph
+x_coordinate = middle #the x coordina #getting the y value of the maxte of the max should be at 5800 which is the middle
+y_coordinate = max(yaxis)
+plt.plot(x_coordinate, y_coordinate, 'ro') # ploting the max
+[<matplotlib.lines.Line2D at 0x7f168f3b6990>]
+No description has been provided for this image
+I believe my plotting looks good. The x axis is in nanometers. The y axis is in intensity given by the Planck function. The peak occurs directly at where Wein's law calculates it should on the x-axis and at the correct position given by the Planck function on the y-axis.
+
+2.2 Computing the derivative of the Planck function 𝑑𝐵/𝑑𝜆 over the range of wavelengths from 2.1
+for calculating the derivative of the Planck function, I will use numpy.diff function. I will then plot two separate plots. First, I will plot the derivative on the plot of the function with arrows using quiver to make sure my derivatives are correct. Then I will create a separate plot of the drivtive as a function of wavelength.
+
+# Calculating the derivative
+
+dB =[]
+dx = []
+print(len(dB))
+print(len(dx))
+x_pos = []
+y_pos = []
+
+
+
+
+for i in range(len(xaxis)):
+    if i % 9 == 0 and i != 99: #this will create 11 value pf where my function will calculate the drivative and between 0.0 and 1.0 therre are 11 steps of 0.1
+
+        B = np.diff(yaxis) #dBdx is the difference of values on the y axis, aka the derivative
+        x = np.diff(xaxis)
+        dB.append(B[i]) # making sure both derivatives have the same size as the xaxis array
+        dx.append(x[i])
+
+        #getting the position of each derivative
+        x_pos.append(xaxis[i])
+        y_pos.append(yaxis[i])
+    else:
+        i += 1
+print(len(xaxis))
+print(dB)
+0
+0
+100
+[683555707.5184557, 238576288612.72485, 968850755162.8164, 1056915355817.6074, 601153106197.8711, 134870281935.30469, -200033063346.1836, -388076662971.5625, -412796860235.6094, -370995152619.13086, -310708949672.8672]
+#plotting the derivative with the actual planck function
+x_direct = dx
+y_direct = dB
+
+
+plt.plot(xaxis,yaxis)
+plt.quiver(x_pos, y_pos, x_direct, y_direct)
+plt.title('derivative of the Placnk function dB/dlambda ')
+plt.ylabel(" intensity from the Planck function")
+plt.title("wavelength vs intensity curve for 5800 Kelvin blackbody")
+plt.grid()
+
+# Show plot
+plt.show()
+No description has been provided for this image
+The drivative in my function looks like it just graphing dB but this is because in relation to dB dx is miniscule. dB is on teh scale of 1e+13 while dx is o the scale of 1e-1. This cuases dX to not be noticable and leas to the mostly vertical vectors for my derivative graph.
+
+2.3 Estimate visually the wavelength where the derivative 𝑑𝐵/𝑑𝜆 crosses zero (it may help to
+x = np.linspace(0,1,11)
+plt.plot(x, dB)
+plt.ylabel("derivative of intensity with repsect to wave length")
+plt.xlabel("wavelength in nanometers")
+plt.title("derivative of intensity vs wavelength for 5800 Kelvin blackbody")
+plt.axhline()
+plt.grid()
+No description has been provided for this image
+The plot of the derivative of intensity vs wavelength intersects the line y = 0 at one place. The line for the derivative of intensity with respect to wavelength intersects zero at around 0.5 nanometers. This makes sense as the peak intensity found using Wein's law occurs at a wavelength of 4.996551724137931e-07 meters or roughly 0.5 nanometers. Before 0.499 nanometers, the derivative is positive and the function is increasing. After 0.499 nanometers, the derivative is negative and the function is decreasing. This means that the derivative is accurate to the function.
+
+2.4 Plot the Planck function again. This time, color the points or curve so they are one color when the derivative 𝑑𝐵/𝑑𝜆 is positive and another color when the derivative is negative.
+Since my derivative function is not a continuous derivative rather it is a derivative at certain points, I will be using plt. scatter to plot the points with positive derivative in green and negative derivative in red
+
+#making a new derivative list that is the length of the xaxis list so my plot of the points with colors will look more complete
+dB2 = []
+for i in range(len(xaxis)-1):
+    B = np.diff(yaxis) #dBdx is the difference of values on the y axis, aka the derivative
+    dB2.append(B[i]) # making sure both derivatives have the same size as the xaxis array
+mask = []
+#creating the mask for when the points are positive or negative
+for i in range(len(dB2)):
+    if dB2[i] > 0:
+        mask.append(True)
+    elif dB2[i] < 0:
+        mask.append(False)
+
+print(len(mask))
+print(mask[25])
+print(mask[75])
+98
+True
+False
+for i in range(len(mask)):
+    if mask[i] == True: # using the mask to tell if a point is increasing
+        plt.plot(xaxis[i],yaxis[i], 'o', color ='green') #plotting increasing(positive derivative) points in green
+    elif mask[i] == False: # using the mask to tell if a point is decreasing
+        plt.plot(xaxis[i],yaxis[i], 'o', color ='red') #plotting decreasing(negative derivative) points in red
+    
+
+plt.title('derivative of the Placnk function dB/dlambda ')
+plt.ylabel(" intensity from the Planck function")
+plt.title("wavelength vs intensity curve for 5800 Kelvin blackbody")
+plt.grid()
+plt.legend
+No description has been provided for this image
+2.5 Write code to find the wavelength location of the spectrum’s peak, 𝜆peak by computing where the derivative
+Currently, my brain is fried so I cannot figure out how to do this
+
+2.6 Load the data in the file model_5800K.txt (available on Canvas) into two arrays, one for wavelengths and the other for fluxes
+I could not remember how to read a .txt file(I know we just did this, but I cannot find my notes or tutorial on it, sorry :( so I googled, "how to import a txt file in python with two columns with pandas" and I am retyping some of the code from the ai result
+
+import pandas as pd
+file = 'model_5800K.txt'
+ data = pd.read_csv(file, sep=' ', header=6, names=['wavelength', 'flux'])  # model_5800K.txt has 7 rows of header
+print(data)
+      wavelength          flux
+0          300.0  2.656344e+12
+1          300.1  3.681784e+12
+2          300.2  4.696834e+12
+3          300.3  5.813122e+12
+4          300.4  7.128835e+12
+...          ...           ...
+6995       999.5  1.060670e+13
+6996       999.6  1.042450e+13
+6997       999.7  9.964475e+12
+6998       999.8  8.999450e+12
+6999       999.9  7.404734e+12
+
+[7000 rows x 2 columns]
+print(type(data))
+<class 'pandas.core.frame.DataFrame'>
+I could not remember how to access data from pandas data frame, so I googled, "how to access data from a pandas dataframe"
+
+wavelengths = []
+fluxs = []
+for i in range(300):
+    #adding the data from model_5800K.txt to the two lists, I have 
+    wavelength = data.loc[i, "wavelength"]
+    wavelengths.append(wavelength)
+    flux = data.loc[i, "flux"]
+    fluxs.append(flux)
+
+wavelengths = np.array(wavelengths)
+fluxs = np.array(fluxs)
+print(type(wavelengths), type(fluxs)) 
+print(wavelengths[0], fluxs[0]) # this should be a wavelength of 300 nanometers and a flux of 2.656344240092129883e+12 watts per meter cubed
+<class 'numpy.ndarray'> <class 'numpy.ndarray'>
+300.0 2656344240092.1294
+wavelengths = wavelengths/100 # The wavelengths were nowhere near the Planck curve, so I had to shrink them down
+
+#plotting the wavelength vs intensity curve for 5800 Kelvin blackbody
+plt.plot(xaxis,yaxis)
+
+
+plt.plot(wavelengths, fluxs)
+plt.xlabel(" wavelength in nanometers")
+plt.ylabel(" intensity from the Planck function")
+plt.title("wavelength vs intensity curve for 5800 Kelvin blackbody")
+plt.grid()
+No description has been provided for this image
