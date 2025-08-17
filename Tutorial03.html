@@ -1,0 +1,260 @@
+2 think+pair+code: for vs while loops
+Since I am doing alll of this coding after class I do not have a partner to ccode with
+for x in range(10): #the given code for me to analyze. My guess is on the following line
+    print(3*x)
+I believe the code on the above line will run 10 times. x will start at 0 and then increase by 1 until it reaches 9. This will print 10 lines of output. The output will be: 0 3 6 9 12 15 18 21 24 27
+for x in range(10): #this should print the output I predcicted above hopefully
+    print(3*x)
+0
+3
+6
+9
+12
+15
+18
+21
+24
+27
+The output above is what I predicted!to print this out with a while loop, the only difference is that I will need to manually add the counter variable increase.
+x = 0 # declaring the starting value of my counter variable
+while x < 10: #setting up the while loop to behave similar to an x in range(10) for loop
+    print(3*x) #printing the output
+    x += 1
+# this code should have the same output as the for loop in line [3] just using a while loop
+0
+3
+6
+9
+12
+15
+18
+21
+24
+27
+3 think+type: accessing list elements
+list = [2, 3, 4, 5, 7, 9, 2178, 1357, -12, -5, 0] #defining a list named list
+print(list) #checking to make sure I defined the list correctly
+[2, 3, 4, 5, 7, 9, 2178, 1357, -12, -5, 0]
+print(list[3]) #trying to print a certain element from list in this case 5
+5
+list[6] #accxssesing the 6th element in list
+2178
+list[0] #making sure the list starts at the 0th place
+2
+len(list) #counting the length of the list
+11
+list[10] #printing the item in index position 10 of the list(this should be the last item)
+0
+list[11] #trying to accsses the 12th postion in a list of length 11
+---------------------------------------------------------------------------
+IndexError                                Traceback (most recent call last)
+Cell In[12], line 1
+----> 1 list[11] #trying to accsses the 12th postion in a list of length 11
+
+IndexError: list index out of range
+list[-2]#this should accsses the 10th index postion of the list and print -5
+-5
+list[-1] == list[10] #this should return True as the tenth index position in a list of length 11 should be equal to the --1st index position 
+True
+4 think+code: accessing list elements
+list2 = [1, 2, 3, "pi", 3.14159265358979, "the digits of pis I know are...", 4, 5] #defining a new list with at least 5 different numbers it has 5 integers and 6 numbers 1  one of the number is a float
+print(list2[4]) #printing the 4th element in the list using positive integer index
+3.14159265358979
+print(list2[-3]) #printing out an element using negative index number
+the digits of pis I know are...
+print(list2[5], list2[-4]) #printing out the previous two elements but switching which index number I use. If I used a positive index the first time, this time I am using a negative index position and flipped for the oppisite
+the digits of pis I know are... 3.14159265358979
+5 think+type: modifying lists
+gp = "Girlie Pop!" # defining a variable to put into make string
+girlie_pops = [1, 2, 2.718, 3, "what's popping", gp] #defining a list with integers, floats, strings, and variables
+print(girlie_pops[4],girlie_pops[5]) #testing to make sure list3 is all fetch
+what's popping Girlie Pop!
+girlie_pops.append("That's so fetch") #adding one of my favorite quotes to 
+print(girlie_pops) #printing the list to make sure I correvtly appended it
+[1, 2, 2.718, 3, "what's popping", 'Girlie Pop!', "That's so fetch"]
+girlie_pops.insert(-1, "on wednesdays we wear pink!") #adding another iconic mean girls quote
+print(girlie_pops)
+[1, 2, 2.718, 3, "what's popping", 'Girlie Pop!', 'on wednesdays we wear pink!', "That's so fetch"]
+girlie_pops.insert(0, 0) #putting zero before 1 in the integers, changing them from integers to whole numbers
+print(girlie_pops) # testing to make sure my insert function worked
+[0, 1, 2, 2.718, 3, "what's popping", 'Girlie Pop!', 'on wednesdays we wear pink!', "That's so fetch"]
+girlie_pops.remove("on wednesdays we wear pink!")
+print(girlie_pops)
+[0, 1, 2, 2.718, 3, "what's popping", 'Girlie Pop!', "That's so fetch"]
+b = girlie_pops.pop() # removes and returns the last element of girlie_pops
+print(b) #this should print what was once the last element of girlie_pios
+print(girlie_pops) #this should print girlie pops without the last element
+That's so fetch
+[0, 1, 2, 2.718, 3, "what's popping", 'Girlie Pop!']
+c = girlie_pops.pop() # removes and returns the last element of girlie_pops
+print(c) #this should print what was once the last element of girlie_pios
+print(girlie_pops) #this should print girlie pops without the last element
+Girlie Pop!
+[0, 1, 2, 2.718, 3, "what's popping"]
+d = [42, "the answer to,", "the Ultimate Question of Life, the Universe, and Everything!"]
+girlie_pops.extend(d) # adding the list, d to the end of the list, girlie_pops
+print(girlie_pops)
+[0, 1, 2, 2.718, 3, "what's popping", 42, 'the answer to,', 'the Ultimate Question of Life, the Universe, and Everything!', 42, 'the answer to,', 'the Ultimate Question of Life, the Universe, and Everything!', 42, 'the answer to,', 'the Ultimate Question of Life, the Universe, and Everything!']
+test = [ 2, 5, 4, 7, 1, 21, 65, 0, 5, 0, -42] #creating anew list of integers to test the sort function
+print(test) #pritning the unsorted test list
+[2, 5, 4, 7, 1, 21, 65, 0, 5, 0, -42]
+test.sort() #using the .sort function on a list of integers
+print(test) #checking the result of the .sort function
+[-42, 0, 0, 1, 2, 4, 5, 5, 7, 21, 65]
+len(test) # learning the length of the test list with out me counting
+11
+test.index(7) # testing the .index function for list to see if it tells me the index position of an elment in a list
+8
+42 in test #testing the in operator to see how it works
+False
+-42 in test #testing to see if the in operator works as a search function for element in a list
+True
+6 think+pair+code: making a list
+# making a list with Luca. I was not able to complete this section in class
+Luca_planets = ["Vulcan", "Romulus", "Bajor"] #yes my planets are all from star trek
+print(Luca_planets)
+['Vulcan', 'Romulus', 'Bajor']
+Star_wars = ["Scarif", "Mon Cala", "Bespin"] #list of some iconic planets from star wars
+for i in range(len(Star_wars)): # we learned for loops earlier so I am using one now
+    Star_wars_planet = Star_wars[i] #getting the planets from the list Satr_wars and assigning them to a new variable
+    Luca_planets.append(Star_wars_planet) #adding in some planets from the Star Wars galaxy
+print(Luca_planets) #making sure the list has all of the correct elements
+['Vulcan', 'Romulus', 'Bajor', 'Scarif', 'Mon Cala', 'Bespin', 'Scarif', 'Mon Cala', 'Bespin']
+print(Luca_planets) #making sure the list has all of the correct elements
+['Vulcan', 'Romulus', 'Bajor', 'Scarif', 'Mon Cala', 'Bespin', 'Scarif', 'Mon Cala', 'Bespin']
+sci_fi_planets = sorted(Luca_planets, key=len) # sotring the list by element lenght
+print(sci_fi_planets) # checking to make sure the sort worked
+['Bajor', 'Vulcan', 'Scarif', 'Bespin', 'Scarif', 'Bespin', 'Romulus', 'Mon Cala', 'Mon Cala']
+7 think+type: for loops
+numbers = [0, 1, 2, 3, 4, 5, 6]
+for n in numbers:
+    print(n, n**2)
+
+# This code first defines a list of seven numbers
+#the code then runs a for loop to run throug every whole number in numbers 
+#the for loop then prints the number it's on and that number squared
+0 0
+1 1
+2 4
+3 9
+4 16
+5 25
+6 36
+for n in range(6):
+    print(n, n**2)
+
+    #This code is similar to the previous code. However, it has two differences. First,
+    # it uses the range() function to generate a list of values
+    #second it will quit after printing 5 because 0,1,2,3,4,5 is a list with 6 iIndices
+0 0
+1 1
+2 4
+3 9
+4 16
+5 25
+for n in range(10, 22, 2):  #range(lower, upper, step)
+    print(n)
+
+
+#This will pring a list of six value starting at 10 and increasing by 2 until 20
+10
+12
+14
+16
+18
+20
+8 think+code: the N𝑡ℎ closest star
+For this code, I will create a while loop that increases our radius by 2 parsecs and then prints out how many stars are within this radius. I will need to raise the radius to the power of 3 because the ratio is stars per parsec^3 It will start with an initial value of 2 parsecs and then run until the radius is equal to 50 parsecs
+Intial_radius = 2 #parsecs
+Testing_radius = 10 #parsecs 
+Final_radius = 50 #parsecs
+At 10 parsec radius, the code should output about 77 stars
+radius = Intial_radius #making sure the radius is set intially to 2 parsec
+print(radius)
+2
+while radius <= Testing_radius: #setting up a while loop to increase radius by the correvt amount
+    print(radius)
+    radius += 2
+
+radius = 2
+2
+4
+6
+8
+10
+while radius <= Testing_radius: #
+    stars = (radius**3)*0.077 #stars/parsec^3
+    print("there should be, ", stars, " stars in a sphere of radius, ", radius, " parsecs away from earth")
+
+    radius += 2
+
+radius = 2
+My while loop seems to work and is producing the results I predicted I predicted a few lines back that at 10 parsecs away from earth there should be 77 stars Time to run it with a radius of 50 parsecs!
+while radius <= Final_radius: #
+    stars = (radius**3)*0.077 #stars/parsec^3
+    print("there should be, ", stars, " stars in a sphere of radius, ", radius, " parsecs away from Earth")
+
+    radius += 2
+
+radius = 2
+there should be,  0.616  stars in a sphere of radius,  2  parsecs away from earth
+there should be,  4.928  stars in a sphere of radius,  4  parsecs away from earth
+there should be,  16.632  stars in a sphere of radius,  6  parsecs away from earth
+there should be,  39.424  stars in a sphere of radius,  8  parsecs away from earth
+there should be,  77.0  stars in a sphere of radius,  10  parsecs away from earth
+there should be,  133.056  stars in a sphere of radius,  12  parsecs away from earth
+there should be,  211.288  stars in a sphere of radius,  14  parsecs away from earth
+there should be,  315.392  stars in a sphere of radius,  16  parsecs away from earth
+there should be,  449.064  stars in a sphere of radius,  18  parsecs away from earth
+there should be,  616.0  stars in a sphere of radius,  20  parsecs away from earth
+there should be,  819.896  stars in a sphere of radius,  22  parsecs away from earth
+there should be,  1064.448  stars in a sphere of radius,  24  parsecs away from earth
+there should be,  1353.352  stars in a sphere of radius,  26  parsecs away from earth
+there should be,  1690.304  stars in a sphere of radius,  28  parsecs away from earth
+there should be,  2079.0  stars in a sphere of radius,  30  parsecs away from earth
+there should be,  2523.136  stars in a sphere of radius,  32  parsecs away from earth
+there should be,  3026.408  stars in a sphere of radius,  34  parsecs away from earth
+there should be,  3592.512  stars in a sphere of radius,  36  parsecs away from earth
+there should be,  4225.144  stars in a sphere of radius,  38  parsecs away from earth
+there should be,  4928.0  stars in a sphere of radius,  40  parsecs away from earth
+there should be,  5704.776  stars in a sphere of radius,  42  parsecs away from earth
+there should be,  6559.168  stars in a sphere of radius,  44  parsecs away from earth
+there should be,  7494.872  stars in a sphere of radius,  46  parsecs away from earth
+there should be,  8515.584  stars in a sphere of radius,  48  parsecs away from earth
+there should be,  9625.0  stars in a sphere of radius,  50  parsecs away from earth
+or if we only want to final result this is what we could do insteda
+while radius < Final_radius: #
+    radius += 2
+    stars = (radius**3)*0.077 #stars/parsec^3
+    #print("there should be, ", stars, " stars in a sphere of radius ", radius, " parsecs away from earth")
+
+   
+print("there should be, ", stars, " stars in a sphere of radius,", radius - 2, " parsecs away from Earth")
+there should be,  9625.0  stars in a sphere of radius, 50  parsecs away from Earth
+9 think+type: indices, elements, enumerate
+cats = ["Zaggy", "Jane", "Biscotti"] #a list of cats I have had as pets, and the one cat I still have as a pet Jane
+index = 0
+print("in order of adoption, ")
+for pets in cats:
+    print(pets, "was my, ", index +1, "cat")
+    index += 1
+in order of adoption, 
+Zaggy was my,  1 cat
+Jane was my,  2 cat
+Biscotti was my,  3 cat
+print("in order of adoption, ")
+for pet in range(len(cats)):
+    number = cats[pet]
+    print( f" {pet + 1} cat {number} was adopted")
+in order of adoption, 
+ 1 cat Zaggy was adopted
+ 2 cat Jane was adopted
+ 3 cat Biscotti was adopted
+print("in order of adoption, ")
+for index, element in enumerate(cats):
+    print(f" {index}) cat {element} was adopted")
+in order of adoption, 
+ 0) cat Zaggy was adopted
+ 1) cat Jane was adopted
+ 2) cat Biscotti was adopted
+"
