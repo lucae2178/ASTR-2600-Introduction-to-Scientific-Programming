@@ -1,0 +1,394 @@
+HomeworkG-numericalIntegration
+#importing the usual libraries and modules
+import matplotlib.pyplot as plt
+import numpy as np
+2 Testing I have access to the module by running
+#testing to make sure I have blackbody.py in the correct area of my jupyter notebook
+# I also imported thermal.oy and constants.py into my jupyter notebook
+import blackbody
+blackbody.testBlackbody()
+No description has been provided for this image
+the above code seems to have generated a blackbody diagram with wavelength in nanometers on the x-axis and fluux in watts per meter**3 on the y-axis
+
+#learning what the blackbody() module does
+help(blackbody)
+Help on module blackbody:
+
+NAME
+    blackbody - This module contains tools to generate random blackbody spectra.
+
+FUNCTIONS
+    generateBlackbody(T='random')
+        Generate a blackbody spectrum for a random (or specific) temperature.
+        
+            Arguments:
+        
+                T = [Optional]If set, this temperature is used to generate the
+                    blackbody curve. If not, a random temperature is generated
+                    between 2000-9000K.
+        
+            Returns:
+        
+                A blackbody spectrum. The format of this spectrum
+                is as a dictionary that contains several key-value pairs.
+                The keys inside this spectrum are highlighted in
+                the example below.
+        
+            Example:
+        
+                # call the function to get a random spectrum
+                s = generateBlackbody()
+        
+                # the wavelengths are in units of nanometers (=10**-9 m)
+                w_nanometers = s['wavelengths']
+        
+                # the fluxes are in units of "W/m**3"
+                f = s['flux']
+        
+                # The temperature used for the Planck function is in Kelvin"
+                t = s['temp']
+        
+                # A title for the object is given in a string named objectID
+                name = s['objectID']
+    
+    testBlackbody()
+        This function tests the generateBlackbody() function and plots the result.
+            Arguments:
+                None
+        
+            Returns:
+                Nothing
+        
+            Example:
+                testBlackbody()
+
+FILE
+    /home/luel8892/ASTR 2600/homework/blackbody.py
+
+
+black_body = blackbody.generateBlackbody(T='random')
+print(len(black_body)) #learing how many coloumns blackbody has
+print(type(black_body)) #learning what the type blackbody is is
+4
+<class 'dict'>
+print(black_body.keys()) #learning what the keys of black body are
+dict_keys(['temp', 'wavelengths', 'flux', 'objectID'])
+print(type(black_body['temp']))
+<class 'numpy.float64'>
+3 Python function called integrateSpectrum
+def integrateSpectrum(wavelengths, fluxes, w_lower, w_upper):
+    
+    """
+    This function performs a numerical integral of a spectrum.
+    Arguments:
+    wavelengths = a numpy array of wavelengths, in nanometers
+    fluxes = a numpy array of fluxes, corresponding to w
+    w_lower = the lower wavelength limit of the integration
+    w_upper = the upper wavelength limit of the integration
+    Returns:
+    the integral of fluxes, with wavelength limits from w_lower to w_upper
+    (this should be one floating point number)
+    """
+    new_wavelengths = []#creating a new list for the wavelengths between w_lower and w_upper
+    new_fluxes = []#list pf equal length to new_wvalengths for teh fluxes at each point in the domain, between w_lower to w_upper
+    
+    for i in range(len(wavelengths)):#adding all of the  wavelengths and fluxes between w_lower and w_upper to tjhe new lists
+        if w_lower <= wavelengths[i] <= w_upper:
+            new_wavelengths.append(wavelengths[i])
+            new_fluxes.append(fluxes[i])
+
+    delta_wave = (w_upper-w_lower)/len(new_wavelengths) #calculating the duffeerence between succseive wavelength values
+    
+    trap_area = []
+    for i in range(len(new_wavelengths)-1):#len(new_wavelengths)-1): #calulating the trapeziodal integral 
+        trap_area.append(((new_fluxes[i]+new_fluxes[i+1])/2)*delta_wave)
+        #print(f"\n \n at i = {i} \n trap_area = {trap_area[i]}")
+        
+    trap_area = np.array(trap_area)
+    #print(f" \n {delta_wave}")
+    #return delta_wave
+    return np.sum(trap_area)
+4 testing my function
+I ran part of this code while creating my function
+
+imaginary_w = np.sort(np.random.uniform(400, 1000, 1000)) #creating a numpy array of tesat wavelngths
+imaginary_f = imaginary_w # creating a numpy array for fluxes to test
+w_low = 600 #creating the lower bound for the domain of wavelengths to integrate
+w_up = 700 #creating the upper  bound for the domain of wavelengths to integrate
+#testing trapezoidal integration using these numbers
+
+imaginary_w = np.sort(np.linspace(1, 10, 10)) #creating a numpy array of tesat wavelngths
+imaginary_f = imaginary_w # creating a numpy array for fluxes to test
+w_low = 1 #creating the lower bound for the domain of wavelengths to integrate
+w_up = 11 #creating the upper  bound for the domain of wavelengths to integrate
+print(imaginary_w)
+[ 1.  2.  3.  4.  5.  6.  7.  8.  9. 10.]
+#testing the integrateSpectrum with y -x from x=- to x =10 with 10 subdivisions. This should return 49.5
+integrateSpectrum(imaginary_w, imaginary_f,w_low, w_up ) #
+ 
+ at i = 0 
+ trap_area = 1.5
+
+ 
+ at i = 1 
+ trap_area = 2.5
+
+ 
+ at i = 2 
+ trap_area = 3.5
+
+ 
+ at i = 3 
+ trap_area = 4.5
+
+ 
+ at i = 4 
+ trap_area = 5.5
+
+ 
+ at i = 5 
+ trap_area = 6.5
+
+ 
+ at i = 6 
+ trap_area = 7.5
+
+ 
+ at i = 7 
+ trap_area = 8.5
+
+ 
+ at i = 8 
+ trap_area = 9.5
+ 
+ 1.0
+49.5
+Okay, so my integrateSpectrum function using the Riemann trapezoid rule seems to be working!
+
+imaginary_w = np.sort(np.random.uniform(400, 1000, 1000)) #creating a numpy array of tesat wavelngths
+imaginary_f = imaginary_w # creating a numpy array for fluxes to test
+w_low = 600 #creating the lower bound for the domain of wavelengths to integrate
+w_up = 700 #creating the upper  bound for the domain of wavelengths to integrate
+print(f"{integrateSpectrum(imaginary_w, imaginary_f,w_low, w_up )} watts/(meter**3)")
+#running integrateSpectrum from 600 to 700 nm 
+64503.69655012342 watts/(meter**3)
+5 integrating to calculate RGB
+#getting the wavelength and flux values from the black_body dictionary
+wavelengths = np.array(black_body['wavelengths'])
+flux = np.array(black_body['flux'])
+
+print(len(wavelengths) == len(flux)) #making sure the two np.arrays are teh same length
+True
+red = integrateSpectrum(wavelengths, flux, 565, 660) #getting the red values from 565 nm to 660 nm
+green = integrateSpectrum(wavelengths, flux, 480, 570) #getting the green values from 480 nm to 570 nm
+blue = integrateSpectrum(wavelengths, flux, 400, 490) #getting the blue values from 400 nm to 490 nm
+def estimateRGB(wavelengths, fluxes):
+    
+    """
+    This function estimates the RGB color of an object, from its spectrum.
+    It calculates the integrals the flux over wavelength ranges
+    that correspond roughly to the red, green, and blue colors
+    displayed on computer monitors.
+    
+    Arguments:
+    wavelengths = a numpy array of wavelengths, in nanometers
+    fluxes = a numpy array of fluxes, corresponding to w
+    
+    Returns:
+    an RGB color, expressed as a three-element array,
+    with R as the first element, G the second, B the third
+    (In Python these values must span from 0.0 to 1.0, so you
+    will need to renormalize your integrals by the maximum of
+    the three values, to ensure this happens.)
+    """
+
+    red = integrateSpectrum(wavelengths, flux, 565, 660) #getting the red values from 565 nm to 660 nm
+
+    green = integrateSpectrum(wavelengths, flux, 480, 570) #getting the green values from 480 nm to 570 nm
+
+    blue = integrateSpectrum(wavelengths, flux, 400, 490) #getting the blue values from 400 nm to 490 nm
+
+
+    #figuring out wich color is greatest
+    if red > green and red > blue: #red is the greatest and will therefore have a value of 1 in the RGB list
+        #print(f" red = {red} \n green = {green} \n blue = {blue}")
+            
+        R = red/red
+        G = green/red
+        B = blue/red
+        RGB = [R,G,B]
+        return RGB
+    
+    elif green > red and green > blue:#green is the greatest and will therefore have a value of 1 in the RGB list
+        #print(f" green = {green}\n red = {red} \n blue = {blue}")
+        G = green/green
+        R = red/green
+        B = blue/green
+        RGB = [R,G,B]
+        return RGB
+    
+    elif blue > red and blue > green:#blue is the greatest and will therefore have a value of 1 in the RGB list
+        #print(f"blue = {blue} \n green = {green}\n red = {red}")
+        B = blue/blue
+        R = red/blue
+        G = green/blue
+        RGB = [R,G,B]
+
+        return RGB
+estimateRGB(wavelengths, flux)
+[0.7065578219023919, 0.8421778849357727, 1.0]
+6 testing my RGB function
+#redifing imaginary_w and imaginary_f to see if I accidentally changed thier defintions earlier
+imaginary_w = np.sort(np.random.uniform(400, 1000, 1000))
+imaginary_f = imaginary_w
+print(integrateSpectrum(imaginary_w, imaginary_f, 600, 700))
+64680.25522632939
+print(estimateRGB(imaginary_w, imaginary_f))
+[0.7821994423781864, 0.9518197471760547, 1.0]
+I do not know why I am not getting the correct answer of [ 1.0, 0.78, 0.69].
+
+7 generate a blackbody spectrum of a randomly generated temperature
+At the very beginning of the homework, I called help(blackbody) in line [19]. I was confused about what blackbody was doing and I wanted to better understand it. So I know I can call generateBlackbody(T='random')
+
+firstspectrum = blackbody.generateBlackbody(T='random')
+print(type(firstspectrum)) #this should tell me the data type of firstspectrum
+<class 'dict'>
+print(firstspectrum.keys())
+dict_keys(['temp', 'wavelengths', 'flux', 'objectID'])
+Since firstspectrum has data type: dictionary, I should be able to extract all of the wavelengths and fluxes by simply extracting all of the elements under the keys, 'wavelengths' and 'flux' similar to what I did in [199]
+
+as stated when I called help(blackbody) on line [19], # the wavelengths are in units of nanometers (=10**-9 m)
+
+and ,# the fluxes are in units of "W/m**3"
+
+#just the code from [199]
+wavelengths = np.array(firstspectrum['wavelengths'])
+flux = np.array(firstspectrum['flux'])
+plt.plot(wavelengths,flux, color = estimateRGB(wavelengths, flux))
+plt.xlabel(" wavelength in nanometers")
+plt.ylabel(" flux in watts per meter cubed")
+plt.title("wavelength vs intensity curve blackbod 1")
+plt.grid()
+No description has been provided for this image
+8 making ten plots of randomly generated black body spectra
+I'm using the first plot as plot #1 in this list of 10 randomly generated plots
+
+firstspectrum = blackbody.generateBlackbody(T='random') #i'm just copying and pasting the code as each new defintion will create new values
+#just the code from [199]
+wavelengths = np.array(firstspectrum['wavelengths'])
+flux = np.array(firstspectrum['flux'])
+plt.plot(wavelengths,flux, color = estimateRGB(wavelengths, flux))
+plt.xlabel(" wavelength in nanometers")
+plt.ylabel(" flux in watts per meter cubed")
+plt.title("wavelength vs intensity curve blackbod 2")
+plt.grid()
+No description has been provided for this image
+firstspectrum = blackbody.generateBlackbody(T='random')
+#just the code from [199]
+wavelengths = np.array(firstspectrum['wavelengths'])
+flux = np.array(firstspectrum['flux'])
+plt.plot(wavelengths,flux, color = estimateRGB(wavelengths, flux))
+plt.xlabel(" wavelength in nanometers")
+plt.ylabel(" flux in watts per meter cubed")
+plt.title("wavelength vs intensity curve blackbod 3")
+plt.grid()
+No description has been provided for this image
+firstspectrum = blackbody.generateBlackbody(T='random')
+#just the code from [199]
+wavelengths = np.array(firstspectrum['wavelengths'])
+flux = np.array(firstspectrum['flux'])
+plt.plot(wavelengths,flux, color = estimateRGB(wavelengths, flux))
+plt.xlabel(" wavelength in nanometers")
+plt.ylabel(" flux in watts per meter cubed")
+plt.title("wavelength vs intensity curve blackbod 4")
+plt.grid()
+No description has been provided for this image
+firstspectrum = blackbody.generateBlackbody(T='random')
+#just the code from [199]
+wavelengths = np.array(firstspectrum['wavelengths'])
+flux = np.array(firstspectrum['flux'])
+plt.plot(wavelengths,flux, color = estimateRGB(wavelengths, flux))
+plt.xlabel(" wavelength in nanometers")
+plt.ylabel(" flux in watts per meter cubed")
+plt.title("wavelength vs intensity curve blackbod 5")
+plt.grid()
+No description has been provided for this image
+firstspectrum = blackbody.generateBlackbody(T='random')
+#just the code from [199]
+wavelengths = np.array(firstspectrum['wavelengths'])
+flux = np.array(firstspectrum['flux'])
+plt.plot(wavelengths,flux, color = estimateRGB(wavelengths, flux))
+plt.xlabel(" wavelength in nanometers")
+plt.ylabel(" flux in watts per meter cubed")
+plt.title("wavelength vs intensity curve blackbod 6")
+plt.grid()
+No description has been provided for this image
+firstspectrum = blackbody.generateBlackbody(T='random')
+#just the code from [199]
+wavelengths = np.array(firstspectrum['wavelengths'])
+flux = np.array(firstspectrum['flux'])
+plt.plot(wavelengths,flux, color = estimateRGB(wavelengths, flux))
+plt.xlabel(" wavelength in nanometers")
+plt.ylabel(" flux in watts per meter cubed")
+plt.title("wavelength vs intensity curve blackbod 7")
+plt.grid()
+No description has been provided for this image
+firstspectrum = blackbody.generateBlackbody(T='random')
+#just the code from [199]
+wavelengths = np.array(firstspectrum['wavelengths'])
+flux = np.array(firstspectrum['flux'])
+plt.plot(wavelengths,flux, color = estimateRGB(wavelengths, flux))
+plt.xlabel(" wavelength in nanometers")
+plt.ylabel(" flux in watts per meter cubed")
+plt.title("wavelength vs intensity curve blackbod 8")
+plt.grid()
+No description has been provided for this image
+firstspectrum = blackbody.generateBlackbody(T='random')
+#just the code from [199]
+wavelengths = np.array(firstspectrum['wavelengths'])
+flux = np.array(firstspectrum['flux'])
+plt.plot(wavelengths,flux, color = estimateRGB(wavelengths, flux))
+plt.xlabel(" wavelength in nanometers")
+plt.ylabel(" flux in watts per meter cubed")
+plt.title("wavelength vs intensity curve blackbod 9")
+plt.grid()
+No description has been provided for this image
+firstspectrum = blackbody.generateBlackbody(T='random')
+#just the code from [199]
+wavelengths = np.array(firstspectrum['wavelengths'])
+flux = np.array(firstspectrum['flux'])
+plt.plot(wavelengths,flux, color = estimateRGB(wavelengths, flux))
+plt.xlabel(" wavelength in nanometers")
+plt.ylabel(" flux in watts per meter cubed")
+plt.title("wavelength vs intensity curve blackbod 10")
+plt.grid()
+No description has been provided for this image
+9
+I'm noticing two clear and distinct patterns in the plots. If the peak wavlength is longer (greater wavelength in nanometers) the RGB value looks redder. Likewise, if the peak wavelength is shorter (lower wavelength in nanometers), the RGB value looks bluer.
+
+I believe that this demonstrates the effect known as Doppler shifting. My rough understanding of doppler shifting is that an object moving away from an observer will produce longer wavelengths and this is called resdshift. An object moving towards an observer will produce shorter wavelengths, and this is called blueshift. My simulation shows that spectra with shorter peak wavelengths will appear bluer and spectra with longer peak wavelengths will appear redder.
+
+10 generate three blackbody spectra of specific temperatures: 5000K, 10,000K, 20,000K.
+fivek = blackbody.generateBlackbody(T=5000)
+tenk = blackbody.generateBlackbody(T=10000)
+twentyk = blackbody.generateBlackbody(T=20000)
+wavelengths = np.array(fivek['wavelengths'])
+flux = np.array(fivek['flux'])
+fivebright =  integrateSpectrum(wavelengths, flux, 400, 700)
+print(f"{fivebright:.4e}")
+3.5633e+15
+wavelengths = np.array(tenk['wavelengths'])
+flux = np.array(tenk['flux'])
+tenbright =  integrateSpectrum(wavelengths, flux, 400, 700)
+print(f"{tenbright:.4e}")
+5.9461e+16
+wavelengths = np.array(twentyk['wavelengths'])
+flux = np.array(twentyk['flux'])
+twentybright =  integrateSpectrum(wavelengths, flux, 400, 700)
+print(f"{twentybright:.4e}")
+3.1389e+17
+According to my calculations, a 10000 kelvin star is roughly ten times brighter than a 5000 kelvin star in the visible spectrum. Similarly, a 20000 kelvin star is ten times brighter than a 10000 kelvin star and one hundred times brighter than a 5000 kelvin star in the visible light spectrum.
+
+I believe this shows that for every doubling of temperature, the brightness increases by an order of magnitude(a factor of 10)
+
+ 
