@@ -1,0 +1,200 @@
+import numpy as np #importing numpy and renaming .numpy to .np
+2 think+type: numpy arrays
+list1 = [-2, -1, 0, 1, 2] #a list of integers starting from -2 and increasing by 1 until 2
+list2 = [2, 3, 4, 5, 6] # a list of integers starting at 2 and increasing by 1 until 6
+list1_2 = list1 - list2 #creating a list of list1-list2
+---------------------------------------------------------------------------
+TypeError                                 Traceback (most recent call last)
+Cell In[36], line 3
+      1 list1 = [-2, -1, 0, 1, 2] #a list of integers starting from -2 and increasing by 1 until 2
+      2 list2 = [2, 3, 4, 5, 6] # a list of integers starting at 2 and increasing by 1 until 6
+----> 3 list1_2 = list1 - list2 #creating a list of list1-list2
+
+TypeError: unsupported operand type(s) for -: 'list' and 'list'
+since this is an invalid operation for 'list' data types, I will need to use NumPy to convert these lists to arrays.
+array1 = np.array(list1) #converting list 1 from 'list' data type to 'array' data type
+print("list1 is converted to, ", type(array1), "and has elements, ", array1) #checking to make sure the conversion worked
+
+array2 = np.array(list2) #converting list 2 from 'list' data type to 'array' data type
+print("list2 is converted to, ", type(array2), "and has elements, ", array2) #checking to make sure the conversion worked
+list1 is converted to,  <class 'numpy.ndarray'> and has elements,  [-2 -1  0  1  2]
+list2 is converted to,  <class 'numpy.ndarray'> and has elements,  [2 3 4 5 6]
+diff = array1 - array2 #subtracting every value in arrary from array 1 aka finding the differnece between each value in array1 and each value in array 2, it should return am array of 5 of the same number
+print(diff)
+[-4 -4 -4 -4 -4]
+twoArray1 = 2*array1 # multiplying each value in array 1 by 2
+print(array1) # pritning array1 to check that every value has been multiplied by 2
+print(twoArray1) #printing twoArray1
+[-2 -1  0  1  2]
+[-4 -2  0  2  4]
+d = array2 * array1**2 +2 * twoArray1 #seeing if mukiple arrays with different operation can work
+print(d)
+[ 0 -1  0  9 32]
+e = twoArray1/(2 + d)
+print(e)
+[-2.         -2.          0.          0.18181818  0.11764706]
+print(e[0]) #checkling to make sure I can index arrays
+-2.0
+3 think+code: array math
+x = np.array([1,3,5,7,9]) #defining x as an array
+y = [] #defining y as an empty list
+
+for i in range(len(x)):
+    y.append(x[i]/4) #adding 1/4 x to y
+
+#checking my code with print statements
+print("this is x, ", x)
+print("this is y, ", y)
+this is x,  [1 3 5 7 9]
+this is y,  [0.25, 0.75, 1.25, 1.75, 2.25]
+X = np.array([1,2,3,4,5])
+Y=np.array([6,7,8,9,10])
+Z=X*Y #testing if there is an easier way to perform operation on two numpy arrays without a for loop
+print(Z)
+[ 6 14 24 36 50]
+4 think+type: creating arrays
+f = np.array([41, 42, 43]) print(f) This will print f, an array of [41. 42. 43] output: [41 42 43]
+f = np.array([41, 42, 43]) #testing to make sure my prediction was correct
+print(f)
+[41 42 43]
+#creating an array with n elements of zero
+zeros = np.zeros(5) # this should assign zeros to an aray of [0,0,0,0,0]
+print(zeros)
+[0. 0. 0. 0. 0.]
+# creating an array with 5 ones
+ones = np.ones(5) #this should create an array of five 1s
+print(ones)
+[1. 1. 1. 1. 1.]
+# testing if numpy can create arraus of other numbers
+twos = np.twos(5) #this should create an array of fives 2s
+print(twos)
+---------------------------------------------------------------------------
+AttributeError                            Traceback (most recent call last)
+Cell In[65], line 2
+      1 # testing if numpy can create arraus of other numbers
+----> 2 twos = np.twos(5) #this should create an array of fives 2s
+      3 print(twos)
+
+File /opt/anaconda3/envs/current/lib/python3.11/site-packages/numpy/__init__.py:333, in __getattr__(attr)
+    330     "Removed in NumPy 1.25.0"
+    331     raise RuntimeError("Tester was removed in NumPy 1.25.")
+--> 333 raise AttributeError("module {!r} has no attribute "
+    334                      "{!r}".format(__name__, attr))
+
+AttributeError: module 'numpy' has no attribute 'twos'
+since the np.twos function did not work, I found another way to do this instead. The np.full function should work instead, which takes two arguments. The first is the element you want to fill an array with, and the second is the number of elements you want in the array. So np.full(2,5) should create [2 2 2 2 2]
+# trying to create an array of 5 elements of 2s
+twos = np.full(2,5)
+print(twos) 
+[5 5]
+it would appear I got the order of the arguments reversed for the np.full function so np.full(5,2) should print an array of [2 2 2 2 2]
+# trying to create an array of 5 elements of 2s
+twos = np.full(5,2)
+print(twos) 
+[2 2 2 2 2]
+print( twos + 4*ones) # should print [6 6 6 6 6]
+[6. 6. 6. 6. 6.]
+count = np.arange(10) #creating an array from 0 to 9
+print(count)
+[0 1 2 3 4 5 6 7 8 9]
+count_by_five = np.arange(0, 50, 5, int) # the first argument is the start the second element is the stop the third element is the step size and the for\urth eleemnt is the type
+print(count_by_five)
+[ 0  5 10 15 20 25 30 35 40 45]
+count_backwards = np.arange(10, -10, -2) #testing if np.arange can handle egative step size
+print(count_backwards)
+[10  8  6  4  2  0 -2 -4 -6 -8]
+5 think(+pair)+write: creating arrays
+with Allie
+a1 = np.array([1, 2, 3, 4, 5]) we think this will create an array in order of [1. 2. 3. 4. 5.]
+a1 = np.array([1, 2, 3, 4, 5])
+print(a1) #checking to see if we are correct
+[1 2 3 4 5]
+a2 = np.arange(1, 6, 1) We think that will take in 3 inputs, start, stop, and integer step size and will output an array in the given range a2 will output [1 2 3 4 5]
+a2 = np.arange(1, 6, 1)
+print(a2)
+[1 2 3 4 5]
+a3 = np.linspace(1, 5, 5) we think it will return evenly spaced numbers over a specified interval. The arguments are, start, stop, num, endpoint, retstep whci is a boolean, dtypem axis. return = [1 2 3 4 5]
+a3 = np.linspace(1, 5, 5)
+print(a3)
+[1. 2. 3. 4. 5.]
+aa = np.linspace(1, 5, 9) # Hopefully this will print, [1.0 1.5 2.0 2.5 3.0 3.5 4.0 4.5 5.0] print(aa)a4 = np.log10(np.logspace(1, 5, 5)) nnp.log10(1,5, 5) should return an array of length 5 of the numbers 1, 2 ,3, 4 ,5 on a log base 10 scale. That means log 10 of log 10 of the numbers should return the logbase 10 of the previous arrary
+ab= np.logspace(1,1000,3) #testing how the log base scale works
+print(ab)
+[10. inf inf]
+a4 = np.log10(np.logspace(1, 5, 5))
+
+print(a4)
+[1. 2. 3. 4. 5.]
+6 think+pair+code: make a plot!
+with allie
+# This "magic" command will embed plots directly in your notebook
+%matplotlib inline
+# Import the function we need to make a scatter plot
+from matplotlib.pyplot import scatter
+# We'll discuss the two previous commands in a little more detail soon!
+# Fill in the ??? based on your answers to questions 1 and 2.
+x = np.linspace(1, 100, 20) #staring at 1 going to 100 in steps of 5 20 points
+y = np.log10(x) #defing y as f unction x as y = log(base10)(x)
+print(x) # checking x is correct
+print(y) #checking that y is correct
+# plots the x and y 
+scatter(x, y); # notice the semi-colon here
+[  1.           6.21052632  11.42105263  16.63157895  21.84210526
+  27.05263158  32.26315789  37.47368421  42.68421053  47.89473684
+  53.10526316  58.31578947  63.52631579  68.73684211  73.94736842
+  79.15789474  84.36842105  89.57894737  94.78947368 100.        ]
+[0.         0.79312841 1.05770613 1.22093348 1.3392945  1.43220952
+ 1.50870687 1.57372639 1.63026725 1.68028779 1.72513757 1.76578616
+ 1.80295367 1.83718958 1.86892272 1.89849424 1.92617992 1.95220595
+ 1.97676011 2.        ]
+No description has been provided for this image
+7 think+type: arrays and functions
+def sum_of_squares(x):
+    ''' 
+
+    ----input-----
+
+    x is a numpy array 
+
+    ----ouputs-----
+
+    "if we take every element in array: "
+    x
+    "Every element in the array squared is: "
+    array1
+    "The sum of these squares is: "
+    array 2
+
+    '''
+    squares = x**2 # defining squares as every element in the aray x sqaured
+    sum_squares = np.sum(squares) # defing sum_squares as the sum of every element in squares
+    print("the original array is, \n",
+    x, "\n",
+    "Every element in the array squared is: \n",
+    squares, "\n",
+    "The sum of these squares is: \n",
+    sum_squares )
+    
+    return(sum_squares) #if you just want the output
+x= np.array([2, 4, 8, 16])
+sum_of_squares(x)
+the original array is, 
+ [ 2  4  8 16] 
+ Every element in the array squared is: 
+ [  4  16  64 256] 
+ The sum of these squares is: 
+ 340
+340
+# testing if the sum_of_squares function can be used to solve the pythagorean theorum
+sides = np.array([5,12])
+hypotenuse = np.sqrt(sum_of_squares(sides))
+print("the hypotenuse is, ", hypotenuse)
+the original array is, 
+ [ 5 12] 
+ Every element in the array squared is: 
+ [ 25 144] 
+ The sum of these squares is: 
+ 169
+the hypotenuse is,  13.0
+I probably could have cut the print statement out of the function, but I din't need to
+ 
