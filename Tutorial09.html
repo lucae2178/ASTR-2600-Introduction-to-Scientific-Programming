@@ -1,0 +1,237 @@
+2 think+prep: Accessing the files
+files = "./textfiles/"
+
+!ls {files}
+atmospheric-CO2-longterm.csv   deserved-nobel.txt  temperatures-global.csv
+atmospheric-CO2-shortterm.csv  ecoli.fasta	   temperatures-northern.csv
+bright-stars.txt	       solar-spectrum.csv  temperatures-southern.csv
+3 think+type: splitting strings
+with open(files + 'deserved-nobel.txt') as f: #this code opens and assigns the file, deserved-nobel.txt and assigns it to the variable f de
+    paragraph = f.read() #this assigns paragraph to f.read() which is deserved-nobel.txt.read. This should return a string of the file
+print(paragraph) #this should print the string of the file deserved-nobel.txt
+Deborah Jin created fermionic condensates in the lab.
+Jocelyn Bell Burnell discovered pulsars in 1967.
+Vera Rubin found dark matter in galaxies.
+
+I did not know about Deborah Jin but, I agree that all three of these esteemed scientist derseve the nobel prize. Also because trhis is a list of female scientist who did not receive the nobel prize for the work I would like to add, Dr. Cecilia Payne-Gaposchkin to this list for her work on discovering that stars are made up of hydrogen using spectrascopy.
+print(paragraph, "Dr. Cecilia Payne-Gaposchkin discovered that stars are primarily made of hydrogen using spectrascopy in 1925") #this should print the string of the file deserved-nobel.txt
+Deborah Jin created fermionic condensates in the lab.
+Jocelyn Bell Burnell discovered pulsars in 1967.
+Vera Rubin found dark matter in galaxies.
+ Dr. Cecilia Payne-Gaposchkin discovered that stars are primarily made of hydrogen using spectrascopy in 1925
+words = paragraph.split() #this will create a new list of each word in the paragraph txt file
+print(words)
+
+words_count = len(words) #counting the amount of words
+print(words_count) #shiuld print 22 asa that's what I counted
+['Deborah', 'Jin', 'created', 'fermionic', 'condensates', 'in', 'the', 'lab.', 'Jocelyn', 'Bell', 'Burnell', 'discovered', 'pulsars', 'in', '1967.', 'Vera', 'Rubin', 'found', 'dark', 'matter', 'in', 'galaxies.']
+22
+sentences = paragraph.split('\n')
+print(sentences)
+sentence_number = len(sentences) #counting the number of senetences in the list, senetences
+print('\n', sentence_number-1) # -1 because the txt files ends with a new line
+['Deborah Jin created fermionic condensates in the lab.', 'Jocelyn Bell Burnell discovered pulsars in 1967.', 'Vera Rubin found dark matter in galaxies.', '']
+
+ 3
+print(paragraph.count('in')) #counting the amount of times the string, in appears in the txct file
+      
+5
+4 think+pair+code: genetic code
+with Allie
+!head -n 10 {files + 'ecoli.fasta'}
+AGCTTTTCATTCTGACTGCAACGGGCAATATGTCTCTGTGTGGATTAAAAAAAGAGTGTCTGATAGCAGC
+TTCTGAACTGGTTACCTGCCGTGAGTAAATTAAAATTTTATTGACTTAGGTCACTAAATACTTTAACCAA
+TATAGGCATAGCGCACAGACAGATAAAAATTACAGAGTACACAACATCCATGAAACGCATTAGCACCACC
+ATTACCACCACCATCACCATTACCACAGGTAACGGTGCGGGCTGACGCGTACAGGAAACACAGAAAAAAG
+CCCGCACCTGACAGTGCGGGCTTTTTTTTTCGACCAAAGGTAACGAGGTAACAACCATGCGAGTGTTGAA
+GTTCGGCGGTACATCAGTGGCAAATGCAGAACGTTTTCTGCGTGTTGCCGATATTCTGGAAAGCAATGCC
+AGGCAGGGGCAGGTGGCCACCGTCCTCTCTGCCCCCGCCAAAATCACCAACCACCTGGTGGCGATGATTG
+AAAAAACCATTAGCGGCCAGGATGCTTTACCCAATATCAGCGATGCCGAACGTATTTTTGCCGAACTTTT
+GACGGGACTCGCCGCCGCCCAGCCGGGGTTCCCGCTGGCGCAATTGAAAACTTTCGTCGATCAGGAATTT
+GCCCAAATAAAACATGTCCTGCATGGCATTAGTTTGTTGGGGCAGTGCCCGGATAGCATCAACGCTGCGC
+file = ecoli.fasta
+---------------------------------------------------------------------------
+NameError                                 Traceback (most recent call last)
+Cell In[5], line 1
+----> 1 file = ecoli.fasta
+
+NameError: name 'ecoli' is not defined
+ecoliString = ecoli.fasta.txt
+---------------------------------------------------------------------------
+NameError                                 Traceback (most recent call last)
+Cell In[7], line 1
+----> 1 ecoliString = ecoli.fasta.txt
+
+NameError: name 'ecoli' is not defined
+file =!head -n 10 {files + 'ecoli.fasta'}
+with open (files + "ecoli.fasta") as f: 
+    ecoli = f.read() #this is what Allie came up with
+#this is what I though of using allies code which assigns the file to ecoli
+len(ecoli) #this should count the number of charcters in the string ecoli
+4707963
+countA = 0
+countT = 0
+countG = 0
+countC = 0
+countTACT = 0
+countCATATTAC = 0
+
+for i in range(len(ecoli)):
+    if ecoli[i] == 'A':
+        countA += 1
+    elif ecoli[i] == 'T':
+        countT += 1
+    elif ecoli[i] == 'G':
+        countG += 1
+    elif ecoli[i] == 'C':
+        countC += 1
+
+    #count the amount of TACT
+    if ecoli[i] == 'T' and ecoli[i+1] == 'A' and ecoli[i+2]=='C' and ecoli[i+3] == 'T':
+        countTACT += 1
+
+    #count the amount of CATATTAC
+    if ecoli[i] == 'C' and ecoli[i+1] == 'A' and ecoli[i+2]=='T' and ecoli[i+3] == 'A' and ecoli[i+4] == 'T' and ecoli[i+5] == 'T' and ecoli[i+6] == 'A' and ecoli[i+7] == 'C':
+        countCATATTAC += 1
+
+print("the amount of A=", countA, "the count of T =", countT, "the count of G=", countG, "the count of C=", countC)
+print("the amount of TACT = ", countTACT)
+print("the amount of CATATTAC = ", countCATATTAC)
+the amount of A= 1142742 the count of T = 1141382 the count of G= 1177437 the count of C= 1180091
+the amount of TACT =  10149
+the amount of CATATTAC =  44
+5 hink+type: reading a data table with pandas
+import pandas as pd # importing the module pandas as pd
+stars = pd.read_csv(files + 'bright-stars.txt') # importing stars frp, the csv file bright-stars using pandas
+print(stars) #printing stars
+print(type(stars)) #learing what data type stars is
+           ra      dec     V
+0      2.0971  29.0906  2.06
+1      2.2946  59.1497  2.27
+2      2.3529 -45.7475  3.88
+3      3.3092  15.1836  2.83
+4      4.8571  -8.8239  3.56
+..        ...      ...   ...
+508  349.3580 -58.2358  3.99
+509  349.2910   3.2822  3.69
+510  350.7430 -20.1006  3.97
+511  354.3910  46.4581  3.82
+512  354.8370  77.6325  3.21
+
+[513 rows x 3 columns]
+<class 'pandas.core.frame.DataFrame'>
+stars # the data type DataFrame seems to be a sort of array with the first column being the index postions and the next columns being alist of length 3
+ra	dec	V
+0	2.0971	29.0906	2.06
+1	2.2946	59.1497	2.27
+2	2.3529	-45.7475	3.88
+3	3.3092	15.1836	2.83
+4	4.8571	-8.8239	3.56
+...	...	...	...
+508	349.3580	-58.2358	3.99
+509	349.2910	3.2822	3.69
+510	350.7430	-20.1006	3.97
+511	354.3910	46.4581	3.82
+512	354.8370	77.6325	3.21
+513 rows × 3 columns
+
+print(stars.keys()) #treating the stars DataTable like a dictionary with keys instead of indeces
+Index(['ra', 'dec', 'V'], dtype='object')
+print(stars['ra']) #printing the coloumn ra using the 'ra' index
+0        2.0971
+1        2.2946
+2        2.3529
+3        3.3092
+4        4.8571
+         ...   
+508    349.3580
+509    349.2910
+510    350.7430
+511    354.3910
+512    354.8370
+Name: ra, Length: 513, dtype: float64
+print(stars['ra'][420]) #printing the 420th elment becuase its boulder in the ;ost ra in the datatable stars
+276.993
+pd.read_csv?
+# this is equivalent to saying
+help(pd.read_csv)
+#I have clreaed the output of this box of code because it is really long
+#give code
+pd.read_csv('bright-stars.txt', sep=',', comment='#', header=0,
+skiprows=0, names=['RA','Dec','Vmag'])
+
+# This code returns an error message saying that it cannot find 'bright-stars,txt'
+import pandas as pd
+# testing out this code
+bright_stars = pd.read_csv(files +"bright-stars.txt", sep=',', comment='#', header=0,skiprows=0, names=['RA','Dec','Vmag'])
+# Iadded the files + line as it wasn't working beforehand
+
+
+print(bright_stars)
+           RA      Dec  Vmag
+0      2.0971  29.0906  2.06
+1      2.2946  59.1497  2.27
+2      2.3529 -45.7475  3.88
+3      3.3092  15.1836  2.83
+4      4.8571  -8.8239  3.56
+..        ...      ...   ...
+508  349.3580 -58.2358  3.99
+509  349.2910   3.2822  3.69
+510  350.7430 -20.1006  3.97
+511  354.3910  46.4581  3.82
+512  354.8370  77.6325  3.21
+
+[513 rows x 3 columns]
+6 think+pair+code: reading + plotting a table
+with Allie agaon
+import pandas as pd
+
+spectrum = pd.read_csv(files +"solar-spectrum.csv")
+import matplotlib.pyplot as plt
+spectrum
+# (nm)	(W/m^2/nm)
+0	wavelength	flux
+1	115.50	1.8253e-05
+2	116.50	2.3362e-05
+3	117.50	7.7704e-05
+4	118.50	3.0802e-05
+...	...	...
+922	2145.59	0.094265
+923	2157.91	0.092289
+924	2170.15	0.089707
+925	2182.34	0.089357
+926	2194.44	0.088758
+927 rows × 2 columns
+
+import numpy as np
+
+
+
+array = np.array(spectrum)
+print(array)
+x = []
+y = []
+i = 2
+for i in range(len(array)):
+    if i < 926:
+        x.append(array[i+1][0])
+        y.append(array[i+1][1])
+
+x = np.array(x)
+y = np.array(y)
+
+plt.title("solar spectrum data graph")
+plt.xlabel("wavelenght in nanometers")
+plt.ylabel("flux in Watts/meter\u00b2/nanometers")
+plt.scatter(x,y)
+plt.show()
+[['wavelength' 'flux']
+ ['115.50' '1.8253e-05']
+ ['116.50' '2.3362e-05']
+ ...
+ ['2170.15' '0.089707']
+ ['2182.34' '0.089357']
+ ['2194.44' '0.088758']]
+No description has been provided for this image
+7 think+write: what does your plot show?
+While I do not believe I plotted the axis correctly, as they are large black bars and do not have any numbers, I believe my plot does show a relationship. My plot shows a linear relationship between wavelength and flux/ As the wavelength increases in nanometers, the flux in Watts per meter squared increases at a constant linear rate. It also shows some some data of interest as it does not fit the linear trend line.
