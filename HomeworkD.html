@@ -1,0 +1,285 @@
+1 N-body Dynamics (for N>2)
+import numpy as np
+
+import matplotlib.pyplot as plt
+2 new code
+#copying and pasting code into this cell from the tutorial assisngment
+# normally I do not copy&paste code but the tutorial said, "n the second cell, define the masses and positions of our objects by copying and pasting the following block of code."
+
+au = 1.496e+11 # in meters 
+
+masses = np.array([2.0e24, 30.0e24, 65.0e24, 40.0e24, 3.0e24]) # in kg
+positions = [np.array([ 0.6, 2.5, 0.04])*au,
+np.array([ 0.9, 9.2, 0.12])*au,
+np.array([-4.3, -2.1, 0.85])*au,
+np.array([10.9, 3.2, 0.00])*au,
+np.array([-2.5, -1.6, -0.42])*au]
+3 prinintg all the data into a table
+print("particle |", "  ", "mass    |    ", " x   |   ", " y   |", "   z  ",
+     "\n", "    #   ", "    (kg)", "        (m)",  "       (m)",  "     (m)"
+     "\n", "-------------------------------------------------")
+#^printing the header of the table
+
+
+for i in range(len(positions)):
+    print("    ", i, "  |", f"{masses[i]: .1e}","|", f"{positions[i][0]: .1e}", "|", f"{positions[i][1]: .1e}", "|", f"{positions[i][2]: .1e}")
+    #using a for loop to print each element in the aray into the table
+particle |    mass    |      x   |     y   |    z   
+     #        (kg)         (m)        (m)      (m)
+ -------------------------------------------------
+     0   |  2.0e+24 |  9.0e+10 |  3.7e+11 |  6.0e+09
+     1   |  3.0e+25 |  1.3e+11 |  1.4e+12 |  1.8e+10
+     2   |  6.5e+25 | -6.4e+11 | -3.1e+11 |  1.3e+11
+     3   |  4.0e+25 |  1.6e+12 |  4.8e+11 |  0.0e+00
+     4   |  3.0e+24 | -3.7e+11 | -2.4e+11 | -6.3e+10
+4 importing old functions from homework C
+#my gravitational force function between two bodies from homework c
+
+def grav_force(mass1, mass2, pos1, pos2):
+    '''
+    --------inputs------------
+    mass1 = integer or float
+    mass1 is the value of the mass of the 1st object
+
+    mass2 = integer or float
+    mass2 is the value of the mass of the 2nd object
+
+    pos1 = list or array
+    pos1 is the value of the position of the 1st object
+
+    pos2 = list or array
+    pos2 is the value of the position of the 2md object
+
+    --------function---------------
+
+    The function first begins by defining G 
+    The gravitational constant
+
+    The function then uses the separation function to
+    determine an array for the separation between pos1 and pos2
+
+    The function then uses the acceleration function to calculate
+    the magnitude of the separation vector. This magnitude is then
+    assigned to radius
+
+    Then the function, grav_force, uses Newtons 
+    law of universal gravitation to calculate the
+    non-relativistic magnitude of the gravitational force
+    between the two objects
+
+    -----output---------------
+    The function returns a value with three decimal points
+    precision. This value is the Newtons of gravitational
+    The force felt by each of the two objects due to the gravity
+    of the other object
+
+    '''
+
+    G = 6.6743e-11 #m^3kg^-1s^-2 gravitational constant
+    
+    AU = acceleration(separation_vector(pos1, pos2)) #returns the magnitude of the sepertion vector in AU
+
+    radius = AU*1.496e+11
+   
+    
+    
+    #netwons law of universal gravitation
+    force = (G * mass1*mass2)/(radius**2)         #calculating the force
+    force_exp = f"{force:.3e}"   #changing the result ito exponetial notation
+    return(force_exp)
+
+    
+#one of the functions my grav_force function calls
+
+def separation_vector(vector1,vector2):
+    '''
+    --------inputs----------
+    
+    vector1 = a list with 3 elements
+    each element in list1 should either be a float or an integer
+    
+    vector2 = a list with 3 elements
+    each e;e,emt om ;ost2 should either be a float or an integer
+
+    ------function---------------
+    The separation_vector uses a for loop to go through
+    each element of both lists and find the difference between them
+
+    These differences values for each element of list1-list2 will be
+    added to a new list called sep_list
+
+    -----return---------
+
+    the separation_vector functrion will return one numpy
+    array of 3 values that define the seperation vector
+    between the two vectors
+
+    '''
+    vector_1 = np.array(vector1) # converting vector1 to a numpy array data type
+    #print("vector1 is: ", vector_1)
+
+    vector_2 = np.array(vector2) # converting vector2 to a numpy array data type
+    #print("vector1 is: ", vector_2)
+
+    sep_list = []
+    if len(vector_1) == len(vector_2): #making sure both arrays are the same size
+        #print("this part ran girliepop!")
+        for i in range(len(vector_1)):
+            #print(vector_1[i]-vector_2[i])
+            sep_list.append(vector_1[i]-vector_2[i])
+        return(np.array(sep_list))
+    else:
+        print("please input two lists with 3 elements in each list")
+
+    
+#another function my grav_force function calls
+def acceleration (list): #defining the function to take in a position and output an accleration
+    '''
+    ---input-----
+    this function takes the input of 1 list
+
+    ----process-----
+    This function converts the inputted list to a numpy array 
+    then it outputs a total acceleration using the pythagorean theorum
+
+    ----output------
+    this function returns a single float output that represents the accelration
+    of a point in 3 dimentions
+
+
+    '''
+    array1 = np.array(list)
+    a = np.sqrt(array1[0]**2 + array1[1]**2 + array1[2]**2)
+    return a
+#inserting the given constants from homework C to test to make sure my functions still work
+
+earth = "particle 0" # defining the Earth as particle zero
+earthMass = 6.97e24 #kg # defining variable earthMass as the mass of the Earth
+sun = "particle 1"
+sunMass = 1.99e30 #kg # defining variable sunMass as the mass of the sun
+#positions are list in fomr [x,y,z]
+posEarth = [1.59, -1.27, -0.56] #AU # initla position of earth 
+posSun = [0.73, -1.77, -0.56] #AU # Initial position of the sun
+grav_force(earthMass, sunMass, posEarth, posSun) #testing to make sure all of my functions still work. The result should be like 4.18e+22
+'4.180e+22'
+5 making a plot of the positions
+# redfining the array, positions in AU 
+
+masses = np.array([2.0e24, 30.0e24, 65.0e24, 40.0e24, 3.0e24]) # in kg
+positions = [np.array([ 0.6, 2.5, 0.04]),
+np.array([ 0.9, 9.2, 0.12]),
+np.array([-4.3, -2.1, 0.85]),
+np.array([10.9, 3.2, 0.00]),
+np.array([-2.5, -1.6, -0.42])]
+x = [] #creating a blank list for the x axis
+y = [] #creating a blank list for the y axis
+mass = [] #creating a blank list for the mas of each star
+for i in range(len(positions)):
+    x.append(positions[i][0]) #appending the x value of each element to the list of x values
+    y.append(positions[i][1]) #appending the y value of each element to the list of y values
+    mass.append(masses[i]) #appending the mass value to the mass array
+#converting both x and y list to x and y numpy arrays
+x = np.array(x) 
+y=np.array(y)
+Mass=np.array(mass)
+area = Mass/(8.0e+23)
+
+
+#creating the scatter plot 
+
+#plt.scatter(x, y, area)
+plt.scatter(x, y, area)
+
+#creating the x axis range and label
+plt.xlabel(" x- astronomical units")
+plt.xlim(-5.0, 12.5)
+
+#creating the y axis range and label
+plt.ylabel(" y- astronomical units")
+plt.ylim(-2.6, 10.0)
+
+#giving the plot some grid lines because, it makes understanding the data easier
+plt.grid()
+plt.title(" plot of x & y positions of nearby stars")
+Text(0.5, 1.0, ' plot of x & y positions of nearby stars')
+No description has been provided for this image
+6 function to calculate the net forces on all objects
+def net_grav_system(position_list, mass_array):
+    '''
+    -----inputs--------
+    
+    position_list = list of numpy array
+    position_list is the first input and is a numpy array.
+    position_list sjould be an array of 3 floats. Each float should represent a length in Astronimcal units cooresponding to (x, y, z)
+    '
+    mass_array = numpy array
+    mass_array should be the same length as position_array
+    mass_array should include masses in kilograms in exponetial notation
+
+    -------function------
+    
+    the function will use for loops to calculate every gravotational
+    force vector as calculated by the  grav_force(mass1, mass2, pos1, pos2) function
+
+    ------output----------
+    
+    the net_grav_system function will then output a numpy array
+    containing the entire force each object fee;s
+
+    '''
+    position_list=np.array(positio
+    if len(position_list) != len(mass_array): #checking to make sure that the array length and list length are equal
+        print("please innput a position array with an equal length to the mass list")
+    elif type(position_list) != list: #more checking
+        print("please input a Pist of numpy arrays as for position_list")
+    elif type(mass_array) != np.ndarray: #triple checking
+        print("please enter a numpy.ndarray for mass_array")
+    else:
+        for i in range(len(position_list)):
+            for n in range(len(position_list)):
+                if n != i:
+                    grav =  grav_force(position_list[i],position_list[n],mass_array[i],mass_array[n])
+                    print(grav)
+    
+ net_grav_system(positions, masses) #testing to make sure my first if statement worked
+---------------------------------------------------------------------------
+TypeError                                 Traceback (most recent call last)
+Cell In[165], line 1
+----> 1 net_grav_system(positions, masses) #testing to make sure my first if statement worked
+
+Cell In[164], line 34, in net_grav_system(position_list, mass_array)
+     32 for n in range(len(position_list)):
+     33     if n != i:
+---> 34         grav =  grav_force(position_list[i],position_list[n],mass_array[i],mass_array[n])
+     35         print(grav)
+
+Cell In[57], line 45, in grav_force(mass1, mass2, pos1, pos2)
+      4 '''
+      5 --------inputs------------
+      6 mass1 = integer or float
+   (...)
+     40 
+     41 '''
+     43 G = 6.6743e-11 #m^3kg^-1s^-2 gravitational constant
+---> 45 AU = acceleration(separation_vector(pos1, pos2)) #returns the magnitude of the sepertion vector in AU
+     47 radius = AU*1.496e+11
+     51 #netwons law of universal gravitation
+
+Cell In[58], line 34, in separation_vector(vector1, vector2)
+     31 #print("vector1 is: ", vector_2)
+     33 sep_list = []
+---> 34 if len(vector_1) == len(vector_2): #making sure both arrays are the same size
+     35     #print("this part ran girliepop!")
+     36     for i in range(len(vector_1)):
+     37         #print(vector_1[i]-vector_2[i])
+     38         sep_list.append(vector_1[i]-vector_2[i])
+
+TypeError: len() of unsized object
+type(positions[1])
+numpy.ndarray
+type(masses)
+numpy.ndarray
+ separation_vector(positions[0],positions[1])
+array([-0.3 , -6.7 , -0.08])
+i cannot understand why mu code is breaking so I'm moving on to the next section
+ 
