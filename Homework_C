@@ -1,0 +1,281 @@
+1 Physics Background: Forces + Vectors
+Magnitude of non-relativistic gravitational force F(r) = G*{[m(1)*m(2)]/[r**2]} G = 6.674 x 10^-11 m**3*kg**-1*s**-2Acceleration in 3d a = sqrt(a[x]**2 + a[y]**2 + a[z]**2) = a m*s**-2
+2 Coding Assignment: Forces + Vectors
+earth = "particle 0" # defining the Earth as particle zero
+earthMass = 6.97e24 #kg # defining variable earthMass as the mass of the Earth
+sun = "particle 1"
+sunMass = 1.99e30 #kg # defining variable sunMass as the mass of the sun
+#positions are list in fomr [x,y,z]
+posEarth = [1.59, -1.27, -0.56] #AU # initla position of earth 
+posSun = [0.73, -1.77, -0.56] #AU # Initial position of the sun
+import numpy as np #importing numpy and renaming it to np
+2.1 1. Create a Python function that accepts an array representation of a vector
+def acceleration (list): #defining the function to take in a position and output an accleration
+    '''
+    ---input-----
+    this function takes the input of 1 list
+
+    ----process-----
+    This function converts the inputted list to a numpy array 
+    then it outputs a total acceleration using the pythagorean theorum
+
+    ----output------
+    this function returns a single float output that represents the accelration
+    of a point in 3 dimentions
+
+
+    '''
+    array1 = np.array(list)
+    a = np.sqrt(array1[0]**2 + array1[1]**2 + array1[2]**2)
+    return a
+test = (1,3,6)
+answer = acceleration(test)
+print(answer)
+6.782329983125268
+#testing if answer is correct
+correctAnswer = np.sqrt(1**2 + 3**2 + 6**2) #setting correvtAnswer to what the answer should be
+correctAnswer == answer #testing if the function acceleration returned the correvt answer. If so than this should return True
+True
+2.2 2. Create a Python function that accepts an array representation of a vector
+def unit_vector(list1):
+
+    '''
+
+    The function unit_vector takes a 3-dimensional vector
+    and calculates the unit vector of the input 3d
+    vector
+
+    -----input------
+
+    The input for the function is one list with 
+    three elements, which are either floats or integers
+    This list represents a 3d vector
+
+    ----function----------
+    the function first uses the acceleration(list)
+    function to calculate the magnitude of the iput 
+    vector. The function will then go through each
+    element of the list and divide it by the magnitude
+    the function will then create a new list with the 
+    resulting values named unit_vector
+
+    ------output--------
+    this function wil then use a return statement to 
+    return the list unit_vector
+
+    '''
+    unit_vector = []
+    if len(list1) == 3:
+        magnitude = acceleration(list1)#getting the magnitude of an inputted vector
+       #return magnitude #testing magnitude to make sure it ran the acceleration function
+        for i in range(len(list1)):
+            x = list1[i]/magnitude #getting the element from the list
+            unit_vector.append(x) # adding the reult to the unit_vector list
+
+        unit_vector = np.array(unit_vector)
+        return(unit_vector)
+        
+    else:
+        print("please input a list with 3 elements representing a 3d vector")
+#this was run when the only code in the unit_vector function was the code to run the acceleration function
+unit_vector(test) #testing to make sure unit_vector function can call my acceleration function and returns the correct value 
+6.782329983125268
+unit_vector(test) #testing the for loop in unit_vector
+array([0.14744196, 0.44232587, 0.88465174])
+acceleration(unit_vector(test)) #this should return 1 as it is finding the magnitude of the unit_vector whcih should be 1 if I coded everything correvtly
+1.0
+2.3 Create a Python function that accepts two position vectors ⃗ 𝑝𝑖 and ⃗ 𝑝𝑗,and returns the separation vector between them ⃗
+def separation_vector(vector1,vector2):
+    '''
+    --------inputs----------
+    
+    vector1 = a list with 3 elements
+    each element in list1 should either be a float or an integer
+    
+    vector2 = a list with 3 elements
+    each e;e,emt om ;ost2 should either be a float or an integer
+
+    ------function---------------
+    The separation_vector uses a for loop to go through
+    each element of both lists and find the difference between them
+
+    These differences values for each element of list1-list2 will be
+    added to a new list called sep_list
+
+    -----return---------
+
+    the separation_vector functrion will return one numpy
+    array of 3 values that define the seperation vector
+    between the two vectors
+
+    '''
+    vector_1 = np.array(vector1) # converting vector1 to a numpy array data type
+    #print("vector1 is: ", vector_1)
+
+    vector_2 = np.array(vector2) # converting vector2 to a numpy array data type
+    #print("vector1 is: ", vector_2)
+
+    sep_list = []
+    if len(vector_1) == len(vector_2): #making sure both arrays are the same size
+        #print("this part ran girliepop!")
+        for i in range(len(vector_1)):
+            #print(vector_1[i]-vector_2[i])
+            sep_list.append(vector_1[i]-vector_2[i])
+        return(np.array(sep_list))
+    else:
+        print("please input two lists with 3 elements in each list")
+
+    
+# First test of the separation_vector function
+
+test1 = (4,8,16)
+test2 = (2,4,8)
+separation_vector(test1,test2) #testing that separation_vectror succsefully converted both lists to arrays
+vector1 is:  [ 4  8 16]
+vector1 is:  [2 4 8]
+#2nd trest of separation_vector function
+separation_vector(test1,test2) #testing that separation_vectror ran the for loop
+vector1 is:  [ 4  8 16]
+vector1 is:  [2 4 8]
+this part ran girliepop!
+#testing the separtuib_vector function
+test1 = (4,8,16)
+test2 = (2,4,8)
+separation_vector(test1,test2) #this should output [2,4,8]
+array([2, 4, 8])
+#redifing test1 and test2
+test1 = (3,6,11)
+test2 = (2,4,8)
+
+#2nd trest of separation_vector function
+print(separation_vector(test1,test2)) #testing the for loop
+[1 2 3]
+# using the separation_vector to calculate the separation vector between the position of the Earth adn the position of the sun
+print(separation_vector(posEarth, posSun), "is the separation vector for the position of the Earth and the position of the Sun in Astronomical Units(AU)")
+
+print("\n", "\n")
+
+print(acceleration(separation_vector(posEarth, posSun)), "is the magnitude of the seperation between the Sun and the Earth in AU")
+#putting the function for seperation vector into the function for accelertion to calculate the magnitude of the seperation it should be around 1 AU
+[0.86 0.5  0.  ] is the separation vector for the position of the Earth and the position of the Sun in Astronomical Units(AU)
+
+ 
+
+0.9947864092356711 is the magnitude of the seperation between the Sun and the Earth in AU
+The magnitude of the separation between the Earth and the Sun should be around 1 Astronomical unit as that is the average distance between the Earth and the Sun. The output my functions generated with the input, acceleration(separation_vector(posEarth, posSun)) is within 0.01 AU of 1 AU. This could be caused by a minuscule mistake I made when coding the functions. However, this may just be the correct answer as the Earth is not constantly at 1 AU from the sun. 1 AU is just the average distance from the sun. So the answer my functions calculated is a plausible value of Earth's distance from the sun at the time this data was collected.
+2.4 Create a Python function that accepts two masses and the magnitude of the separation between them as input and returns the magnitude of the force as a float. This is the force magnitude, not the force vector
+def grav_force_mag(mass1, mass2, radius):
+    '''
+    --------inputs------------
+    mass1 = integer or float
+    mass1 is the value of the mass of the 1st object
+
+    mass2 = integer or float
+    mass2 is the value of the mass of the 2nd object
+
+    radius = integer or float
+    radius is the distance between the two onjects
+
+    --------function---------------
+
+    the function first begins by defining G 
+    the gravitational constant
+
+    Then the function, grav_force_mag, uses Newtons 
+    law of universal gravitation to calculate the
+    non-relativistic magnitude of the gravitational force
+    between the two objects
+
+    -----output---------------
+    The function returns a value with three decmil point
+    precision. This value is the Newtons of gravitational
+    The force felt by each of the two objects due to the gravity
+    of the other object
+
+    '''
+    G = 6.6743e-11 #m^3kg^-1s^-2 gravitational constant
+    
+    #netwons law of universal gravitation
+    force = (G * mass1*mass2)/(radius**2)         #calculating the force
+    force_exp = f"{force:.3e}"   #changing the result ito exponetial notation
+    return(force_exp)
+    
+AU = acceleration(separation_vector(posEarth, posSun))
+# need to convert AU to meters
+#print(AU)
+radius = 1.496e+11*AU #converting AU to meters
+#print(type(radius), radius)
+
+print("the gravitational force between Earth and the Sun is, ", grav_force_mag(earthMass, sunMass, radius), "Newtons")
+the gravitational force between Earth and the Sun is,  4.180e+22 Newtons
+I had no idea what the answer should be, so I googled what the gravitational force the sun exerts on the Earth is. Google's AI result for the search, " what is the gravitational force of the sun on Earth in Newtons," the AI result was 3.52 x 10^22 Newtons. I was not able to easily find a more credible source. I would not use this source for a project; however, for a homework, I believe that this is an ok source. This AI result agrees with my result as they are of the same order of magnitude. (Both answers are n * 10^22 Newtons)
+2.5 Create a Python function that accepts two masses and two position vectors, and returns the full gravitational force vector ⃗ 𝐹𝑖𝑗 acting on a particle.
+This is essentially what I did in section 2.4, except I calculated the radius before putting it into the function For this new function, I will just copy the code from grav_force_mag. I will just need to move the calculation of the radius inside the function for this section
+def grav_force(mass1, mass2, pos1, pos2):
+    '''
+    --------inputs------------
+    mass1 = integer or float
+    mass1 is the value of the mass of the 1st object
+
+    mass2 = integer or float
+    mass2 is the value of the mass of the 2nd object
+
+    pos1 = list or array
+    pos1 is the value of the position of the 1st object
+
+    pos2 = list or array
+    pos2 is the value of the position of the 2md object
+
+    --------function---------------
+
+    The function first begins by defining G 
+    The gravitational constant
+
+    The function then uses the separation function to
+    determine an array for the separation between pos1 and pos2
+
+    The function then uses the acceleration function to calculate
+    the magnitude of the separation vector. This magnitude is then
+    assigned to radius
+
+    Then the function, grav_force, uses Newtons 
+    law of universal gravitation to calculate the
+    non-relativistic magnitude of the gravitational force
+    between the two objects
+
+    -----output---------------
+    The function returns a value with three decimal points
+    precision. This value is the Newtons of gravitational
+    The force felt by each of the two objects due to the gravity
+    of the other object
+
+    '''
+
+    G = 6.6743e-11 #m^3kg^-1s^-2 gravitational constant
+    
+    AU = acceleration(separation_vector(pos1, pos2)) #returns the magnitude of the sepertion vector in AU
+
+    radius = AU*1.496e+11
+   
+    
+    
+    #netwons law of universal gravitation
+    force = (G * mass1*mass2)/(radius**2)         #calculating the force
+    force_exp = f"{force:.3e}"   #changing the result ito exponetial notation
+    return(force_exp)
+
+    
+grav_force(earthMass, sunMass, posEarth, posSun) 
+#testing to make sure that the function converts the two positions to a radius in AU
+0.9947864092356711
+grav_force(earthMass, sunMass, posEarth, posSun) 
+#testing to make sure the radius in meters is correct. 
+# it should be something like 148820046821.6564
+148820046821.6564
+grav_force(earthMass, sunMass, posEarth, posSun)
+#running the function for real, I believe it should work after all of my testing
+#hopefully this returns something like: 4.180e+22
+'4.180e+22'
+# one more print statement
+print("the gravitational force between Earth and the Sun is, ", grav_force(earthMass, sunMass, posEarth, posSun), "Newtons")
+the gravitational force between Earth and the Sun is,  4.180e+22 Newtons
