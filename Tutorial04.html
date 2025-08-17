@@ -1,0 +1,352 @@
+2 think+type: moons of Jupiter
+#declaring the list moons with some of juipters moons
+moons = ["Io", "Europa", "Ganymede", "Callisto"] #some of the jovian moons
+
+periods = [42.5, 85.2, 171.7, 400.5] #the periods of the above jovian moons in hours 
+
+orbit_sizes = [ 111, 178, 282, 499] # the rough size of each orbit in arcseconds
+
+initial_phases = [2.542, 3.739, 5.831, 1.669] # the initial orbital phases of the jovian the moons, in radians
+print(moons) #printing the list, moons
+
+print(periods) #printing the periods of the moons
+
+print(orbit_sizes) #printing the size of each moons orbit
+
+print(initial_phases) #printing the phases of each moon
+['Io', 'Europa', 'Ganymede', 'Callisto']
+[42.5, 85.2, 171.7, 400.5]
+[111, 178, 282, 499]
+[2.542, 3.739, 5.831, 1.669]
+3 think+type: printing lists
+print("moon             period         orbit size            intial phase")
+for i in range(len(moons)):   #since all the list are the same length, I will do this that way in the future I could add more moons with thier relative information
+    print(f"{moons[i]:10} {periods[i]:10} {orbit_size[i]:13} {initial_phases[i]:23}")
+moon             period         orbit size            intial phase
+Io               42.5           111                   2.542
+Europa           85.2           178                   3.739
+Ganymede        171.7           282                   5.831
+Callisto        400.5           499                   1.669
+4 think+code: being flexible
+well, oops, it appears I accidentally already did this step. In the code I wrote for section 3, I preemptively changed the for loop conditions. The given condition was for i in range(4):, I was thinking that in the future I could add more jovian moons so I changed the for loop parameter to for i in range(len(moons)) this will allow me to add more jovian moons as long as I also add each aditional moons period, orbital size and initial phase to the other list respectively.
+#same code with my modification of the for loop condition
+print("moon             period         orbit size            intial phase")
+for i in range(len(moons)):   #since all the list are the same length, I will do this that way in the future I could add more moons with thier relative information
+    print(f"{moons[i]:10} {periods[i]:10} {orbit_size[i]:13} {initial_phases[i]:23}")
+moon             period         orbit size            intial phase
+Io               42.5           111                   2.542
+Europa           85.2           178                   3.739
+Ganymede        171.7           282                   5.831
+Callisto        400.5           499                   1.669
+5 think+type: zip()
+print("moon            period    orbit size  initial phase")
+for m, p, o, i in zip(moons, periods, orbit_sizes, initial_phases): # testing out the zip function to print different element from different livraries without using a for loop
+    print(f'{m:10} {p:10.1f} {o:10.0f} {i:10.3f}')
+moon            period    orbit size  initial phase
+Io               42.5        111      2.542
+Europa           85.2        178      3.739
+Ganymede        171.7        282      5.831
+Callisto        400.5        499      1.669
+6 think+pair+code: where are the moons?
+I left class before I could work on this with a partner so this is just my code
+
+x(t) = (A)sin((2(pi)t)/P + theta) formula for projected positon x(t0\) A = orbit size of the Jovian moon in arcseconds P is the orbital period of the Jovian moon in hours theta is the intial phase of the jovian moon in radians
+ 
+from math import sin, pi #importing what I need from the math library
+
+t= 36.4
+
+moon_pos = ["the project positions of the jovain moons at,", t, "hours  are,"] #creating a blank list for all of the moon's positions
+#creating a for loop to calculate each moon's position at time t = 36.4 hours
+
+for moon, P, A, theta in zip(moons, periods, orbit_sizes, initial_phases):
+    t - 36.4 #hours
+    x = A*sin((2*pi*t)/P+theta) #x(t) using the variable from the for loop
+    moon_pos.append(moon) #adding the name of the moon to the moon_pos list
+    moon_pos.append("is at, ")
+    moon_pos.append(f"{x:0.2f}") #adding the rounded position of the moon
+    moon_pos.append(",")
+print(*moon_pos) #printing the list without brackets between each element
+the project positions of the jovain moons at, 36.4 hours  are, Io is at,  110.73 , Europa is at,  24.87 , Ganymede is at,  217.32 , Callisto is at,  391.36 ,
+7 think+type: define a helpful function
+import sys
+sys.path.append('/home/taak5361/astr2600/shared/')
+import galileo
+
+from galileo import drawMoons
+---------------------------------------------------------------------------
+ImportError                               Traceback (most recent call last)
+Cell In[135], line 3
+      1 import galileo
+----> 3 from galileo import drawMoons
+
+ImportError: cannot import name 'drawMoons' from 'galileo' (/home/luel8892/ASTR 2600/Tutorial/galileo.py)
+I tried for a while to get this working by looking up how to import files into python and then downloading the galileo.py file
+import sys
+sys.path.append('C:\Users\Lucae\Downloa"ds')
+  Cell In[137], line 2
+    sys.path.append('C:\Users\Lucae\Downloa"ds')
+                                               ^
+SyntaxError: (unicode error) 'unicodeescape' codec can't decode bytes in position 2-3: truncated \UXXXXXXXX escape
+Tryubg to import the file from downloads using its path is also not workingso my plan is just to insert the code from galileo directly into this jupyter notebook
+#copying galileo.pu and pasting it below
+import numpy as np
+import matplotlib.pyplot as plt
+def drawMoons(names, xpositions, xlim=[-500,500], labels=False, color=False):
+    '''
+    Draw a plot of the positions of moons relative to Jupiter.
+    
+    This function requires two input arguments. They should
+    both be lists, and they should be the same size as each
+    other. They are:
+        
+        moons -- a 1-dimensional list of moon names
+        xpositions -- a 1-dimensional list of moon positions (in arcsec)
+    
+    For example:
+        
+        %matplotlib inline
+        names = ['Io', 'Europa', 'Ganymede', 'Callisto']
+        xpositions = [-20, 40, 80, -160]
+        drawMoons(names, xpositions)
+        
+        (should display a plot of the moon positions)
+    
+    Options keyword arguments
+    
+        xlim = [-500,500]
+            (set this to some other 2-element list to change
+                the range over which the plot stretchs)
+        labels = False
+            (set this to True to provide text labels)
+        color = False
+            (set this to True to provide different colors for each moon)
+            
+    '''
+    
+    # since we're plotting only 1D positions, we make up y-values
+    ypositions = np.zeros_like(xpositions)
+
+    # we create a new figure, and set its size
+    plt.figure(figsize=(10,.25))
+    
+    # if color output, set colors
+    if color:
+        colors=['orange','blue','magenta','green']
+    else:
+        colors=['black']*len(xpositions)
+        
+    # we plot the moons in their positions
+    for i in range(len(xpositions)):
+        plt.plot(xpositions[i], ypositions[i],
+                    marker = '.',
+                    linewidth=0,
+                    color=colors[i])
+    
+    # if desired, we add text labels to all the moons
+    if labels:
+        for x, y, n in zip(xpositions, ypositions, names):
+            plt.text(x, y+0.1, n, ha='center', va='bottom')
+    
+    # plot Jupiter in the center
+    plt.plot(0,0, marker='o', markersize=10, color='black')    
+
+    # set the x and y limits of the plot
+    plt.xlim(*xlim)
+    plt.ylim(-1,1)
+
+    # turn off all axis labels (and the box around the plot)
+    plt.axis('off')
+
+    # make sure the plot shows to the screen
+    plt.show()
+help(drawMoons)
+Help on function drawMoons in module __main__:
+
+drawMoons(names, xpositions, xlim=[-500, 500], labels=False, color=False)
+    Draw a plot of the positions of moons relative to Jupiter.
+    
+    This function requires two input arguments. They should
+    both be lists, and they should be the same size as each
+    other. They are:
+        
+        moons -- a 1-dimensional list of moon names
+        xpositions -- a 1-dimensional list of moon positions (in arcsec)
+    
+    For example:
+        
+        %matplotlib inline
+        names = ['Io', 'Europa', 'Ganymede', 'Callisto']
+        xpositions = [-20, 40, 80, -160]
+        drawMoons(names, xpositions)
+        
+        (should display a plot of the moon positions)
+    
+    Options keyword arguments
+    
+        xlim = [-500,500]
+            (set this to some other 2-element list to change
+                the range over which the plot stretchs)
+        labels = False
+            (set this to True to provide text labels)
+        color = False
+            (set this to True to provide different colors for each moon)
+
+drawMoons(moons, [50, 100, 200, 400], labels=True) #testing the drawMoons function
+No description has been provided for this image
+drawMoons(moons, moon_pos, labels=True) 
+#tryin the drawMoons function with my current list moon_pos
+---------------------------------------------------------------------------
+TypeError                                 Traceback (most recent call last)
+Cell In[147], line 1
+----> 1 drawMoons(moons, moon_pos, labels=True) 
+      2 #tryin the drawMoons function with my current list moon_pos
+
+Cell In[139], line 58, in drawMoons(names, xpositions, xlim, labels, color)
+     56 if labels:
+     57     for x, y, n in zip(xpositions, ypositions, names):
+---> 58         plt.text(x, y+0.1, n, ha='center', va='bottom')
+     60 # plot Jupiter in the center
+     61 plt.plot(0,0, marker='o', markersize=10, color='black')    
+
+TypeError: can only concatenate str (not "float") to str
+No description has been provided for this image
+MY moon_pos list conatins the moons positoin as well as strrings laveling each moon so I will need to define a new list with just their positions
+#defining my new list, moon_positions
+moon_positions = []
+
+for moon, P, A, theta in zip(moons, periods, orbit_sizes, initial_phases):
+    t - 36.4 #hours
+    x = A*sin((2*pi*t)/P+theta) #x(t) using the variable from the for loop
+    y = int(x) # to make the data type accepted by the drawMoon function, I need to convert the floats to integers
+    moon_positions.append(y)
+print(moon_positions)
+[110, 24, 217, 391]
+drawMoons(moons, moon_positions, labels=True) 
+No description has been provided for this image
+The drawMoon function seems to work, except for the fact that it is flipping Europa and Io in the drawing. Io should be the closest of these four, and Europa should be the second closest. However, when it draws them, it is flipping their order. This is because of the x(t) code I have written, which is returning a cvalue of 24 for Europawhen I evaluate the position, x(t) for Europa with the data given, I get -170.6. I will manually imput this into the function
+moon_positions = [110, -171, 217, 391] #manually redfing the list moon_ppsition with the corrected data for europa
+
+print(moon_positions)
+[110, -171, 217, 391]
+drawMoons(moons, moon_positions, labels=True) 
+No description has been provided for this image
+The result on line [182] looks a lot better than the result on line [175] as the moons are located the correct distance away
+8 think+type+code: calculate the moon positions over time
+to calculate the moon's positions over time, we will first need to create an increasing time counter variable to use in a while loop
+timer = 0
+while(timer <= 500):
+    print(timer)
+    timer += 100
+0
+100
+200
+300
+400
+500
+now I will replace t in my orginal code with timer
+timer = 0
+
+#recreating the while loop I used to calculate each position
+while(timer <= 500):
+    moon_pos = [] 
+    
+    for moon, P, A, theta in zip(moons, periods, orbit_sizes, initial_phases):
+        x = int(A*sin((2*pi*timer)/P+theta)) #x(t) using the variable from the for loop
+        moon_pos.append(moon) #adding the name of the moon to the moon_pos list
+        moon_pos.append("is at, ")
+        moon_pos.append(x) #adding the rounded position of the moon
+        moon_pos.append(",")
+    timer += 100
+    print(*moon_pos, "at time =", timer)
+Io is at,  62 , Europa is at,  -100 , Ganymede is at,  -123 , Callisto is at,  496 , at time = 100
+Io is at,  -110 , Europa is at,  -176 , Ganymede is at,  -18 , Callisto is at,  -47 , at time = 200
+Io is at,  70 , Europa is at,  -62 , Ganymede is at,  155 , Callisto is at,  -496 , at time = 300
+Io is at,  25 , Europa is at,  118 , Ganymede is at,  -251 , Callisto is at,  46 , at time = 400
+Io is at,  -101 , Europa is at,  172 , Ganymede is at,  281 , Callisto is at,  496 , at time = 500
+Io is at,  97 , Europa is at,  40 , Ganymede is at,  -238 , Callisto is at,  -44 , at time = 600
+ 
+timer = 0
+
+#recreating the while loop I used to calculate each position
+while(timer <= 500):
+    moon_pos = [] 
+
+    #simplifiting my for loop to only return the bare essentials
+    for moon, P, A, theta in zip(moons, periods, orbit_sizes, initial_phases):
+        x = int(A*sin((2*pi*timer)/P+theta)) #x(t) using the variable from the for loop
+        moon_pos.append(x) #adding the rounded position of the moon
+    timer += 100
+    print(*moon_pos, "at time =", timer)
+    
+62 -100 -123 496 at time = 100
+-110 -176 -18 -47 at time = 200
+70 -62 155 -496 at time = 300
+25 118 -251 46 at time = 400
+-101 172 281 496 at time = 500
+97 40 -238 -44 at time = 600
+timer = 0
+
+#recreating the while loop I used to calculate each position
+while(timer <= 500):
+    moon_pos = [] 
+
+    #simplifiting my for loop to only return the bare essentials
+    for moon, P, A, theta in zip(moons, periods, orbit_sizes, initial_phases):
+        x = int(A*sin((2*pi*timer)/P+theta)) #x(t) using the variable from the for loop
+        moon_pos.append(x) #adding the rounded position of the moon
+    timer += 25
+    print("at time =", timer, "this is hwere the moons are:")
+    drawMoons(moons, moon_pos, labels=True) 
+    
+at time = 25 this is hwere the moons are:
+No description has been provided for this image
+at time = 50 this is hwere the moons are:
+No description has been provided for this image
+at time = 75 this is hwere the moons are:
+No description has been provided for this image
+at time = 100 this is hwere the moons are:
+No description has been provided for this image
+at time = 125 this is hwere the moons are:
+No description has been provided for this image
+at time = 150 this is hwere the moons are:
+No description has been provided for this image
+at time = 175 this is hwere the moons are:
+No description has been provided for this image
+at time = 200 this is hwere the moons are:
+No description has been provided for this image
+at time = 225 this is hwere the moons are:
+No description has been provided for this image
+at time = 250 this is hwere the moons are:
+No description has been provided for this image
+at time = 275 this is hwere the moons are:
+No description has been provided for this image
+at time = 300 this is hwere the moons are:
+No description has been provided for this image
+at time = 325 this is hwere the moons are:
+No description has been provided for this image
+at time = 350 this is hwere the moons are:
+No description has been provided for this image
+at time = 375 this is hwere the moons are:
+No description has been provided for this image
+at time = 400 this is hwere the moons are:
+No description has been provided for this image
+at time = 425 this is hwere the moons are:
+No description has been provided for this image
+at time = 450 this is hwere the moons are:
+No description has been provided for this image
+at time = 475 this is hwere the moons are:
+No description has been provided for this image
+at time = 500 this is hwere the moons are:
+No description has been provided for this image
+at time = 525 this is hwere the moons are:
+No description has been provided for this image
+Please know that I now realize my initial results for the use of the drawing function were correct. I was confused because I thought that the moons should be in order of their distance away from Jupiter. However, this will not always happen because the drawing is one-dimensional while the moons' orbits are 3 dimensonal. This leads to times when, from the observer's perspective, the moons look out of order. However, they are not out of order. The majority of their orbital distance is just in a perpendicular dimension with the screen. While the drawings O have generated look somewhat random, they are not, and if you decrease the rate at which the timer is increased, then you will see that they are not random and do represent the Jupiter, four-moon system.
+9 think+write: lists within a list
+1 At the end of the code in [214], the length of moon_pos list is the same as it has been throughout the whole run. The moon_pos list remains a constant 4 integer long list the whole time. Every run through the while loop, the list is reset to a blank list and then filled with the four moons' positions
+
+2 The length of the moon_pos list has no relationship with the number of times the code has been run, as the length of the moon_pos list is constantly 4
+
+3 The list moon_pos[0] represents the position of the position of the first moon. This is a string of multiple integers
+
+4 the list moon_pos[1] is differnt from moon_pos[0] as it represents the position of the second moon
