@@ -1,0 +1,541 @@
+Tutorial20-MoreClasses
+import matplotlib.pyplot as plt
+import numpy as np
+2 think+type: shine brightly
+I have imported glow.py, thermal.py, & constants.py into my Jupyter notebook
+
+from glow import ThingThatGlows, Star, Planet
+#importing the class ThingThatGlow
+#importing the subclass, star
+#importing the subclass planet
+#both planet and star are subclasses of the class,THingThatGlows
+help(ThingThatGlows) #learning what's inside of theclass, ThingThatGlows
+Help on class ThingThatGlows in module glow:
+
+class ThingThatGlows(builtins.object)
+ |  ThingThatGlows(radius, temperature, name='')
+ |  
+ |  The class of ThingThatGlows python objects can handle calculations
+ |  and visualizations related to physical things that emit radiation.
+ |  
+ |  Methods defined here:
+ |  
+ |  __init__(self, radius, temperature, name='')
+ |      Initialize a ThingThatGlows object.
+ |      
+ |      Parameters
+ |      ----------
+ |      radius : float
+ |          The radius of the object, in meters
+ |      temperature : float
+ |          The temperature of the object, in K
+ |      name (optional) : string
+ |          The name of the object
+ |  
+ |  calculateArea(self)
+ |      Calculate the surface area of the thing,
+ |      in units of meters**2.
+ |  
+ |  calculateLuminosity(self)
+ |      Calculate the luminosity of the thing,
+ |      in units of W.
+ |  
+ |  plotSpectrum(self)
+ |      Plot the spectrum of light this thing emits.
+ |  
+ |  ----------------------------------------------------------------------
+ |  Data descriptors defined here:
+ |  
+ |  __dict__
+ |      dictionary for instance variables
+ |  
+ |  __weakref__
+ |      list of weak references to the object
+
+help(Star)
+#learning what's inside the subclass, Star
+Help on class Star in module glow:
+
+class Star(ThingThatGlows)
+ |  Star(radius, temperature, name='')
+ |  
+ |  The Star is a ThingThatGlows, with two new methods.
+ |  
+ |  Method resolution order:
+ |      Star
+ |      ThingThatGlows
+ |      builtins.object
+ |  
+ |  Methods defined here:
+ |  
+ |  explode(self)
+ |      Become a supernova or planetary nebula.
+ |  
+ |  sing(self)
+ |      Sing a song.
+ |  
+ |  ----------------------------------------------------------------------
+ |  Methods inherited from ThingThatGlows:
+ |  
+ |  __init__(self, radius, temperature, name='')
+ |      Initialize a ThingThatGlows object.
+ |      
+ |      Parameters
+ |      ----------
+ |      radius : float
+ |          The radius of the object, in meters
+ |      temperature : float
+ |          The temperature of the object, in K
+ |      name (optional) : string
+ |          The name of the object
+ |  
+ |  calculateArea(self)
+ |      Calculate the surface area of the thing,
+ |      in units of meters**2.
+ |  
+ |  calculateLuminosity(self)
+ |      Calculate the luminosity of the thing,
+ |      in units of W.
+ |  
+ |  plotSpectrum(self)
+ |      Plot the spectrum of light this thing emits.
+ |  
+ |  ----------------------------------------------------------------------
+ |  Data descriptors inherited from ThingThatGlows:
+ |  
+ |  __dict__
+ |      dictionary for instance variables
+ |  
+ |  __weakref__
+ |      list of weak references to the object
+
+help(Planet) 
+#learning what's inside the subclass Planet
+Help on class Planet in module glow:
+
+class Planet(ThingThatGlows)
+ |  Planet(radius, orbit, star, albedo=0.3, name='')
+ |  
+ |  A Planet is a ThingThatGlows, heated by a host star.
+ |  
+ |  Method resolution order:
+ |      Planet
+ |      ThingThatGlows
+ |      builtins.object
+ |  
+ |  Methods defined here:
+ |  
+ |  __init__(self, radius, orbit, star, albedo=0.3, name='')
+ |      Initalize a Planet object.
+ |      radius is the planet radius, in m
+ |      orbit is the orbital separation, in AU
+ |      star is a Star object representing the host star
+ |      name(optional) is the name of the planet
+ |  
+ |  ----------------------------------------------------------------------
+ |  Methods inherited from ThingThatGlows:
+ |  
+ |  calculateArea(self)
+ |      Calculate the surface area of the thing,
+ |      in units of meters**2.
+ |  
+ |  calculateLuminosity(self)
+ |      Calculate the luminosity of the thing,
+ |      in units of W.
+ |  
+ |  plotSpectrum(self)
+ |      Plot the spectrum of light this thing emits.
+ |  
+ |  ----------------------------------------------------------------------
+ |  Data descriptors inherited from ThingThatGlows:
+ |  
+ |  __dict__
+ |      dictionary for instance variables
+ |  
+ |  __weakref__
+ |      list of weak references to the object
+
+# calculating how bright a 100w light bulb glows
+lightbulb = ThingThatGlows(radius=0.00132, temperature=3000.0, name="lightbulb")
+
+# defining lightbulb as an object of class ThingThatGlows
+
+print(type(lightbulb)) #checking to make sure it is an object that is a class,ThingThatGlows
+<class 'glow.ThingThatGlows'>
+lightbulb.calculateLuminosity() #making sure that some of the modules in class, ThingThatGlows workk
+100.56012492655658
+dude = ThingThatGlows(radius=0.5, temperature=300.0, name="dude")
+# defining another object of class ThingThatGLows called, dude, which is just some random dude with the given stats
+dude.calculateArea() # calculating the surface area of some random dude
+#also since dude has a radius of 0.5 meters and the formula for surface area of a sphere is 4*pi*radius**2,
+#dude's surface area should be like pi meters sqaured
+3.141592653589793
+ratio = dude.ThingThatGlows()/lightbulb.calculateLuminosity()
+#calculating the ratio of dude's luminosity to the luminosity of a 100-watt incandescent lightbulb
+print(ratio)
+14.348025711662075
+The ThingThatGlows.calculateLuminosity multiplies self.temperature**4 by sigma by self.calculatedArea
+
+slef.calculateArea = 4piself..radius**2
+
+Since sigma, 4, and pi are all constants, the ratio is really just calculating:
+
+(dude.temperature4 * dude.radius2)/(lightbulb.temperature4 * lightbulb.radius2)
+
+this is equal to (3004 * 0.52)/(3000 ** 4 * 0.00132 **2)
+
+That expression has a value of about 14.35
+
+The class ThingThatGlows just does all of the calculation with modules defined in it.
+
+Dude looks roughly 14.35 times brighter than a lightbulb due to the dudes larger radius. But please note that the wavelength of light is not given. So the lightbulb might be brighter in visible light, as that's probably where its peak wavelength is while dude will probably look brighter in infrared, where their peak wavelength is.
+
+#plotting the lightbulb's spectrum
+lightbulb.plotSpectrum()
+
+plt.fill_between([400, 700],[1e8, 1e8], color='green', alpha=0.5, label='visible regime') #plotting the visible light wavelengths
+
+dude.plotSpectrum() #plotting the spectrum for dude in the same wavelngths
+
+plt.ylim(1e-30, 1e8)
+(1e-30, 100000000.0)
+No description has been provided for this image
+As predicted, the lightbulb has a much higher luminosity in the visible spectrum than dude. Dude peaks in the micrometer wavelength 10**4 nm, which is infrared light.
+
+3 Think+pair+code: modify ThingThatGlows
+I did this by myself
+import thermal
+import numpy as np
+import matplotlib.pyplot as plt
+
+class ThingThatGlows2:
+    '''
+    The class of ThingThatGlows python objects can handle calculations
+    and visualizations related to physical things that emit radiation.'''
+
+    def __init__(self, radius, temperature, name=""):
+        '''
+        Initialize a ThingThatGlows object.
+
+        Parameters
+        ----------
+        radius : float
+            The radius of the object, in meters
+        temperature : float
+            The temperature of the object, in K
+        name (optional) : string
+            The name of the object
+        '''
+
+        # store the radius and temperature as attributes
+        self.radius = radius
+        self.temperature = temperature
+        # store the name, if given
+        self.name = name
+        
+    def calculateArea(self):
+        '''
+        Calculate the surface area of the thing,
+        in units of meters**2.
+        '''
+        return 4 * np.pi * self.radius**2
+    
+    def calculateLuminosity(self):
+        '''
+        Calculate the luminosity of the thing,
+        in units of W.
+        '''
+
+        # the Stefan-Bolztmann constant
+        sigma = 5.67e-8 # W/m**2/K**4
+        powerPerArea = sigma * self.temperature**4
+        return powerPerArea * self.calculateArea()
+
+    def plotSpectrum(self):
+        '''
+        Plot the spectrum of light this thing emits.
+        '''
+        # create a grid of wavelengths
+        wavelengths = np.logspace(2, 6, 1000)
+
+        # this is the flux per unit area
+        flux = thermal.planck(wavelengths, T=self.temperature)
+
+        # we multiply by an area to get total luminosity
+        specificluminosity = flux * self.calculateArea()
+
+        # make the plot
+        plt.plot(wavelengths, specificluminosity, label=self.name)
+        if self.name:
+            plt.legend(loc="best")
+        plt.xscale('log'); plt.yscale('log')
+        plt.xlabel('Wavelength (nm)'); plt.ylabel('Specific Luminosity (W/m)')
+
+
+
+    #defining a new method inside the ThingThatGlows class 
+    def getSpectrum(self, wavearray):
+        '''
+        the getSpectrum module accepts an array of wavelengths
+        in nanometers and returns an array of the lumonisties
+        of the thing we are looking at.
+
+        '''
+
+        #print(wavearray)
+        #print(type(wavearray))
+        
+        #code from plotSpectrum() module for calcultatin the luminotisy
+
+        wavelengths = wavearray
+        
+        # this is the flux per unit area
+        flux = thermal.planck(wavelengths, T=self.temperature)
+
+        # we multiply by an area to get total luminosity
+        specificluminosity = flux * self.calculateArea()
+        
+        return  specificluminosity
+
+# star inherits the properties of ThingThatGlows
+class Star(ThingThatGlows):
+    '''The Star is a ThingThatGlows, with two new methods.'''
+    
+    def explode(self):
+        '''Become a supernova or planetary nebula.'''
+        print("Kaboom!")
+
+    def sing(self):
+        '''Sing a song.'''
+        print(f"Twinkle, twinkle, little {self.name}...")
+
+# Planet inherits some of the properties of ThingThatGlows
+class Planet(ThingThatGlows):
+    '''A Planet is a ThingThatGlows, heated by a host star.'''
+    
+    # we modify the initialization, replacing the definition 
+    def __init__(self, radius, orbit, star, albedo=0.3, name=""):
+        '''Initalize a Planet object.
+            radius is the planet radius, in m
+            orbit is the orbital separation, in AU
+            star is a Star object representing the host star
+	    name(optional) is the name of the planet'''
+        
+        # ThingThatGlows depends on radius, so we must define it
+        self.radius = radius
+        
+        # store the orbital separation
+        self.separation = orbit*1.5e11
+        
+        # store an instance of a star object, associated 
+        self.host = star
+        
+        # store the object name, if given
+        self.name = name
+
+        # set the temperature of the planet, 
+        # based on its host star and orbital distance
+        self.temperature = (0.25*(1 - albedo)
+                            *(self.host.radius/self.separation)**2
+                            *self.host.temperature**4)**0.25
+Since 103 nm is infrared and 105 is a;sp omfrared. I know it would be best too look for exoplanets in infrared. I just do not know if it is better to look for exoplanets in longer or shorter infrared wavelengths, so, I do not know the answer to this qurestion.
+
+lightbulb = ThingThatGlows2(radius=0.00132, temperature=3000.0, name="lightbulb") #redfing lightbuklb so it can have the new module
+testarray = np.linspace(1,10,10)
+lightbulb.getSpectrum(testarray)
+#this is just testing to make sure my code returns a numpy array
+array([0.00000000e+000, 0.00000000e+000, 0.00000000e+000, 0.00000000e+000,
+       0.00000000e+000, 0.00000000e+000, 4.38723856e-278, 3.51404211e-241,
+       1.65341094e-212, 1.35600884e-189])
+#time for the real test
+sun = Star2(radius=7.0e8, temperature=5800)
+earth = Planet2(radius=6.3e6, orbit=1.0, star=sun)
+waves = np.logspace(2, 6) #defining a numpy array of wavelengths 
+earth.getSpectrum(waves)
+[1.00000000e+02 1.20679264e+02 1.45634848e+02 1.75751062e+02
+ 2.12095089e+02 2.55954792e+02 3.08884360e+02 3.72759372e+02
+ 4.49843267e+02 5.42867544e+02 6.55128557e+02 7.90604321e+02
+ 9.54095476e+02 1.15139540e+03 1.38949549e+03 1.67683294e+03
+ 2.02358965e+03 2.44205309e+03 2.94705170e+03 3.55648031e+03
+ 4.29193426e+03 5.17947468e+03 6.25055193e+03 7.54312006e+03
+ 9.10298178e+03 1.09854114e+04 1.32571137e+04 1.59985872e+04
+ 1.93069773e+04 2.32995181e+04 2.81176870e+04 3.39322177e+04
+ 4.09491506e+04 4.94171336e+04 5.96362332e+04 7.19685673e+04
+ 8.68511374e+04 1.04811313e+05 1.26485522e+05 1.52641797e+05
+ 1.84206997e+05 2.22299648e+05 2.68269580e+05 3.23745754e+05
+ 3.90693994e+05 4.71486636e+05 5.68986603e+05 6.86648845e+05
+ 8.28642773e+05 1.00000000e+06]
+<class 'numpy.ndarray'>
+---------------------------------------------------------------------------
+NameError                                 Traceback (most recent call last)
+Cell In[91], line 1
+----> 1 earth.getSpectrum(waves)
+
+Cell In[28], line 86, in ThingThatGlows.getSpectrum(self, wavearray)
+     81 wavelength = wavearray
+     83 #code from plotSpectrum() module for calcultatin the luminotisy
+     84 
+     85 # this is the flux per unit area
+---> 86 flux = thermal.planck(wavelengths, T=self.temperature)
+     88 # we multiply by an area to get total luminosity
+     89 specificluminosity = flux * self.calculateArea()
+
+NameError: name 'wavelengths' is not defined
+I do not understand the error on line [85] as I have wavelengths defined as wavvearray and clearly that worked as the return statement is an array so I am just moving on and ignoring the error statement
+
+#trying the code from the tutorial
+ratio = earth.getSpectrum(waves)/earth.host.getSpectrum(waves)
+[1.00000000e+02 1.20679264e+02 1.45634848e+02 1.75751062e+02
+ 2.12095089e+02 2.55954792e+02 3.08884360e+02 3.72759372e+02
+ 4.49843267e+02 5.42867544e+02 6.55128557e+02 7.90604321e+02
+ 9.54095476e+02 1.15139540e+03 1.38949549e+03 1.67683294e+03
+ 2.02358965e+03 2.44205309e+03 2.94705170e+03 3.55648031e+03
+ 4.29193426e+03 5.17947468e+03 6.25055193e+03 7.54312006e+03
+ 9.10298178e+03 1.09854114e+04 1.32571137e+04 1.59985872e+04
+ 1.93069773e+04 2.32995181e+04 2.81176870e+04 3.39322177e+04
+ 4.09491506e+04 4.94171336e+04 5.96362332e+04 7.19685673e+04
+ 8.68511374e+04 1.04811313e+05 1.26485522e+05 1.52641797e+05
+ 1.84206997e+05 2.22299648e+05 2.68269580e+05 3.23745754e+05
+ 3.90693994e+05 4.71486636e+05 5.68986603e+05 6.86648845e+05
+ 8.28642773e+05 1.00000000e+06]
+<class 'numpy.ndarray'>
+---------------------------------------------------------------------------
+NameError                                 Traceback (most recent call last)
+Cell In[92], line 2
+      1 #trying the code from the tutorial
+----> 2 ratio = earth.getSpectrum(waves)/earth.host.getSpectrum(waves)
+
+Cell In[28], line 86, in ThingThatGlows.getSpectrum(self, wavearray)
+     81 wavelength = wavearray
+     83 #code from plotSpectrum() module for calcultatin the luminotisy
+     84 
+     85 # this is the flux per unit area
+---> 86 flux = thermal.planck(wavelengths, T=self.temperature)
+     88 # we multiply by an area to get total luminosity
+     89 specificluminosity = flux * self.calculateArea()
+
+NameError: name 'wavelengths' is not defined
+#attempting to plot the stata. 
+#I do not know if this will plot because of the error messages I have been recieving
+plt.loglog(waves, ratio)
+plt.ylim(1e-12, 1)
+plt.xlabel('Wavelength (nm)')
+plt.ylabel('Planet-to-Star Brightness Ratio')
+---------------------------------------------------------------------------
+ValueError                                Traceback (most recent call last)
+Cell In[95], line 3
+      1 #attempting to plot the stata. 
+      2 #I do not know if this will plot because of the error messages I have been recieving
+----> 3 plt.loglog(waves, ratio)
+      4 plt.ylim(1e-12, 1)
+      5 plt.xlabel('Wavelength (nm)')
+
+File /opt/anaconda3/envs/current/lib/python3.11/site-packages/matplotlib/pyplot.py:3602, in loglog(*args, **kwargs)
+   3600 @_copy_docstring_and_deprecators(Axes.loglog)
+   3601 def loglog(*args, **kwargs) -> list[Line2D]:
+-> 3602     return gca().loglog(*args, **kwargs)
+
+File /opt/anaconda3/envs/current/lib/python3.11/site-packages/matplotlib/axes/_axes.py:1920, in Axes.loglog(self, *args, **kwargs)
+   1916 dy = {k: v for k, v in kwargs.items()
+   1917       if k in ['base', 'subs', 'nonpositive',
+   1918                'basey', 'subsy', 'nonposy']}
+   1919 self.set_yscale('log', **dy)
+-> 1920 return self.plot(
+   1921     *args, **{k: v for k, v in kwargs.items() if k not in {*dx, *dy}})
+
+File /opt/anaconda3/envs/current/lib/python3.11/site-packages/matplotlib/axes/_axes.py:1779, in Axes.plot(self, scalex, scaley, data, *args, **kwargs)
+   1536 """
+   1537 Plot y versus x as lines and/or markers.
+   1538 
+   (...)
+   1776 (``'green'``) or hex strings (``'#008000'``).
+   1777 """
+   1778 kwargs = cbook.normalize_kwargs(kwargs, mlines.Line2D)
+-> 1779 lines = [*self._get_lines(self, *args, data=data, **kwargs)]
+   1780 for line in lines:
+   1781     self.add_line(line)
+
+File /opt/anaconda3/envs/current/lib/python3.11/site-packages/matplotlib/axes/_base.py:296, in _process_plot_var_args.__call__(self, axes, data, *args, **kwargs)
+    294     this += args[0],
+    295     args = args[1:]
+--> 296 yield from self._plot_args(
+    297     axes, this, kwargs, ambiguous_fmt_datakey=ambiguous_fmt_datakey)
+
+File /opt/anaconda3/envs/current/lib/python3.11/site-packages/matplotlib/axes/_base.py:486, in _process_plot_var_args._plot_args(self, axes, tup, kwargs, return_kwargs, ambiguous_fmt_datakey)
+    483     axes.yaxis.update_units(y)
+    485 if x.shape[0] != y.shape[0]:
+--> 486     raise ValueError(f"x and y must have same first dimension, but "
+    487                      f"have shapes {x.shape} and {y.shape}")
+    488 if x.ndim > 2 or y.ndim > 2:
+    489     raise ValueError(f"x and y can be no greater than 2D, but have "
+    490                      f"shapes {x.shape} and {y.shape}")
+
+ValueError: x and y must have same first dimension, but have shapes (50,) and (1,)
+No description has been provided for this image
+4 think+type: magic methods
+#testing/wrolking with magic methos in the class, Subatomic
+class subatomic:
+    
+    '''
+    This a simple class for Subatomic particles.
+    '''
+
+    
+    def __init__(self, name):
+        '''
+        Initialize a Subatomic particle.
+        '''
+        self.name = name
+        
+    def __add__(self, other):
+        
+        '''
+        This magic method is called if someone adds two Subatomic objects
+        '''
+        
+        print(f"Combining {self.name} with {other.name}, you get:")
+        if self.name == ('anti' + other.name):
+            return 'ZAP!'
+        elif other.name == ('anti' + self.name):
+            return 'ZAP!'
+        else:
+            return self.name + other.name
+
+
+    #adding a new method, 
+    def __eq__(self, other):
+
+        '''
+        checks if the two inputs are the same of different
+        '''
+        if self.name == other.name:
+            return "eww get away from me"
+        elif self.name != other.name:
+            return "TOTAL ANNIHILATION!!!"
+    
+#defining two obhects in the subatomic class
+electron = subatomic('electron')
+positron = subatomic('antielectron')
+print(electron + electron) #if I am understanding the code, this should print, electronelectron
+Combining electron with electron, you get:
+electronelectron
+print(electron + positron) #since I'm feeling a little more confident after predicting the last one correctly, I think this will printZAP!
+Combining electron with antielectron, you get:
+ZAP!
+print(positron + electron) #this should agai print ZAP!
+Combining antielectron with electron, you get:
+ZAP!
+5 think+pair+code: Your own magic method
+Again, I did this by myself after class
+
+Also, I am planning on doing eq : == and if they are equal, I will return "eww get away from me" because they would repel each other
+
+elif they are not equal, I will return TOTAL ANNIHILATION! as they will "fly" towards each other and annihilate each other.*( I have not taken a particle physics class, so this is just from my basic understanding of how particles work. I could be completely incorrect on the annihilation of particles with opposite charges.)
+
+print(electron == electron) #this should return, eww get away from me
+eww get away from me
+print(electron == positron)  #this should pritn 
+TOTAL ANNIHILATION!!!
+I know my code is pretty simple but it always makes me just happy when it works, and like omg all that I have learned in this class has been so cool!
+
+ 
