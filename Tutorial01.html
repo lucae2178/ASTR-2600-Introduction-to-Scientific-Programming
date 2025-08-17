@@ -1,0 +1,170 @@
+2 think+type: Using Variables
+x=42 #assinging x to the meanig of life the universe and everythin
+print(x) #checking to make sure I assigned x correctly
+42
+y = 3 * x   #assigning the variable y as 3 times x
+print(y) #checking that I assigned y correctly
+126
+print(1e8) #making sure I can do scientific notation correctly
+100000000.0
+3 tink+pair+code: How many stars?
+I talked with Abby Malstrom about this. We came to this conclusion because we knew that the diameter of the Milky Way is roughly 10^5 therefore, the radius is roughly 5 * 10^4. The area in light years squared is therefore around 10^9 light years squared. The distance to the nearest star is roughly 4 light years. This is equal to 4*10^0 light years. I will square this number because this is the closest star in any direction, which means that there is roughly an area of 1.6*10^1 light years squared between stars. So if we divide 10^9 light years squared by 1.6*10^1 light years squared, we should get a rough estimate of the number of stars in the Milky Way. I am just using the order of magnitudes as I do not have enough information to estimate the number accurately. Therefore, we estimated the number of stars in the Milky Way is around 10^8
+countingstar = 1e8 #guess for the number of stars in the Milky Way. I talked with Abby Malstrom o this. We came to this conclusion becausde we knew that the diameter of the Milky Way is roughly 10^5 therefore the radius is roughly 5  10^4. Thearea in light years squared is therefore around 10^9 light years squared. The distance the nearest star is roughly 4 light years. So if we divide    Abby Malstrom 
+print(countingstar) #making sure I defined it coroectly
+100000000.0
+We just guessed the number of galaxies, as we have essentially no idea. The only thing I remember is that maybe in a previous course the professor said something such as, "There are a million times more galaxies in the universe than stars in the Milky Way." Note that my memory could be completely incorrect. However, that sounds correct enough to me currently. 1 million = 10^6. So if I multiply 10^6 by the number of stars we estimated from the last problem (10^8 stars) I get 10^14 galaxies in the observable universe. Abby believes that there are less galaxies, so they went with a lower number/
+galaxies = 1e14 # guess for the amount of galaxies in the observable universe
+print(galaxies) #checking
+100000000000000.0
+#stars in the observable universe will equal galaxies multiplied by stars per galaxy
+universe_stars = countingstar * galaxies
+print(universe_stars) #checking to make sure it works!
+1e+22
+print(universe_stars, "stars") #putting units on the answer to number of stars in the obseravble universe
+1e+22 stars
+The number for my guess for the number of stars seems to be accurate. By that, I mean the code works as the number of stars in the Milky Way I assigned to my variable, countingstar, was 10^8, and the number of galaxies I assigned to my variable, galaxies, was 10^14. (10^14)*(10^8)=10^22. the result of my code was 1e22 which means 10^22 so my code was succseful!
+4 think+type: Modifying Variables
+x = 4 this will reset the variable, x to the integer4 value of 4
+
+x = 4 #see\tting x = 4
+x = 2 * x. This code will redefine x as 2 times the previous value of x. This should set x equal to 8
+
+x = 2 * x #make sure to run this code before printing x
+print(x) #checking to make sure my code works
+8
+x = x + 1, this code should add 1 to the current value of x. If I ran line [34] then, x = 8 before running the code and x weill equal 9 after running the code.
+
+x = x + 1 # adding 1 to the current value of x
+print(x) #checking to make sure that I succsefully added 1 to x 
+9
+x += 2 this should add 2 to the current value of x so I should get 11
+
+x += 2 # adding 2 to the current value of x 
+print(x) # checking to make sure my code works
+11
+x -= 3. This code should subtract 3 from the current value of x. This should result in x =8
+
+x -= 3 #subtracting 3 from the current value of x
+print(x) #checking the value of x
+8
+ 
+5 think+type: Strings
+print('hello world') This code should just print the string of characters between the two ' symbols
+
+print('hello world') #printing hello world
+hello world
+'hi girlie pop!' #testing to make sure Python will print a random string without a print statement
+'hi girlie pop!'
+if I use a print statement with multple strings of charcters sperated by lines then, It should print mulptle strings of charcters sperated by mukpilke lines.
+
+print(''' 
+
+    /\
+   /  \
+  |    |
+  |NASA|
+  |    |
+  |    |
+  |    |    
+ |      |
+ |      |
+ |______|
+  /    \  ''')  #trying to print amultiplee line symbolwith multiple charactersa and spaces. 
+ 
+
+    /   /    |    |
+  |NASA|
+  |    |
+  |    |
+  |    |    
+ |      |
+ |      |
+ |______|
+  /    \  
+My attempt at ASCI art did not work at the beginning/top of the rocket. It began to work further down once letters were added. I will need more time to figure out how to do ASCII art in Python
+
+print('''
+My attempt at ASCI art did not work at the 
+beginning/top of the rocket. It began to 
+work further down once letters were added. I
+will need more time to figure out how to do 
+ASCII art in Python
+''') 
+#testing if I can make a string of words work
+My attempt at ASCI art did not work at the 
+beginning/top of the rocket. It began to 
+work further down once letters were added. I
+will need more time to figure out how to do 
+ASCII art in Python
+
+However my attempt at producing a string of words seems to have went well!
+
+wassup
+---------------------------------------------------------------------------
+NameError                                 Traceback (most recent call last)
+Cell In[69], line 1
+----> 1 wassup
+
+NameError: name 'wassup' is not defined
+firstName = 'Ceclia' #defining the string, firstName
+lastName = 'Payne-Gaposchkin'
+firstName + lastName
+'CecliaPayne-Gaposchkin'
+fullName = firstName + ' ' + lastName
+print(fullName)
+Ceclia Payne-Gaposchkin
+prefix = 'Dr.'
+print(prefix + ' ' + fullName) 
+#Dr. Payne-Gaposchkin was the first woman to 
+#receive a doctorate in astronomy, so I want 
+#to make sure I recognize that
+Dr. Ceclia Payne-Gaposchkin
+quote = '"Do not undertake a scientific career in quest of fame or money. There are easier and better ways to reach them. Undertake it only if nothing else will satisfy you; for nothing is probably what you will receive."' 
+print(prefix + ' ' + fullName + ' ' + 'said, ' + '           '  + quote)
+#printing all of the strings together
+Dr. Ceclia Payne-Gaposchkin said,            "Do not undertake a scientific career in quest of fame or money. There are easier and better ways to reach them. Undertake it only if nothing else will satisfy you; for nothing is probably what you will receive."
+ 
+6 think+type: Built-in Functions
+since the type() ffunction tells the type of an input I belive that type(3) will return integer
+
+type(3)
+int
+I believe type(3.7) will return string because the decimil point is not an integer
+
+type(3.7)
+float
+I was incorrect on the previous type() guess because I forgot that strings must include multiple data types.
+
+I believe type('sunlight') will return string becausae it is multpile charcters bounded by two ' symbols'
+
+type('sunlight')
+str
+I believe len('moonlight') will return 9 as that is how many charcters are between the two ' symbols
+
+len('moonlight')
+9
+ 
+7 think+write: round
+The Python function round(), I am guessing, rounds either an integer or a float to a the specific number of significant figures or to a specific order of magnitude, I do not yet know how to use this function, but I can guess: for example, round.5(123456) I am using round.x as a filler with x being the amount of significant digits so round.5(123456) would output 123450. This could also be used for numbers with a decimal point, such as a float. round.3(12.345) would output 12.3. However, I will need more time to learn what the round() function does.
+8 think+code: round
+round(12345) #first test to see what is outputed
+12345
+round.5(12345) #testing if my guess was correct
+  Cell In[99], line 1
+    round.5(12345)
+         ^
+SyntaxError: invalid syntax
+round(12345, 3) #testing another option
+12345
+The above option produced a result; however, It did not produce the result I was looking for. This makes me think the rounding is not by the number of significant figures. Rather, I believe rounding is by decimal places. round(1.432) testing to see if this rounds the numver to 1"
+round(1.432)
+1
+round(1.43225, 3) this should hopefully output 1.432 as I now believe the second input is the amount of decmils points
+round(1.43225, 3)
+1.432
+round(154.5, 0) I am running this code to see if python rounds .5 to 1 or .5 to 0
+round(154.5, 0)
+154.0
+round(154.6, 0)
+155.0
+So Python rounds 0.5 down to 0.
