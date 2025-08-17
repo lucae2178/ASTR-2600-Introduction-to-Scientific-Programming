@@ -1,0 +1,384 @@
+Tutorial14-numericalIntegration
+import numpy as np #importing the numpy library as np
+2 think+type: define some test functions
+def parabola(x):
+    return (1/2)*x**2 #returing the value inputed squared times 1/2
+testing the parabola function
+parabola(2) #this should return 2
+2.0
+parabola(16) #this should return 128
+128.0
+parabola(0.5) #this should return 0.125
+0.125
+the integral of the parabola function((1/2)x**2) should be ((1/6)x**3)
+
+def gaussian(x):
+    power = (-1)*parabola(x) #I already have (1/2)*x**2 coded in the function parabalo adn this function called for -1/2*x**2 so i'm just going to call parabola inside this function to make it easier
+    return np.exp(power)/np.sqrt(2*np.pi)
+testing the gaussian function
+parabola(np.sqrt(2)) #getting my parabola function to return 1 or at least a value close to 1
+1.0000000000000002
+gaussian(np.sqrt(2)) #testing the response of the gausian function with parabola = 1
+0.1467626631737399
+gaussian(0) #this should make the exponent zero so it should return 1/np.sqrt(2*np.pi)
+0.3989422804014327
+print(gaussian(0) == (1/np.sqrt(2*np.pi))) #checking my prediction 
+True
+3 think+code: integrate using rectangles
+(aka integrating using Riemann rectangles)
+import riemann_rectangles as rect #I named the module, riemann_rectangles.py
+# my renamed the model, rectangles.py is so that I don't get confused in the future when I try to find the function for intgrating using riemann rectangles
+help(rect) #learning what is inside the riemann_rect module
+Help on module riemann_rectangles:
+
+NAME
+    riemann_rectangles
+
+FUNCTIONS
+    integrateRectangles(f, xmin, xmax, N)
+        Approximate the area under the function "f",
+        from "xmin" to "xmax", using N rectangles.
+        
+        Arguments
+            f    : a function to be integrated
+            xmin : lower limit of integration
+            xmax : upper limit of integration
+            N    : number of rectangles to use
+        
+        Returns
+            the numerical integral of "f"
+        
+        Example:
+            def integrand(x)
+                return x**2
+            integrateRectangles(integrand, 0, 1, 5)
+    
+    visualizeRectangles(f, xmin, xmax, N)
+        Plot "N" rectangles between "xmin" and "xmax",
+        to visualize what happens when we calculate
+        a rectangular integral of the function "f".
+        
+        Arguments
+            f    : a function to be integrated
+            xmin : lower limit of integration
+            xmax : upper limit of integration
+            N    : number of rectangles to use
+        
+        Returns
+            (nothing), but it makes a plot
+        
+        Example:
+            def integrand(x)
+                return x**2
+            plotRectangles(integrand, 0, 2, 5)
+
+FILE
+    /home/luel8892/ASTR 2600/Tutorial/riemann_rectangles.py
+
+
+Ok, so like the visualizeRectangles function looks really fun, so before I continue with the tutorial, I want to try using the visualizeRectangles function
+
+rect.visualizeRectangles(parabola, 0 , 10, 5) 
+#testing the  visualizeRectangles function with the parabola function
+#hopefully this shoiuld return a graph with 5 Riemann rectangles under the curve 1/2*x**2
+No description has been provided for this image
+OMG it worked!!!! This is so cool!! (also sorry it looked like just so much fun!)!
+
+# returning to the tutorial steps
+x1, x2 = 0.0, 10.0 #setting the bounds of integration
+
+N = 5 #setting the number of rectangles I wanted
+
+def analytic(x1, x2): #creating a function for integrating 1/2*x**2
+        return 1/6 * (x2**3 - x1**3) #finding the integral of 1/2*x**2 using the power rule 
+
+    
+print('Analytic:')
+print(analytic(x1, x2))
+Analytic:
+166.66666666666666
+rect.integrateRectangles(parabola,x1,x2,N) #hopefully this should return a so,o;;ar result to code line [52]
+120.0
+The correct answer is 500/3, which is equal to 166.6667
+
+let me see if the integrateRectangles function approaches this value as I increase N
+
+rect.integrateRectangles(parabola,x1,x2,10) #this should be greater than 120 as I increased N from 5 to 10
+142.5
+rect.integrateRectangles(parabola,x1,x2,20) #this should be greater than 142.5 as I increased N from 10 to 20
+154.375
+woohoo!!! The integrateRectangles function works! As I increase N(the number of rectangles), the integrateRectangles function approaches the value of the continuous integral!
+
+rect.visualizeRectangles(gaussian, 0 , 10, 5)
+#testing out the visualizeRectangles function with the gaussian function
+No description has been provided for this image
+rect.visualizeRectangles(gaussian, -np.e, np.e, 20)
+#changing the domain and the number of rectangles to get a prettier graph
+#also, I'm noticing that the rectangular integrals are left-bound. I wonder if there is an easy way to switch this to right-bound or midpoint?
+No description has been provided for this image
+4 think+pair+code: integration using the trapezoids
+I did this bymysself after class
+Trapezoidal area formula:
+Area = (xi+1 -xi) *
+f
+(
+x
+<
+s
+u
+b
+>
+i
++
+1
+<
+/
+s
+u
+b
+>
+)
++
+f
+(
+x
+<
+s
+u
+b
+>
+i
+<
+/
+s
+u
+b
+>
+)
+2
+
+Using Markdown to write mathematical expressions is difficult. This is my best attempt
+
+#code for the area of a trapezoid
+
+def trapezoid(f, x1, x2):
+    #area of a trapezoid
+    base = x2-x1
+    average_height = (f(x1)+f(x2))/2
+    area = average_height*base
+    return base, average_height, area
+    
+trapezoidal integral function
+def integrateTrapezoids(f, x1, x2, N):
+    '''
+    ---inputs-------
+    x1 and x2 can be either floats or integers
+    N is an integer greater than zero
+    f is a defined function
+    
+    -------function-------
+
+    The integrateTrapezoids function calculates the trapezoidal
+    integral for the function f with N trapezoids between
+    x1 and x2
+
+    ------output--------
+
+    The integrateTrapezoids function returns a float
+    with 4 decimal places of rounding.
+
+    '''
+    delta_area = 0
+    base = x2-x1
+    trap_integral = 0
+    for i in range(0, N):
+        
+        #print(area) another testomg print statemet
+        
+        current_x = i*(base/N)+x1 #calculating the current value of x with N subdivsions
+        x_plus_one = (i+1)*(base/N)+x1 #calculating the value of +1 with N subdivisions
+        #area of a trapezium
+        delta_base = x_plus_one - current_x #calculating the current base of the trapezoid
+        delta_height = (f(x_plus_one)+f(current_x))/2 #calculating the current height of the trapezoid
+        delta_area = round(delta_height*delta_base, 4) #the change in the total area under the integral
+        trap_integral += delta_area # adding the area for this trapezoid to the total trapezoidal area
+        
+        #testing print statements to make sure my function is working
+        #print(delta_height)
+        #print(delta_base)
+        #print(delta_area)
+        
+    return trap_integral
+
+        
+integrateTrapezoids(parabola, 1, 25, 6) #testing the integrateTrapezoids function 
+2636.0
+integrateTrapezoids(parabola, 1, 28, 8) #testing the integrateTrapezoids function with non-whole numbers to see if my rounding works, it should round to 4 decmil places 
+3684.1289
+my integrateTrapezoids functions seem to be working!
+
+Trapezoidal visualizer
+I figured it would take a lot less time just to edit he function given for visualizeRectangles rather than make my own visualizing function for trapezoids
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+def visualizeTrapeziods(f, xmin, xmax, N):
+    """
+
+    Plot "N" rectangles between "xmin" and "xmax",
+    to visualize what happens when we calculate
+    a rectangular integral of the function "f".
+
+    Arguments
+        f    : a function to be integrated
+        xmin : lower limit of integration
+        xmax : upper limit of integration
+        N    : number of rectangles to use
+
+    Returns
+        (nothing), but it makes a plot
+
+    Example:
+        def integrand(x)
+            return x**2
+        plotRectangles(integrand, 0, 2, 5)
+    """
+
+    # first, make a high-resolution plot of the function
+    xsmooth = np.linspace(xmin, xmax, 500)
+    plt.plot(xsmooth, f(xsmooth), linewidth=10, alpha=0.3, color='orchid')
+
+    # next, make a grid spanning xmin to xmax, with N+1 elements
+    x = np.linspace(xmin, xmax, N+1)
+
+    # calculate the offsets from x[:-1] to x[1:]
+    dx = np.diff(x)
+
+    # loop over rectangles
+    for i in range(N):
+
+        # where are the left and right edges of the rectangle?
+        left = x[i]
+        right = x[i] + dx[i]
+
+        # set the rectangle plotting style
+        plotkw = dict(color='black', linewidth=2)
+
+        # plot vertical line from 0 up to the curve (left edge of rectangle)
+        plt.plot([left, left], [0, f(left)], **plotkw)
+
+        # plot another vertical line (right edge of rectangle)
+        plt.plot([right, right], [0, f(right)], **plotkw)
+
+        # plot horizontal line (top of rectangle)
+        plt.plot([left, right], [f(left), f(right)], **plotkw) #the only thing i changed was,  [f(left), f(left)] to  [f(left), f(right)] now it plots trapezoidal areas
+
+    # set the x and y labels
+    plt.xlabel('x')
+    plt.ylabel('f(x)')
+
+    # make sure the plot displays to the screen
+    plt.show()
+ visualizeTrapeziods(parabola, 0, 11, 6)
+No description has been provided for this image
+comparing analytical, rectangular, and trapezoidal integration of the parabola
+# final print statements for my trapezoidal integral stuff
+
+print("Testing", parabola)
+print('Analytic:', analytic(x1, x2))
+print('Rectangular:', rect.integrateRectangles(parabola,x1,x2,N))
+print("Trapezoids:", integrateTrapezoids(parabola, x1, x2, N))
+rect.visualizeRectangles(parabola, 0 , 10, 5) #throwing in the rectangular integral visualizer to compare with my trapeziodal integral visualizer
+visualizeTrapeziods(parabola, x1, x2, N)
+Testing <function parabola at 0x7f5048383380>
+Analytic: 166.66666666666666
+Rectangular: 120.0
+Trapezoids: 170.0
+No description has been provided for this image
+No description has been provided for this image
+All 3 of the answers look quite similar. The rectangular is clearly an underestimate, and the trapezoidal is an overestimate. This makes sense since the curve y = x^2 is concave up and increasing on the interval tested. A left-bound rectangular approximation would be an underapproximation, and a trapezoidal approximation would be an overestimate. *** Please note that I do not know how to prove why this is true because I have not yet taken any course involving proofs or analysis
+
+comparing rectangular and trapezoidal integration of the Gaussian
+no analytical because idk how to analytically integrate the Gaussian function
+print("Testing", gaussian)
+N = 10
+x1 = -10 # redefining x1 to -10, that way the gaussian function looks beter and I can see that "bell" curve
+print('Rectangular:', rect.integrateRectangles(gaussian,x1,x2,N))
+print("Trapezoids:", integrateTrapezoids(gaussian, x1, x2, N))
+rect.visualizeRectangles(gaussian, x1, x2, N) #throwing in the rectangular integral visualizer to compare with my trapeziodal integral visualizer
+visualizeTrapeziods(gaussian, x1, x2, N)
+Testing <function gaussian at 0x7f5048139d00>
+Rectangular: 1.0143837720622289
+Trapezoids: 1.0142
+No description has been provided for this image
+No description has been provided for this image
+since both approximations are pretty similar(they only begin to vary at the ten-thousandths place) and both graphs appear to be pretty similar, I believe my functions worked successfully!
+
+5 (bonus)+think+type: converging with N
+x1, x2 = -3, 3 #setting the interval
+
+
+#for N in 2**np.arange(23): idk why this code isn't working so I'm rewriting it to make sense to me
+for N in np.arange(24): #creates ann array from 0 to 24
+
+
+    inputs = [gaussian, x1, x2, N]
+
+    print(N, integrateTrapezoids(*inputs)) #putting the list of inputs (N) into the trapoziodal integral function
+
+# only plot if N is small (otherwise it takes forever!)
+    if N < 100:
+        visualizeTrapeziods(*inputs)
+   
+0 0
+No description has been provided for this image
+1 0.0266
+No description has been provided for this image
+2 1.2102
+No description has been provided for this image
+3 0.9766999999999999
+No description has been provided for this image
+4 0.9936
+No description has been provided for this image
+5 0.9945
+No description has been provided for this image
+6 0.9954000000000001
+No description has been provided for this image
+7 0.9956999999999999
+No description has been provided for this image
+8 0.9961999999999999
+No description has been provided for this image
+9 0.9964
+No description has been provided for this image
+10 0.9964
+No description has been provided for this image
+11 0.9967
+No description has been provided for this image
+12 0.9969999999999999
+No description has been provided for this image
+13 0.9969000000000001
+No description has been provided for this image
+14 0.997
+No description has been provided for this image
+15 0.9968000000000001
+No description has been provided for this image
+16 0.9967999999999998
+No description has been provided for this image
+17 0.9969999999999999
+No description has been provided for this image
+18 0.9971999999999999
+No description has been provided for this image
+19 0.9968
+No description has been provided for this image
+20 0.9969999999999999
+No description has been provided for this image
+21 0.997
+No description has been provided for this image
+22 0.9969999999999999
+No description has been provided for this image
+23 0.9970000000000002
+No description has been provided for this image
+The integral of the Gaussian function from -3 to 3 is .99730020393. My result with a trapezoidal integral with 1 trapezoid, N=1, is 0.0266. This seemed worrying. However, it is because there is only one trapezoid with vertices at x=-3 and x =3. Luckily, with running with 2 trapezoids, N=2, the number became more realistic with 1.2102. The approximation approached the actual value as N increased. At N = 23, the value calculated for the area under the trapezoids is 0.9970000000000002. AT N=2, the difference between the area under the trapezoid and the integral is. 0.2128997961. At N = 23, the difference between the area under the trapezoids and the integral is 0.0000000000997. This shows that as N increases, the area under the trapezoids approaches the value of the integral. This means my function for the area under a curve using trapezoids is correct!
+
+ 
