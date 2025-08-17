@@ -1,0 +1,370 @@
+HomeworkE-exoplanetData
+*an exoplanet is a planet that orbits any star other than our sun
+
+# importing the two modules, I am also certain I will be using
+import matplotlib.pyplot as plt
+import numpy as np
+
+pi = np.pi
+print(np.pi)
+3.141592653589793
+1 Physics Background: Exoplanets, Known and Unknown
+The fraction of star light that a planet blocks, often known as the transit depth 𝐷, is the ratio of cross-sectional areas, given by the following equation
+
+D =
+n
+p
+.
+p
+i
+∗
+R
+2
+<
+s
+u
+b
+>
+p
+l
+a
+n
+e
+t
+<
+/
+s
+u
+b
+>
+n
+p
+.
+p
+i
+∗
+R
+2
+<
+s
+u
+b
+>
+s
+t
+a
+r
+<
+/
+s
+u
+b
+>
+=
+(
+n
+p
+.
+p
+i
+∗
+R
+<
+s
+u
+b
+>
+p
+l
+a
+n
+e
+t
+<
+/
+s
+u
+b
+>
+n
+p
+.
+p
+i
+∗
+R
+<
+s
+u
+b
+>
+s
+t
+a
+r
+<
+/
+s
+u
+b
+>
+)
+2
+
+I do not know why my subscripts are not working
+
+A typical Jupiter-sized planet transiting a Sun-like star has a transit depth of 0.01, meaning it blocks 1% of the star’s light.
+
+The typical flux of a planet at a distance "a" away from a star is given by
+
+Fplanet =
+L
+<
+s
+u
+b
+>
+s
+t
+a
+r
+<
+/
+s
+u
+b
+>
+4
+∗
+n
+p
+.
+p
+i
+∗
+a
+2
+
+2 Coding Assignment: Exoplanet Data
+1 what's in the files
+The file, exoplanet.csv, is a .csv file, so I will be using pandas to read it. The file also has a list of rows. Each row has 4 columns for each exoplanet. The first column is the exoplanet's name. The second column is the exoplanets' radii in Earth radii. The third column is the star's radius in solar radii. The third column is the energy flux the planet receives from its star relative to what Earth receives from the sun. exoplanets.csv has 2415 rows, and rows 1-7 ar headers
+
+I will make a data table with the index number of the planet in the furthest left column, then the name of the planet in the next left column, then the other three data points in succeeding columns.
+
+new planet.lifgtcurve is a text file with two columns of information. The first column is time in days., Time in days goes from -.1 to .1 in 274 rows. The second column is relative flux. This varies between 0.990 and 1.004, I believe. However, I will test this later by putting all of the values of flux into a numpy.array and finding the max and minThe file is 277 rows long. The first 3 rows are headers.
+
+2 storing the data into arrays
+import pandas as pd
+
+file = 'exoplanets.csv'
+row = 8
+
+# list for getting the data
+nameOfExoplanet = []
+radiiInEarthRadii = []
+StarRadiiInSolarRadii = []
+energyFluxRelativeToSun = []
+
+
+
+
+N = 20 #number of exoplanets I want
+for rows in range(2415): #reading the data skipping over the first 8 rows of header
+
+
+    single_row = pd.read_csv(file, skiprows=rows + 8, nrows=1, header=None) ##assinign a single row to this list
+    nameOfExoplanet.append(single_row[0].to_string()) # assigning the first element of the list as the name of the exoplanet
+    radiiInEarthRadii.append(single_row[1].to_string()) #assigning the second element to the radius of the exoplanet in Earth radii
+    StarRadiiInSolarRadii.append(single_row[2].to_string()) #repeating the code above for Solar Radii
+    energyFluxRelativeToSun.append(single_row[3].to_string()) #repeating the code above for energy Flux
+    
+
+# numpy arrays for storing the data
+name = []
+radii = []
+star_radii = []
+flux = []
+for i in range(2415):    #len( nameOfExoplanet)):
+    cleanedNameOfExoplanet =  nameOfExoplanet[i].replace("0    ", "") #removing some charcters from the string, nameOfExoplanet
+    cleanedradiiInEarthRadii = float(radiiInEarthRadii[i].replace("0    ", "")) #removing some charcters from the string and converting it to a flaot
+    cleanedStarRadiiInSolarRadii = float(StarRadiiInSolarRadii[i].replace("0    ", "")) #removing some charcters from the string and converting it to a flaot
+
+    
+    #print(f"the name of the exoplanet is, {cleanedNameOfExoplanet} \n, \t the radius in Earth Radii is { radiiInEarthRadii[i]} ") #printing it all in an F string
+    #print(cleanedradiiInEarthRadii)
+    
+    name.append(cleanedNameOfExoplanet) #storing the names to a list
+    radii.append(cleanedradiiInEarthRadii) #repating the code above for radii of the planet
+    star_radii.append(cleanedStarRadiiInSolarRadii) #repeating the code above for star radii
+    flux.append(cleanedStarRadiiInSolarRadii) #repeating the code above for flux
+
+#converting the radii, star_radii and fkux from list to numpy.arrays
+radii = np.array(radii)
+satr_radii = np.array(star_radii)
+flux = np.array(flux)
+---------------------------------------------------------------------------
+EmptyDataError                            Traceback (most recent call last)
+Cell In[288], line 19
+     15 N = 20 #number of exoplanets I want
+     16 for rows in range(2415): #reading the data skipping over the first 8 rows of header
+---> 19     single_row = pd.read_csv(file, skiprows=rows + 8, nrows=1, header=None) ##assinign a single row to this list
+     20     nameOfExoplanet.append(single_row[0].to_string()) # assigning the first element of the list as the name of the exoplanet
+     21     radiiInEarthRadii.append(single_row[1].to_string()) #assigning the second element to the radius of the exoplanet in Earth radii
+
+File /opt/anaconda3/envs/current/lib/python3.11/site-packages/pandas/io/parsers/readers.py:1026, in read_csv(filepath_or_buffer, sep, delimiter, header, names, index_col, usecols, dtype, engine, converters, true_values, false_values, skipinitialspace, skiprows, skipfooter, nrows, na_values, keep_default_na, na_filter, verbose, skip_blank_lines, parse_dates, infer_datetime_format, keep_date_col, date_parser, date_format, dayfirst, cache_dates, iterator, chunksize, compression, thousands, decimal, lineterminator, quotechar, quoting, doublequote, escapechar, comment, encoding, encoding_errors, dialect, on_bad_lines, delim_whitespace, low_memory, memory_map, float_precision, storage_options, dtype_backend)
+   1013 kwds_defaults = _refine_defaults_read(
+   1014     dialect,
+   1015     delimiter,
+   (...)
+   1022     dtype_backend=dtype_backend,
+   1023 )
+   1024 kwds.update(kwds_defaults)
+-> 1026 return _read(filepath_or_buffer, kwds)
+
+File /opt/anaconda3/envs/current/lib/python3.11/site-packages/pandas/io/parsers/readers.py:620, in _read(filepath_or_buffer, kwds)
+    617 _validate_names(kwds.get("names", None))
+    619 # Create the parser.
+--> 620 parser = TextFileReader(filepath_or_buffer, **kwds)
+    622 if chunksize or iterator:
+    623     return parser
+
+File /opt/anaconda3/envs/current/lib/python3.11/site-packages/pandas/io/parsers/readers.py:1620, in TextFileReader.__init__(self, f, engine, **kwds)
+   1617     self.options["has_index_names"] = kwds["has_index_names"]
+   1619 self.handles: IOHandles | None = None
+-> 1620 self._engine = self._make_engine(f, self.engine)
+
+File /opt/anaconda3/envs/current/lib/python3.11/site-packages/pandas/io/parsers/readers.py:1898, in TextFileReader._make_engine(self, f, engine)
+   1895     raise ValueError(msg)
+   1897 try:
+-> 1898     return mapping[engine](f, **self.options)
+   1899 except Exception:
+   1900     if self.handles is not None:
+
+File /opt/anaconda3/envs/current/lib/python3.11/site-packages/pandas/io/parsers/c_parser_wrapper.py:93, in CParserWrapper.__init__(self, src, **kwds)
+     90 if kwds["dtype_backend"] == "pyarrow":
+     91     # Fail here loudly instead of in cython after reading
+     92     import_optional_dependency("pyarrow")
+---> 93 self._reader = parsers.TextReader(src, **kwds)
+     95 self.unnamed_cols = self._reader.unnamed_cols
+     97 # error: Cannot determine type of 'names'
+
+File parsers.pyx:581, in pandas._libs.parsers.TextReader.__cinit__()
+
+EmptyDataError: No columns to parse from file
+#checking to make sure all my list and arrays are the correct type
+print("name is, ", type(name))
+print("radii is, ", type(radii))
+print("star_radii is, ", type(star_radii))
+print("flux is, ", type(flux))
+name is,  <class 'list'>
+radii is,  <class 'numpy.ndarray'>
+star_radii is,  <class 'list'>
+flux is,  <class 'numpy.ndarray'>
+#checking to make sure that they are all the same length. They should be, but just want to double-check
+print(len(name) == len(radii) == len(star_radii) == len(flux))
+print(len(name))
+True
+1000
+3 plotting the exoplanets population on a logarthimic scale
+import matplotlib.pyplot as plt
+x = flux
+y = radii
+label = name
+
+plt.scatter(x,y)
+plt.xscale('log')
+plt.xlim(0.1, 10)
+plt.yscale('log')
+plt.ylim(0.5, 100) #all the radii are greater than earth's radii
+plt.title("exoplanets population on a logarthimic scale")
+plt.xlabel("solar flux relative to Earth's solar flux")
+plt.ylabel("planets radius in earth radii")
+plt.text(1,1,"earth")
+plt.grid()
+No description has been provided for this image
+4 plotting radius vs transit depth
+x = radii
+y = flux
+label = name
+
+plt.scatter(x,y)
+plt.xscale('log')
+plt.xlim(0.1, 100)
+plt.yscale('log')
+plt.ylim(0.5, 3) #all the radii are greater than earth's radii
+plt.title("exoplanets transit depth calculated through change in flux on a logarthimic scale")
+plt.xlabel("planets radius in earth radii")
+plt.ylabel("transit depth from change in flux")
+plt.text(1,1,"earth")
+plt.grid()
+No description has been provided for this image
+5 making a dictionary
+#print(name)
+print('Kepler-42b' in name)
+print('Kepler-42c' in name)
+print('Kepler-42d' in name)
+False
+False
+False
+I do not believe any of the 3 planets mentioned in the homework instructions are in the exoplanets.csv file
+
+print('Kepler-142b' in name)
+print('Kepler-142c' in name)
+print('Kepler-142d' in name)
+True
+True
+True
+however, I did find 3 similarly named exoplanets in the name list that I will use instead
+
+exoplanets = {}
+type(exoplanets)
+dict
+for i in range(len(name)):
+    exoplanets[name[i]] = radii[i]
+print(len(exoplanets)) #checking to make sure all of the names were inputted as keys
+1000
+print(exoplanets['Kepler-142b']) #testing if the first key works
+1.99
+print(f"Kepler-142b's radius is {exoplanets['Kepler-142b']} times earth's radius \nKepler-142c's radius is {exoplanets['Kepler-142c']} times earth's radius \nKepler-142d's radius is {exoplanets['Kepler-142d']} times earth's radius")  #printing all three radius with an f stirng 
+Kepler-142b's radius is 1.99 times earth's radius 
+Kepler-142c's radius is 2.86 times earth's radius 
+Kepler-142d's radius is 2.16 times earth's radius
+6 reading the newplanet.lightcurve
+count = 0
+time = [] #a list to hold all of the values of time
+flux = [] # a list to hold all of the values of flux
+
+
+with open("newplanet.lightcurve") as file:
+    for row in file:
+        
+        if count == 0 or count == 1: #the file has two rows of headers
+            print("header") #skipping over the firsdt two lines of header
+        elif count > 1:
+            Time = float(row[0:8]) # slicing the first 9 charcters of row to get time 
+            Flux = float(row[9:17]) # slicing the 10th through 18th charcter of row to get Flux
+            time.append(Time)
+            flux.append(Flux)
+            
+        count += 1
+
+time_array = np.array(time)
+flux_array = np.array(flux)
+header
+header
+x = time_array
+y = flux_array
+
+
+plt.scatter(x,y)
+
+plt.xlim(-0.1, 0.1)
+
+plt.ylim(0.99, 1.01) 
+plt.title("newplanet light flux as a function of time")
+plt.xlabel("time in days")
+plt.ylabel("relative flux")
+
+plt.grid()
+No description has been provided for this image
+ 
